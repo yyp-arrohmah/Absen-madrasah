@@ -65,12 +65,24 @@
         .profile-img-container:hover { transform: scale(1.05); }
         .profile-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #f1f5f9; }
         .name-container { margin-top: 9px !important; width: 100%; text-align: center; }
-        #displayName { font-size: 11px !important; font-weight: 800 !important; color: #1f2937; line-height: 1.1 !important; margin-bottom: 5px !important; }
-        #displayRole { font-size: 9px !important; color: #4b5563 !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 0.5px !important; }
+        #displayName { font-size: 10px !important; font-weight: 800 !important; color: #1f2937; line-height: 1.1 !important; margin-bottom: 5px !important; }
+        #displayRole { font-size: 8px !important; color: #4b5563 !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 0.5px !important; }
         .id-card-body .mt-4 { margin-top: 8px !important; padding: 2px 10px !important; }
         #displayId { font-size: 8px !important; font-weight: 800 !important; letter-spacing: 1px !important; color: #111827 !important; }
         .barcode-container { margin-top: 4px !important; padding-top: 2px !important; width: 100%; text-align: center; }
         .barcode-container svg { height: 28px !important; width: 95% !important; display: inline-block; }
+
+        /* --- STYLING KARTU SISWA (Landscape) --- */
+        .id-card-landscape { width: 86mm !important; height: 54mm !important; background: white; border-radius: 8px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; position: relative; border: 1px solid #e2e8f0; display: flex; flex-direction: column; background-size: cover; background-position: center; font-family: 'Inter', sans-serif; }
+        .id-card-landscape-header { height: 10mm !important; background: transparent !important; display: flex; align-items: center; justify-content: center; color: #1f2937; position: relative; padding: 5px !important; text-align: center; z-index: 5; transition: background 0.3s; }
+        .id-card-landscape-body { flex: 1; display: flex; flex-direction: row; align-items: center; padding: 5px 15px !important; position: relative; z-index: 10; transition: background 0.3s; background: transparent; gap: 15px; }
+        .profile-img-container-landscape { width: 25mm !important; height: 32mm !important; border-radius: 6px; padding: 2px !important; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 20; cursor: pointer; transition: transform 0.2s; overflow: hidden; }
+        .profile-img-landscape { width: 100%; height: 100%; object-fit: cover; background: #f1f5f9; border-radius: 4px; }
+        .info-landscape { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .info-landscape h2 { font-size: 10px !important; font-weight: 800 !important; color: #1f2937; line-height: 1.2 !important; margin-bottom: 2px !important; }
+        .info-landscape p { font-size: 9px !important; color: #4b5563 !important; font-weight: 600 !important; margin-bottom: 2px !important; }
+        .barcode-container-landscape { margin-top: 5px !important; width: 100%; text-align: left; }
+        .barcode-container-landscape svg { height: 26px !important; max-width: 100% !important; display: inline-block; }
 
         /* Modal Cropper */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
@@ -198,6 +210,9 @@
         </div>
     </div>
 
+    <!-- Global Input File Tersembunyi untuk Cropper (Penting untuk HP) -->
+    <input type="file" id="global-cropper-input" accept="image/*" class="hidden" onchange="window.openCropper(event, window.currentCropTarget)">
+
     <!-- Modal untuk Cropper (Edit Foto) -->
     <div class="modal-overlay" id="cropperModal">
         <div class="modal-content shadow-2xl">
@@ -207,9 +222,10 @@
                 <img id="imageToCrop" src="" alt="Gambar untuk dipotong" style="display: block; max-width: 100%; max-height: 100%;">
             </div>
             
-            <div class="flex justify-between mt-4 gap-4">
-                <button type="button" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-medium transition w-1/2" onclick="window.closeCropper()">Batal</button>
-                <button type="button" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition w-1/2" onclick="window.applyCrop()">Terapkan Foto</button>
+            <div class="flex justify-between mt-4 gap-2 sm:gap-4">
+                <button type="button" class="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-bold transition text-xs sm:text-sm" onclick="window.closeCropper()">Batal</button>
+                <button type="button" class="px-3 py-2 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 rounded-lg font-bold transition text-xs sm:text-sm flex-1" onclick="document.getElementById('cropperModal').style.display='none'; document.getElementById('global-cropper-input').click();"><i class="fa-solid fa-folder-open mr-1"></i> Ganti File</button>
+                <button type="button" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition text-xs sm:text-sm flex-1" onclick="window.applyCrop()"><i class="fa-solid fa-check mr-1"></i> Terapkan</button>
             </div>
         </div>
     </div>
@@ -314,6 +330,7 @@
                             </button>
                             <div id="submenu-akademik" class="flex flex-col gap-1 mt-1 pl-4 border-l-2 border-gray-200 ml-2">
                                 <button id="nav-btn-siswa" onclick="window.switchTab('siswa', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-2 rounded-xl text-left text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"><i class="fa-solid fa-users w-5"></i> Data Siswa</button>
+                                <button id="nav-btn-idcard-siswa" onclick="window.switchTab('idcard-siswa', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-2 rounded-xl text-left text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"><i class="fa-solid fa-id-card w-5"></i> Cetak Kartu Siswa</button>
                                 <button id="nav-btn-absen-siswa" onclick="window.switchTab('absen-siswa', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-2 rounded-xl text-left text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"><i class="fa-solid fa-clipboard-user w-5"></i> Absensi Murid</button>
                                 <button id="nav-btn-mapel" onclick="window.switchTab('mapel', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-2 rounded-xl text-left text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"><i class="fa-solid fa-book-open w-5"></i> Mata Pelajaran</button>
                                 <button id="nav-btn-nilai" onclick="window.switchTab('nilai', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-2 rounded-xl text-left text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors"><i class="fa-solid fa-pen-to-square w-5"></i> Input Nilai</button>
@@ -374,11 +391,11 @@
                         <div class="mt-4">
                             <label class="block text-sm font-medium mb-2">Foto Profil (Opsional)</label>
                             <div class="flex items-center gap-4">
-                                <div id="preview-foto-container" class="hidden w-16 h-16 rounded-full overflow-hidden border-2 border-purple-200">
+                                <div id="preview-foto-container" class="hidden w-16 h-16 rounded-full overflow-hidden border-2 border-purple-200 cursor-pointer hover:opacity-80 transition-opacity" onclick="window.reopenCropper('guru')" title="Klik untuk potong ulang">
                                     <img id="preview-foto-img" src="" class="w-full h-full object-cover" alt="Preview Foto">
                                 </div>
-                                <button type="button" onclick="window.reopenCropper('guru')" class="bg-purple-50 text-purple-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple-100 border border-purple-200 flex items-center gap-2">
-                                    <i class="fa-solid fa-camera"></i> Ambil/Pilih Foto
+                                <button type="button" onclick="window.currentCropTarget='guru'; document.getElementById('global-cropper-input').click();" class="bg-purple-50 text-purple-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-purple-100 border border-purple-200 flex items-center gap-2 shadow-sm transition-colors">
+                                    <i class="fa-solid fa-camera"></i> Pilih Foto Baru
                                 </button>
                             </div>
                         </div>
@@ -565,7 +582,8 @@
                         </div>
                         <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
                             <button onclick="window.hapusRekapAbsenGuruBulanIni()" class="w-full sm:w-auto bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-colors"><i class="fa-solid fa-trash-can"></i> Hapus Data Bulan Ini</button>
-                            <button onclick="window.cetakRekapAbsenGuru()" class="w-full sm:w-auto bg-gray-800 hover:bg-gray-900 text-white px-6 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md transition-colors"><i class="fa-solid fa-print"></i> Cetak Rekapitulasi</button>
+                            <!-- TOMBOL CETAK DIGANTI MENJADI DOWNLOAD PDF -->
+                            <button onclick="window.downloadRekapAbsenGuruPDF()" class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md transition-colors"><i class="fa-solid fa-file-pdf"></i> Download PDF (A4)</button>
                         </div>
                     </div>
                 </div>
@@ -646,20 +664,97 @@
                 <div id="tab-siswa" class="tab-content max-w-6xl mx-auto scroll-mt-6">
                     <div class="mb-8"><h2 class="text-2xl font-bold text-gray-800">Data Murid</h2></div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-1"><div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><h3 class="font-bold mb-4"><i class="fa-solid fa-user-plus text-blue-500 mr-2"></i>Tambah Murid</h3><form onsubmit="window.simpanSiswa(event)" class="space-y-4"><input type="hidden" id="siswa-mode" value="add"><input type="hidden" id="siswa-id" value=""><div><label class="block text-sm font-medium mb-1">NIS</label><input type="text" id="siswa-nis" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" required></div><div><label class="block text-sm font-medium mb-1">Nama Siswa</label><input type="text" id="siswa-nama" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" required></div><div><label class="block text-sm font-medium mb-1">Kelas</label><input type="text" id="siswa-kelas" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" required></div><div><label class="block text-sm font-medium mb-1">Wali</label><input type="text" id="siswa-wali" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div>
+                        <div class="lg:col-span-1"><div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6"><h3 class="font-bold mb-4"><i class="fa-solid fa-user-plus text-blue-500 mr-2"></i>Tambah Murid</h3><form onsubmit="window.simpanSiswa(event)" class="space-y-4"><input type="hidden" id="siswa-mode" value="add"><input type="hidden" id="siswa-id" value=""><div><label class="block text-sm font-medium mb-1">NIS</label><input type="text" id="siswa-nis" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" required></div><div><label class="block text-sm font-medium mb-1">Nama Siswa</label><input type="text" id="siswa-nama" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" required></div><div><label class="block text-sm font-medium mb-1">Kelas</label><input type="text" id="siswa-kelas" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" required></div><div><label class="block text-sm font-medium mb-1">Wali</label><input type="text" id="siswa-wali" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div><div class="grid grid-cols-2 gap-2"><div><label class="block text-sm font-medium mb-1">Tempat Lahir</label><input type="text" id="siswa-tempat-lahir" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" placeholder="Cth: Surabaya"></div><div><label class="block text-sm font-medium mb-1">Tgl Lahir</label><input type="date" id="siswa-tgl-lahir" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500"></div></div><div><label class="block text-sm font-medium mb-1">Alamat Lengkap</label><textarea id="siswa-alamat" rows="2" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" placeholder="Cth: Jl. Kemerdekaan No. 10"></textarea></div>
                         <div class="mt-4">
                             <label class="block text-sm font-medium mb-2">Foto Profil (Opsional)</label>
                             <div class="flex items-center gap-4">
-                                <div id="preview-foto-siswa-container" class="hidden w-16 h-16 rounded-full overflow-hidden border-2 border-blue-200">
+                                <div id="preview-foto-siswa-container" class="hidden w-16 h-16 rounded-full overflow-hidden border-2 border-blue-200 cursor-pointer hover:opacity-80 transition-opacity" onclick="window.reopenCropper('siswa')" title="Klik untuk potong ulang">
                                     <img id="preview-foto-siswa-img" src="" class="w-full h-full object-cover" alt="Preview Foto">
                                 </div>
-                                <button type="button" onclick="window.reopenCropper('siswa')" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-100 border border-blue-200 flex items-center gap-2">
-                                    <i class="fa-solid fa-camera"></i> Ambil/Pilih Foto
+                                <button type="button" onclick="window.currentCropTarget='siswa'; document.getElementById('global-cropper-input').click();" class="bg-blue-50 text-blue-600 px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-100 border border-blue-200 flex items-center gap-2 shadow-sm transition-colors">
+                                    <i class="fa-solid fa-camera"></i> Pilih Foto Baru
                                 </button>
                             </div>
                         </div>
                         <button type="submit" id="btn-submit-siswa" class="w-full bg-blue-600 text-white rounded-lg p-2.5 font-bold hover:bg-blue-700 mt-2 shadow-md">Simpan Data Siswa</button><button type="button" id="btn-cancel-siswa" onclick="window.resetFormSiswa()" class="w-full bg-gray-100 text-gray-700 rounded-lg p-2.5 font-bold hover:bg-gray-200 mt-2 hidden">Batal</button></form></div></div>
                         <div class="lg:col-span-2"><div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"><table class="w-full text-sm text-left"><thead class="bg-blue-50 text-xs text-blue-900 font-bold uppercase border-b border-blue-100"><tr><th class="px-6 py-3">NIS</th><th class="px-6 py-3">Nama Siswa</th><th class="px-6 py-3 text-right">Aksi</th></tr></thead><tbody id="table-siswa" class="divide-y divide-gray-100 bg-white"></tbody></table></div></div>
+                    </div>
+                </div>
+
+                <!-- TAB CETAK KARTU SISWA -->
+                <div id="tab-idcard-siswa" class="tab-content max-w-6xl mx-auto scroll-mt-6">
+                    <div class="mb-8">
+                        <h2 class="text-2xl font-bold text-gray-800">Cetak Kartu Siswa (Landscape)</h2>
+                        <p class="text-gray-500 text-sm">Pilih murid untuk mengisi data otomatis atau isi manual. Background dapat diubah.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+                        <!-- Form Editor -->
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-5">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-2">Isi Otomatis dari Data Murid</label>
+                                <select id="select-siswa-idcard" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm outline-none focus:border-blue-500" onchange="window.autofillIdCardSiswa(this.value)">
+                                    <option value="">-- Pilih Nama Siswa --</option>
+                                </select>
+                            </div>
+                            <div class="border-b border-gray-200"></div>
+                            
+                            <div><label class="block text-sm font-medium mb-1">Nama Lengkap</label><input type="text" id="inputNameSiswa" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm outline-none" onkeyup="window.updateTextSiswa('inputNameSiswa', 'displayNameSiswa', 'Nama Siswa')" placeholder="Cth: Budi Santoso"></div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="block text-sm font-medium mb-1">Kelas</label><input type="text" id="inputKelasSiswa" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm outline-none" onkeyup="window.updateTextSiswa('inputKelasSiswa', 'displayKelasSiswa', '-', '')" placeholder="Cth: 1A"></div>
+                                <div><label class="block text-sm font-medium mb-1">NIS / Barcode</label><input type="text" id="inputIdSiswa" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm outline-none" onkeyup="window.updateTextSiswa('inputIdSiswa', 'displayIdSiswa', 'XXXXXX', '')" placeholder="Cth: 12345"></div>
+                            </div>
+                            <div><label class="block text-sm font-medium mb-1">TTL (Tempat, Tgl Lahir)</label><input type="text" id="inputTTLSiswa" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm outline-none" onkeyup="window.updateTextSiswa('inputTTLSiswa', 'displayTTLSiswa', '-', '')" placeholder="Cth: Surabaya, 12 Agustus 2010"></div>
+                            <div><label class="block text-sm font-medium mb-1">Alamat Lengkap</label><textarea id="inputAlamatSiswa" rows="2" class="w-full p-2.5 border border-gray-300 rounded-lg text-sm outline-none" onkeyup="window.updateTextSiswa('inputAlamatSiswa', 'displayAlamatSiswa', '-', '')" placeholder="Cth: Jl. Kemerdekaan No. 10"></textarea></div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium mb-1">Background Kartu (Opsional)</label>
+                                <div class="flex gap-2">
+                                    <input type="file" id="inputBgSiswa" accept="image/*" class="w-full p-2 border border-gray-300 rounded-lg text-sm outline-none bg-white" onchange="window.changeBackgroundSiswa(event)">
+                                    <button type="button" onclick="window.hapusBackgroundSiswa()" class="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm font-bold border border-red-200 hover:bg-red-100 transition-colors whitespace-nowrap">
+                                        <i class="fa-solid fa-trash"></i> Hapus
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Preview & Print -->
+                        <div class="flex flex-col items-center">
+                            <div class="bg-gray-100 p-6 rounded-2xl border border-gray-200 w-full flex justify-center mb-4 overflow-x-auto">
+                                <div id="printable-area-siswa" class="id-card-landscape shrink-0">
+                                    <img id="card-bg-img-siswa" src="" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; display: none;">
+                                    
+                                    <div id="themeHeaderSiswa" class="id-card-landscape-header">
+                                        <div id="displayCompanySiswa" class="font-bold text-xs uppercase" style="font-size: 11px; letter-spacing: 0.5px;">KARTU PELAJAR MADRASAH</div>
+                                    </div>
+                                    <div class="id-card-landscape-body">
+                                        <div class="profile-img-container-landscape" onclick="window.reopenCropper('idcard-siswa')" title="Klik untuk potong / ganti foto">
+                                            <img id="displayPhotoSiswa" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>" class="profile-img-landscape" alt="Foto">
+                                        </div>
+                                        <div class="info-landscape">
+                                            <h2 id="displayNameSiswa">Nama Siswa</h2>
+                                            <table style="width: 100%; border: none; font-size: 8px !important; color: #4b5563 !important; font-weight: 600 !important; line-height: 1.5; margin-bottom: 2px;">
+                                                <tr><td style="width: 32px; vertical-align: top; padding: 0;">Kelas</td><td style="width: 5px; vertical-align: top; padding: 0;">:</td><td id="displayKelasSiswa" style="vertical-align: top; padding: 0;">-</td></tr>
+                                                <tr><td style="vertical-align: top; padding: 0;">NIS</td><td style="vertical-align: top; padding: 0;">:</td><td id="displayIdSiswa" style="vertical-align: top; padding: 0;">XXXXXX</td></tr>
+                                                <tr><td style="vertical-align: top; padding: 0;">TTL</td><td style="vertical-align: top; padding: 0;">:</td><td id="displayTTLSiswa" style="vertical-align: top; padding: 0;">-</td></tr>
+                                                <tr><td style="vertical-align: top; padding: 0;">Alamat</td><td style="vertical-align: top; padding: 0;">:</td><td id="displayAlamatSiswa" style="vertical-align: top; padding: 0; max-width: 130px; white-space: normal; word-wrap: break-word;">-</td></tr>
+                                            </table>
+                                            <div class="barcode-container-landscape">
+                                                <svg id="barcodeSiswa"></svg>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex gap-2 w-full max-w-[216px]">
+                                <button onclick="window.downloadKartuSiswaPDF('printable-area-siswa')" class="flex-1 bg-red-600 hover:bg-red-700 text-white py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md transition-all text-sm">
+                                    <i class="fa-solid fa-file-pdf"></i> PDF
+                                </button>
+                                <button onclick="window.downloadKartuSiswaPNG('printable-area-siswa')" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md transition-all text-sm">
+                                    <i class="fa-solid fa-image"></i> PNG
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -918,9 +1013,9 @@
         // --- KONFIGURASI GOOGLE DRIVE API ---
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxMDK-D9oj9FgYdc_dmFSnCsJxw2qxnWQRX5B6W5ty6dApyDi_0VeL1K_4HrWGB9C7i/exec'
 
-        // State Global Aplikasi
-        let db = {
-            guru: [], siswa: [], mapel: [], nilai: [], absensi_guru: [], absensi_siswa: [], jadwal_guru: [],
+        // State Global Aplikasi (Pastikan semua array diinisialisasi di awal agar aman saat offline)
+        window.appState = {
+            guru: [], siswa: [], mapel: [], nilai: [], tabungan: [], spp: [], atk: [], penjualan: [], absensi_guru: [], absensi_siswa: [], jadwal_guru: [],
             pengaturan: { 
                 admin: { user: "admin", pass: "12345" },
                 rapor: { kopBase64: "" },
@@ -1119,6 +1214,7 @@
             toggleNav('nav-btn-rekap-absen-guru', ak.guru);
             toggleNav('nav-btn-idcard', ak.guru); 
             toggleNav('nav-btn-siswa', ak.siswa);
+            toggleNav('nav-btn-idcard-siswa', ak.siswa);
             toggleNav('nav-btn-absen-siswa', ak.siswa);
             toggleNav('nav-btn-mapel', ak.siswa || ak.guru);
             toggleNav('nav-btn-nilai', ak.siswa || ak.guru);
@@ -1262,6 +1358,20 @@
         window.tempFotoGuru = ''; 
         window.tempFotoSiswa = '';
 
+        window.hapusFotoForm = (target) => {
+            if (target === 'siswa') {
+                window.tempFotoSiswa = '';
+                const container = document.getElementById('preview-foto-siswa-container'); if(container) container.classList.add('hidden');
+                const img = document.getElementById('preview-foto-siswa-img'); if(img) img.src = '';
+                const btn = document.getElementById('btn-hapus-foto-siswa'); if(btn) btn.classList.add('hidden');
+            } else if (target === 'guru') {
+                window.tempFotoGuru = '';
+                const container = document.getElementById('preview-foto-container'); if(container) container.classList.add('hidden');
+                const img = document.getElementById('preview-foto-img'); if(img) img.src = '';
+                const btn = document.getElementById('btn-hapus-foto-guru'); if(btn) btn.classList.add('hidden');
+            }
+        };
+
         window.openCropper = (event, target = 'idcard') => { 
             window.currentCropTarget = target;
             const file = event.target.files[0]; 
@@ -1271,75 +1381,81 @@
                 reader.onload = function(e) { window.showCropperModal(e.target.result); }; 
                 reader.readAsDataURL(file); 
             }
-            event.target.value = ''; 
+            if(event.target) event.target.value = ''; 
         };
         
         window.reopenCropper = (target = 'idcard') => { 
             window.currentCropTarget = target;
-            let existingSrc = target === 'guru' ? window.tempFotoGuru : (target === 'siswa' ? window.tempFotoSiswa : document.getElementById('displayPhoto').src);
+            let existingSrc = target === 'guru' ? window.tempFotoGuru : (target === 'siswa' ? window.tempFotoSiswa : (target === 'idcard-siswa' ? document.getElementById('displayPhotoSiswa').src : document.getElementById('displayPhoto').src));
             
             if (existingSrc && !existingSrc.includes('svg+xml')) {
                 window.showCropperModal(existingSrc);
             } else {
-                let hiddenInput = document.getElementById('hidden-photo-input');
-                if (!hiddenInput) {
-                    hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'file';
-                    hiddenInput.id = 'hidden-photo-input';
-                    hiddenInput.accept = 'image/*';
-                    hiddenInput.style.display = 'none';
-                    document.body.appendChild(hiddenInput);
-                }
-                hiddenInput.onchange = (e) => window.openCropper(e, target);
-                hiddenInput.click();
+                document.getElementById('global-cropper-input').click();
             }
         };
-        
-        window.showCropperModal = (imageSrc) => { 
-            const modal = document.getElementById('cropperModal'); 
-            const imageEl = document.getElementById('imageToCrop'); 
-            
-            modal.style.display = 'flex'; 
-            void modal.offsetWidth; 
-            
-            if (window.cropper) { window.cropper.destroy(); window.cropper = null; }
 
-            imageEl.onload = () => {
-                setTimeout(() => {
-                    if (window.cropper) window.cropper.destroy();
-                    window.cropper = new Cropper(imageEl, { 
-                        aspectRatio: 1, 
-                        viewMode: 1, 
-                        dragMode: 'move', 
-                        autoCropArea: 0.8, 
-                        cropBoxMovable: true, 
-                        cropBoxResizable: true,
-                        minContainerWidth: 250,
-                        minContainerHeight: 250
-                    });
-                }, 150); 
-                imageEl.onload = null;
-            };
-            imageEl.src = imageSrc; 
+        window.showCropperModal = (imageSrc) => {
+            const modal = document.getElementById('cropperModal');
+            // PERBAIKAN 1: Menyesuaikan target ID dengan kerangka HTML yang sebenarnya ('imageToCrop')
+            const imageEl = document.getElementById('imageToCrop');
+            if(!modal || !imageEl) {
+                console.error("Elemen gambar cropper tidak ditemukan!");
+                return;
+            }
+            
+            // PERBAIKAN 2: Mencegah pemblokiran keamanan browser (CORS) saat mengedit ulang foto dari Cloud
+            imageEl.crossOrigin = 'anonymous';
+            imageEl.src = imageSrc;
+            modal.style.display = 'flex';
+            
+            if(window.cropper) {
+                window.cropper.destroy();
+            }
+
+            // PERBAIKAN: Rasio Kartu Siswa dan Data Siswa dibuat seragam 3x4 (Portrait)
+            let ratio = 1; // Default rasio 1:1 (Persegi) untuk Guru
+            if (window.currentCropTarget === 'idcard-siswa' || window.currentCropTarget === 'siswa') {
+                ratio = 25 / 32; // Rasio 3x4 (Persegi Panjang) khusus Murid
+            }
+
+            window.cropper = new Cropper(imageEl, {
+                aspectRatio: ratio,
+                viewMode: 1,
+                autoCropArea: 1,
+            });
         };
-        
+
         window.closeCropper = () => { document.getElementById('cropperModal').style.display = 'none'; };
         
         window.applyCrop = () => { 
             if (!window.cropper) return; 
-            const canvas = window.cropper.getCroppedCanvas({ width: 400, height: 400, imageSmoothingEnabled: true, imageSmoothingQuality: 'high' }); 
-            const croppedBase64 = canvas.toDataURL('image/jpeg', 0.85); 
+            
+            // PERBAIKAN: Resolusi proporsional 3x4 untuk murid
+            let cropW = 400;
+            let cropH = 400;
+            if (window.currentCropTarget === 'idcard-siswa' || window.currentCropTarget === 'siswa') {
+                cropW = 300;
+                cropH = 384; 
+            }
+
+            const canvas = window.cropper.getCroppedCanvas({ width: cropW, height: cropH, imageSmoothingEnabled: true, imageSmoothingQuality: 'high' }); 
+            const croppedBase64 = canvas.toDataURL('image/jpeg', 0.90); 
 
             if (window.currentCropTarget === 'guru') {
                 window.tempFotoGuru = croppedBase64;
-                document.getElementById('preview-foto-img').src = croppedBase64;
-                document.getElementById('preview-foto-container').classList.remove('hidden');
+                const el = document.getElementById('preview-foto-img'); if(el) el.src = croppedBase64;
+                const c = document.getElementById('preview-foto-container'); if(c) c.classList.remove('hidden');
+                const btn = document.getElementById('btn-hapus-foto-guru'); if(btn) btn.classList.remove('hidden');
             } else if (window.currentCropTarget === 'siswa') {
                 window.tempFotoSiswa = croppedBase64;
-                document.getElementById('preview-foto-siswa-img').src = croppedBase64;
-                document.getElementById('preview-foto-siswa-container').classList.remove('hidden');
+                const el = document.getElementById('preview-foto-siswa-img'); if(el) el.src = croppedBase64;
+                const c = document.getElementById('preview-foto-siswa-container'); if(c) c.classList.remove('hidden');
+                const btn = document.getElementById('btn-hapus-foto-siswa'); if(btn) btn.classList.remove('hidden');
+            } else if (window.currentCropTarget === 'idcard-siswa') {
+                const el = document.getElementById('displayPhotoSiswa'); if(el) el.src = croppedBase64; 
             } else {
-                document.getElementById('displayPhoto').src = croppedBase64; 
+                const el = document.getElementById('displayPhoto'); if(el) el.src = croppedBase64; 
             }
 
             document.getElementById('cropperModal').style.display = 'none'; 
@@ -1496,6 +1612,177 @@
                 pdf.save(`Kartu_ID_${nama}.pdf`);
 
                 window.showAlert('Berhasil', 'Kartu telah berhasil diunduh sebagai PDF.', 'success');
+            }).catch(err => {
+                console.error(err);
+                window.showAlert('Gagal', 'Terjadi kesalahan saat menyusun PDF.', 'error');
+            });
+        };
+
+        /* ======================== INTEGRASI KARTU SISWA (LANDSCAPE) ======================== */
+        window.autofillIdCardSiswa = (siswaId) => {
+            const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
+            if(!siswaId) {
+                if(document.getElementById('inputNameSiswa')) document.getElementById('inputNameSiswa').value = ''; 
+                if(document.getElementById('inputKelasSiswa')) document.getElementById('inputKelasSiswa').value = ''; 
+                if(document.getElementById('inputIdSiswa')) document.getElementById('inputIdSiswa').value = '';
+                if(document.getElementById('inputTTLSiswa')) document.getElementById('inputTTLSiswa').value = '';
+                if(document.getElementById('inputAlamatSiswa')) document.getElementById('inputAlamatSiswa').value = '';
+                
+                window.updateTextSiswa('inputNameSiswa', 'displayNameSiswa', 'Nama Siswa', ''); 
+                window.updateTextSiswa('inputKelasSiswa', 'displayKelasSiswa', '-', ''); 
+                window.updateTextSiswa('inputIdSiswa', 'displayIdSiswa', 'XXXXXX', ''); 
+                window.updateTextSiswa('inputTTLSiswa', 'displayTTLSiswa', '-', ''); 
+                window.updateTextSiswa('inputAlamatSiswa', 'displayAlamatSiswa', '-', ''); 
+                
+                if(document.getElementById('displayPhotoSiswa')) document.getElementById('displayPhotoSiswa').src = defaultAvatar;
+                return;
+            }
+            const siswa = window.appState.siswa.find(s => String(s.id) === String(siswaId));
+            if(siswa) { 
+                let formatTTL = '';
+                if(siswa.tempat_lahir && siswa.tgl_lahir) formatTTL = `${siswa.tempat_lahir}, ${siswa.tgl_lahir}`;
+                else if (siswa.tempat_lahir) formatTTL = siswa.tempat_lahir;
+                else if (siswa.tgl_lahir) formatTTL = siswa.tgl_lahir;
+
+                if(document.getElementById('inputNameSiswa')) document.getElementById('inputNameSiswa').value = siswa.nama || ''; 
+                if(document.getElementById('inputKelasSiswa')) document.getElementById('inputKelasSiswa').value = siswa.kelas || ''; 
+                if(document.getElementById('inputIdSiswa')) document.getElementById('inputIdSiswa').value = siswa.nis || ''; 
+                if(document.getElementById('inputTTLSiswa')) document.getElementById('inputTTLSiswa').value = formatTTL || '';
+                if(document.getElementById('inputAlamatSiswa')) document.getElementById('inputAlamatSiswa').value = siswa.alamat || '';
+                
+                window.updateTextSiswa('inputNameSiswa', 'displayNameSiswa', 'Nama Siswa', ''); 
+                window.updateTextSiswa('inputKelasSiswa', 'displayKelasSiswa', '-', ''); 
+                window.updateTextSiswa('inputIdSiswa', 'displayIdSiswa', 'XXXXXX', ''); 
+                window.updateTextSiswa('inputTTLSiswa', 'displayTTLSiswa', '-', ''); 
+                window.updateTextSiswa('inputAlamatSiswa', 'displayAlamatSiswa', '-', ''); 
+                
+                if(document.getElementById('displayPhotoSiswa')) document.getElementById('displayPhotoSiswa').src = siswa.foto ? siswa.foto : defaultAvatar;
+            }
+        };
+
+        window.updateTextSiswa = (inputId, displayId, fallbackText, prefix = '') => { 
+            const inputEl = document.getElementById(inputId);
+            const displayEl = document.getElementById(displayId); 
+            if (!inputEl || !displayEl) return;
+            
+            const inputVal = inputEl.value.trim(); 
+            if (inputVal) { 
+                displayEl.textContent = prefix + inputVal; 
+                if (inputId === 'inputIdSiswa' && typeof JsBarcode !== 'undefined') { JsBarcode("#barcodeSiswa", inputVal, { format: "CODE128", lineColor: "#333", width: 1.5, height: 25, displayValue: false, background: "transparent", margin: 0 }); } 
+            } else { 
+                displayEl.textContent = fallbackText; 
+                if (inputId === 'inputIdSiswa' && typeof JsBarcode !== 'undefined') { JsBarcode("#barcodeSiswa", "XXXXXX", { format: "CODE128", lineColor: "#333", width: 1.5, height: 25, displayValue: false, background: "transparent", margin: 0 }); } 
+            } 
+        };
+
+        window.changeBackgroundSiswa = (event) => {
+            const file = event.target.files[0];
+            const bgImgEl = document.getElementById('card-bg-img-siswa');
+            const themeHeader = document.getElementById('themeHeaderSiswa');
+            const cardBody = document.querySelector('.id-card-landscape-body');
+            
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Image = e.target.result;
+                    if(bgImgEl) {
+                        bgImgEl.src = base64Image;
+                        bgImgEl.style.display = 'block';
+                    }
+                    themeHeader.style.backgroundColor = 'transparent'; 
+                    themeHeader.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)';
+                    themeHeader.style.color = 'white';
+                    cardBody.style.backgroundColor = 'transparent';
+
+                    if(!window.appState.pengaturan) window.appState.pengaturan = {};
+                    window.appState.pengaturan.bg_idcard_siswa = base64Image;
+                    window.saveState();
+                    window.showAlert('Berhasil', 'Background kartu siswa berhasil disimpan.', 'success');
+                }; 
+                reader.readAsDataURL(file);
+            } else {
+                if(bgImgEl) {
+                    bgImgEl.src = '';
+                    bgImgEl.style.display = 'none';
+                }
+                themeHeader.style.backgroundColor = 'transparent'; 
+                themeHeader.style.textShadow = 'none'; 
+                themeHeader.style.color = '#1f2937';
+                cardBody.style.backgroundColor = 'transparent';
+
+                if(window.appState.pengaturan && window.appState.pengaturan.bg_idcard_siswa) {
+                    window.appState.pengaturan.bg_idcard_siswa = '';
+                    window.saveState();
+                }
+            }
+        };
+
+        window.hapusBackgroundSiswa = () => {
+            const inputBg = document.getElementById('inputBgSiswa');
+            if(inputBg) inputBg.value = '';
+            window.changeBackgroundSiswa({ target: { files: [] } });
+        };
+
+        window.downloadKartuSiswaPNG = (elementId) => {
+            const element = document.getElementById(elementId);
+            if (!element) return window.showAlert('Gagal', 'Elemen kartu tidak ditemukan.', 'error');
+
+            window.showAlert('Memproses', 'Sedang membuat file PNG (Transparan), mohon tunggu...', 'info');
+
+            const originalBg = element.style.background;
+            const originalBgColor = element.style.backgroundColor;
+            
+            element.style.background = 'transparent';
+            element.style.backgroundColor = 'transparent';
+
+            html2canvas(element, {
+                useCORS: true,
+                scale: 4, 
+                backgroundColor: null 
+            }).then(canvas => {
+                element.style.background = originalBg;
+                element.style.backgroundColor = originalBgColor;
+
+                const link = document.createElement('a');
+                const nama = document.getElementById('inputNameSiswa').value.trim() || 'Kosong';
+                link.download = `Kartu_Siswa_${nama}.png`;
+                link.href = canvas.toDataURL('image/png'); 
+                link.click();
+                
+                window.showAlert('Berhasil', 'Kartu siswa diunduh sebagai PNG (Background Transparan).', 'success');
+            }).catch(err => {
+                element.style.background = originalBg;
+                element.style.backgroundColor = originalBgColor;
+                console.error(err);
+                window.showAlert('Gagal', 'Terjadi kesalahan saat memproses gambar.', 'error');
+            });
+        };
+
+        window.downloadKartuSiswaPDF = (elementId) => {
+            const element = document.getElementById(elementId);
+            if (!element) return window.showAlert('Gagal', 'Elemen kartu tidak ditemukan.', 'error');
+
+            window.showAlert('Memproses', 'Sedang menyusun dokumen PDF, mohon tunggu...', 'info');
+
+            html2canvas(element, {
+                useCORS: true,
+                scale: 4, 
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                
+                // Membuat PDF kertas A4 (Posisi Landscape Card)
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const lebarKartuDiPdf = 86; 
+                const tinggiKartuDiPdf = 54; 
+
+                pdf.addImage(imgData, 'PNG', 15, 15, lebarKartuDiPdf, tinggiKartuDiPdf);
+                
+                const nama = document.getElementById('inputNameSiswa').value.trim() || 'Kosong';
+                pdf.save(`Kartu_Siswa_${nama}.pdf`);
+
+                window.showAlert('Berhasil', 'Kartu siswa berhasil diunduh sebagai PDF.', 'success');
             }).catch(err => {
                 console.error(err);
                 window.showAlert('Gagal', 'Terjadi kesalahan saat menyusun PDF.', 'error');
@@ -1902,6 +2189,8 @@
             const previewContainer = document.getElementById('preview-foto-container'); if (previewContainer) previewContainer.classList.add('hidden');
             const previewImg = document.getElementById('preview-foto-img'); if (previewImg) previewImg.src = '';
             
+            const btnHapus = document.getElementById('btn-hapus-foto-guru'); if(btnHapus) btnHapus.classList.add('hidden');
+            
             document.getElementById('btn-submit-guru').innerText = 'Simpan Data Guru';
             const btnCancel = document.getElementById('btn-cancel-guru'); if (btnCancel) btnCancel.classList.add('hidden');
         };
@@ -1922,10 +2211,12 @@
                 window.tempFotoGuru = guru.foto;
                 document.getElementById('preview-foto-img').src = guru.foto;
                 document.getElementById('preview-foto-container').classList.remove('hidden');
+                const btn = document.getElementById('btn-hapus-foto-guru'); if(btn) btn.classList.remove('hidden');
             } else {
                 window.tempFotoGuru = '';
                 document.getElementById('preview-foto-container').classList.add('hidden');
                 document.getElementById('preview-foto-img').src = '';
+                const btn = document.getElementById('btn-hapus-foto-guru'); if(btn) btn.classList.add('hidden');
             }
             const tabGuru = document.getElementById('tab-guru'); if(tabGuru) tabGuru.scrollIntoView({ behavior: 'smooth', block: 'start' });
             document.getElementById('guru-nama').focus();
@@ -1966,14 +2257,17 @@
             document.getElementById('siswa-nama').value = '';
             document.getElementById('siswa-kelas').value = '';
             document.getElementById('siswa-wali').value = '';
+            document.getElementById('siswa-tempat-lahir').value = '';
+            document.getElementById('siswa-tgl-lahir').value = '';
+            document.getElementById('siswa-alamat').value = '';
             
             const previewContainer = document.getElementById('preview-foto-siswa-container');
             const previewImg = document.getElementById('preview-foto-siswa-img');
             if(previewImg) previewImg.src = '';
             if(previewContainer) previewContainer.classList.add('hidden');
             
-            if(window.croppedImages) window.croppedImages['siswa'] = null;
-            window.tempSiswaPhoto = null; // Reset foto sementara
+            window.tempFotoSiswa = ''; 
+            const btnHapus = document.getElementById('btn-hapus-foto-siswa'); if(btnHapus) btnHapus.classList.add('hidden');
             
             document.getElementById('btn-submit-siswa').innerText = 'Simpan Data Siswa';
             document.getElementById('btn-cancel-siswa').classList.add('hidden');
@@ -1987,33 +2281,33 @@
             const nama = document.getElementById('siswa-nama').value.trim();
             const kelas = document.getElementById('siswa-kelas').value.trim().toUpperCase();
             const wali = document.getElementById('siswa-wali').value.trim();
+            const tempat_lahir = document.getElementById('siswa-tempat-lahir').value.trim();
+            const tgl_lahir = document.getElementById('siswa-tgl-lahir').value;
+            const alamat = document.getElementById('siswa-alamat').value.trim();
             
-            let foto = null;
-            if(window.croppedImages && window.croppedImages['siswa']) {
-                foto = window.croppedImages['siswa'];
-            } else if (mode === 'edit' && window.tempSiswaPhoto) {
-                foto = window.tempSiswaPhoto;
-            }
+            const foto = window.tempFotoSiswa; 
 
             if(!nis || !nama || !kelas) return window.showAlert('Gagal', 'NIS, Nama, dan Kelas wajib diisi.', 'error');
             if(!window.appState.siswa) window.appState.siswa = [];
 
             if (mode === 'add') {
                 if(window.appState.siswa.some(s => s.nis === nis)) return window.showAlert('Gagal', 'NIS sudah terdaftar. Gunakan NIS lain.', 'error');
-                const newSiswa = { id: Date.now().toString(), nis, nama, kelas, wali, foto };
+                // Saldo tabungan diinisialisasi sebagai 0 agar aman
+                const newSiswa = { id: Date.now().toString(), nis, nama, kelas, wali, tempat_lahir, tgl_lahir, alamat, foto, saldo: 0 };
                 window.appState.siswa.push(newSiswa);
                 window.showAlert('Berhasil', 'Data siswa ditambahkan.', 'success');
             } else {
                 const idx = window.appState.siswa.findIndex(s => String(s.id) === String(id));
                 if (idx > -1) {
                     if(window.appState.siswa.some(s => s.nis === nis && String(s.id) !== String(id))) return window.showAlert('Gagal', 'NIS sudah dipakai oleh murid lain.', 'error');
-                    window.appState.siswa[idx] = { id: String(id), nis, nama, kelas, wali, foto };
+                    // Menggunakan titik 3 (...) agar saldo tabungan yang sudah ada tidak terhapus saat nama diedit
+                    window.appState.siswa[idx] = { ...window.appState.siswa[idx], id: String(id), nis, nama, kelas, wali, tempat_lahir, tgl_lahir, alamat, foto };
                     window.showAlert('Berhasil', 'Data siswa diperbarui.', 'success');
                 }
             }
             
-            window.saveState(); window.renderSiswa(); window.resetFormSiswa();
-            // Perbarui juga data absensi/filter jika diperlukan
+            // updateAllViews akan me-refresh tabel sekaligus sinkronisasi dropdown Cetak Kartu
+            window.saveState(); window.updateAllViews(); window.resetFormSiswa();
             if(typeof window.renderAbsenSiswa === 'function') window.renderAbsenSiswa();
         };
 
@@ -2027,17 +2321,23 @@
             document.getElementById('siswa-nama').value = s.nama || '';
             document.getElementById('siswa-kelas').value = s.kelas || '';
             document.getElementById('siswa-wali').value = s.wali || '';
+            document.getElementById('siswa-tempat-lahir').value = s.tempat_lahir || '';
+            document.getElementById('siswa-tgl-lahir').value = s.tgl_lahir || '';
+            document.getElementById('siswa-alamat').value = s.alamat || '';
             
             const previewContainer = document.getElementById('preview-foto-siswa-container');
             const previewImg = document.getElementById('preview-foto-siswa-img');
             if (s.foto) {
                 if(previewImg) previewImg.src = s.foto;
                 if(previewContainer) previewContainer.classList.remove('hidden');
-                window.tempSiswaPhoto = s.foto;
+                
+                window.tempFotoSiswa = s.foto; 
+                const btn = document.getElementById('btn-hapus-foto-siswa'); if(btn) btn.classList.remove('hidden');
             } else {
                 if(previewImg) previewImg.src = '';
                 if(previewContainer) previewContainer.classList.add('hidden');
-                window.tempSiswaPhoto = null;
+                window.tempFotoSiswa = '';
+                const btn = document.getElementById('btn-hapus-foto-siswa'); if(btn) btn.classList.add('hidden');
             }
 
             document.getElementById('btn-submit-siswa').innerText = 'Perbarui Data Siswa';
@@ -2048,9 +2348,16 @@
         };
 
         window.hapusSiswa = (id) => {
-            window.showConfirm("Hapus Siswa", "Yakin ingin menghapus data siswa ini? History absensi siswa ini juga bisa terdampak.", () => {
-                window.appState.siswa = window.appState.siswa.filter(s => s.id !== id);
-                window.saveState(); window.renderSiswa();
+            if (!window.currentUser || window.currentUser.role !== 'admin') {
+                return window.showAlert('Ditolak', 'Aksi ini hanya dapat dilakukan oleh Admin Utama.', 'error');
+            }
+            window.showConfirm("Hapus Siswa", "Yakin ingin menghapus data siswa ini? History tabungan, absensi, dan SPP akan ikut terhapus.", () => {
+                // Diubah menggunakan String() untuk memastikan perbandingan ID selalu akurat
+                window.appState.siswa = window.appState.siswa.filter(s => String(s.id) !== String(id));
+                if(window.appState.tabungan) window.appState.tabungan = window.appState.tabungan.filter(t => String(t.id_siswa) !== String(id));
+                if(window.appState.spp) window.appState.spp = window.appState.spp.filter(p => String(p.id_siswa) !== String(id));
+                
+                window.saveState(); window.updateAllViews();
                 window.showAlert("Terhapus", "Data Siswa berhasil dihapus.", "success");
             });
         };
@@ -2063,22 +2370,30 @@
             const allowEdit = isAdmin || (window.currentUser && window.currentUser.akses && window.currentUser.akses.siswa);
 
             container.innerHTML = window.appState.siswa.map(s => {
-                const img = s.foto ? `<img src="${s.foto}" class="w-9 h-9 rounded-full object-cover border-2 border-blue-100 shadow-sm">` : `<div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm shadow-sm border border-blue-200">${s.nama.charAt(0).toUpperCase()}</div>`;
+                const namaSiswa = s.nama || 'Tanpa Nama';
+                const img = s.foto ? `<img src="${s.foto}" class="w-10 h-14 rounded-md object-cover border border-blue-200 shadow-sm">` : `<div class="w-10 h-14 rounded-md bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-lg shadow-sm border border-blue-200">${namaSiswa.charAt(0).toUpperCase()}</div>`;
                 const btnEdit = allowEdit ? `<button onclick="window.editSiswa('${s.id}')" class="text-blue-500 bg-blue-50 hover:bg-blue-100 p-2 rounded-lg mr-1 transition-colors shadow-sm" title="Edit Data"><i class="fa-solid fa-pen text-[11px]"></i></button>` : '';
                 const btnHapus = allowEdit ? `<button onclick="window.hapusSiswa('${s.id}')" class="text-red-500 bg-red-50 hover:bg-red-100 p-2 rounded-lg transition-colors shadow-sm" title="Hapus Data"><i class="fa-solid fa-trash text-[11px]"></i></button>` : '';
                 
+                // Tambahan Tampilan Alamat dan TTL
+                const extraInfo = (s.tempat_lahir || s.tgl_lahir || s.alamat) ? 
+                    `<p class="text-[10px] text-gray-400 mt-0.5 truncate max-w-[200px] sm:max-w-[300px]">
+                        <i class="fa-solid fa-location-dot mr-1"></i>${s.tempat_lahir || ''} ${s.tgl_lahir ? `(${s.tgl_lahir})` : ''} ${s.alamat ? `- ${s.alamat}` : ''}
+                    </p>` : '';
+
                 return `<tr class="border-b border-gray-100 hover:bg-blue-50/40 transition-colors">
-                    <td class="px-6 py-3 font-bold text-sm text-gray-800">${s.nis}</td>
+                    <td class="px-6 py-3 whitespace-nowrap align-middle">${btnEdit}${btnHapus}</td>
+                    <td class="px-6 py-3 font-bold text-sm text-gray-800 align-middle">${s.nis}</td>
                     <td class="px-6 py-3">
                         <div class="flex items-center gap-3">
                             ${img}
                             <div>
-                                <p class="font-bold text-sm text-gray-800">${s.nama}</p>
-                                <p class="text-xs text-gray-500 font-medium">Kls: <span class="text-blue-600">${s.kelas}</span> ${s.wali ? `| Wali: ${s.wali}` : ''}</p>
+                                <p class="font-bold text-sm text-gray-800">${namaSiswa}</p>
+                                <p class="text-xs text-gray-500 font-medium mb-0.5">Kls: <span class="text-blue-600">${s.kelas}</span> ${s.wali ? `| Wali: ${s.wali}` : ''}</p>
+                                ${extraInfo}
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-3 text-right">${btnEdit}${btnHapus}</td>
                 </tr>`;
             }).join('');
             
@@ -2189,49 +2504,54 @@
             const st = window.appState;
             const isAdmin = window.currentUser && window.currentUser.role === 'admin';
             
-            const elDashSiswa = document.getElementById('dash-siswa'); if(elDashSiswa) elDashSiswa.innerText = st.siswa.length; 
-            const elDashTab = document.getElementById('dash-tabungan'); if(elDashTab) elDashTab.innerText = window.formatRp(st.siswa.reduce((a,b)=>a+(b.saldo||0),0)); 
-            const elDashSpp = document.getElementById('dash-spp'); if(elDashSpp) elDashSpp.innerText = window.formatRp(st.spp.reduce((a,b)=>a+b.nominal,0)); 
+            const elDashSiswa = document.getElementById('dash-siswa'); if(elDashSiswa) elDashSiswa.innerText = st.siswa ? st.siswa.length : 0; 
+            const elDashTab = document.getElementById('dash-tabungan'); if(elDashTab) elDashTab.innerText = window.formatRp(st.siswa ? st.siswa.reduce((a,b)=>a+(b.saldo||0),0) : 0); 
+            const elDashSpp = document.getElementById('dash-spp'); if(elDashSpp) elDashSpp.innerText = window.formatRp(st.spp ? st.spp.reduce((a,b)=>a+(b.nominal||0),0) : 0); 
             const elDashPendapatan = document.getElementById('dash-pendapatan'); if(elDashPendapatan) elDashPendapatan.innerText = window.formatRp(st.penjualan ? st.penjualan.reduce((a,b)=>a+(b.total||0),0) : 0);
             
             const tglSekarang = window.getToday(); const prefixHarian = tglSekarang.split(' ')[0]; const prefixBulanan = prefixHarian.substring(0, 7); const prefixTahunan = prefixHarian.substring(0, 4); 
             
             let statSetor = 0; let statTarik = 0;
-            st.tabungan.forEach(t => { let masukKriteria = false; if (window.activeFilterTabungan === 'harian' && t.tanggal.startsWith(prefixHarian)) masukKriteria = true; else if (window.activeFilterTabungan === 'bulanan' && t.tanggal.startsWith(prefixBulanan)) masukKriteria = true; else if (window.activeFilterTabungan === 'tahunan' && t.tanggal.startsWith(prefixTahunan)) masukKriteria = true; if (masukKriteria) { if (t.jenis === 'Setor') statSetor += t.nominal; else if (t.jenis === 'Tarik') statTarik += t.nominal; } });
+            if (st.tabungan) {
+                st.tabungan.forEach(t => { 
+                    let masukKriteria = false; 
+                    if (window.activeFilterTabungan === 'harian' && t.tanggal && t.tanggal.startsWith(prefixHarian)) masukKriteria = true; 
+                    else if (window.activeFilterTabungan === 'bulanan' && t.tanggal && t.tanggal.startsWith(prefixBulanan)) masukKriteria = true; 
+                    else if (window.activeFilterTabungan === 'tahunan' && t.tanggal && t.tanggal.startsWith(prefixTahunan)) masukKriteria = true; 
+                    
+                    if (masukKriteria) { if (t.jenis === 'Setor') statSetor += (t.nominal||0); else if (t.jenis === 'Tarik') statTarik += (t.nominal||0); } 
+                });
+            }
             const elStatSetor = document.getElementById('stat-setor-tabungan'); if(elStatSetor) elStatSetor.innerText = window.formatRp(statSetor);
             const elStatTarik = document.getElementById('stat-tarik-tabungan'); if(elStatTarik) elStatTarik.innerText = window.formatRp(statTarik);
 
-            let optSiswa = '<option value="">Pilih santri...</option>'; st.siswa.forEach(s => optSiswa += `<option value="${s.id}">${s.nis} - ${s.nama}</option>`); 
+            let optSiswa = '<option value="">Pilih santri...</option>'; 
+            if(st.siswa) { st.siswa.forEach(s => optSiswa += `<option value="${s.id}">${s.nis} - ${s.nama}</option>`); }
             ['riwayat-siswa'].forEach(id => { const el = document.getElementById(id); if(el && el.tagName === 'SELECT') el.innerHTML = optSiswa; });
             
-            const elTblSiswa = document.getElementById('table-siswa'); if(elTblSiswa) elTblSiswa.innerHTML = st.siswa.map(s => {
-                const btnHapusSiswa = isAdmin ? `<button onclick="window.hapusSiswa(${s.id})" class="text-[10px] text-red-500 hover:underline mt-1 inline-flex items-center gap-1"><i class="fa-solid fa-trash"></i> Hapus</button>` : '';
-                return `<tr class="hover:bg-gray-50"><td class="px-6 py-4 font-medium text-gray-900 text-xs">${s.nis}</td><td class="px-6 py-4 font-bold text-sm">${s.nama} <br><span class="text-xs text-gray-500 font-normal">Kelas: ${s.kelas}</span></td><td class="px-6 py-4 text-right">${btnHapusSiswa}</td></tr>`
-            }).join('');
-            
-            const elTblTab = document.getElementById('table-tabungan'); if(elTblTab) elTblTab.innerHTML = [...st.tabungan].slice(-100).reverse().map(t => {
+            const elTblTab = document.getElementById('table-tabungan'); if(elTblTab && st.tabungan) elTblTab.innerHTML = [...st.tabungan].slice(-100).reverse().map(t => {
                 const btnHapusTab = isAdmin ? `<button onclick="window.hapusTabungan(${t.id})" class="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-lg ml-1" title="Hapus Data (Admin)"><i class="fa-solid fa-trash"></i></button>` : '';
-                return `<tr class="hover:bg-gray-50 border-b border-gray-50"><td class="px-6 py-3 text-[11px] text-gray-500">${t.tanggal}</td><td class="px-6 py-3 font-bold text-sm text-gray-700">${(st.siswa.find(s=>s.id===t.id_siswa)||{}).nama||'-'}</td><td class="px-6 py-3 text-xs"><span class="px-2 py-1 font-bold rounded-md ${t.jenis==='Setor'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${t.jenis}</span> ${t.keterangan?`<div class="text-[10px] text-gray-400 mt-1">${t.keterangan}</div>`:''}</td><td class="px-6 py-3 text-right font-bold text-sm ${t.jenis==='Setor'?'text-green-600':'text-red-600'}">${t.jenis==='Setor'?'+':'-'} ${window.formatRp(t.nominal)}</td><td class="px-4 py-3 text-center whitespace-nowrap"><button onclick="window.cetakStrukById('tabungan', ${t.id})" class="text-gray-500 hover:text-blue-600 bg-gray-100 p-2 rounded-lg" title="Cetak Struk"><i class="fa-solid fa-print"></i></button>${btnHapusTab}</td></tr>`
+                return `<tr class="hover:bg-gray-50 border-b border-gray-50"><td class="px-6 py-3 text-[11px] text-gray-500">${t.tanggal||'-'}</td><td class="px-6 py-3 font-bold text-sm text-gray-700">${(st.siswa.find(s=>s.id===t.id_siswa)||{}).nama||'-'}</td><td class="px-6 py-3 text-xs"><span class="px-2 py-1 font-bold rounded-md ${t.jenis==='Setor'?'bg-green-100 text-green-700':'bg-red-100 text-red-700'}">${t.jenis}</span> ${t.keterangan?`<div class="text-[10px] text-gray-400 mt-1">${t.keterangan}</div>`:''}</td><td class="px-6 py-3 text-right font-bold text-sm ${t.jenis==='Setor'?'text-green-600':'text-red-600'}">${t.jenis==='Setor'?'+':'-'} ${window.formatRp(t.nominal)}</td><td class="px-4 py-3 text-center whitespace-nowrap"><button onclick="window.cetakStrukById('tabungan', ${t.id})" class="text-gray-500 hover:text-blue-600 bg-gray-100 p-2 rounded-lg" title="Cetak Struk"><i class="fa-solid fa-print"></i></button>${btnHapusTab}</td></tr>`
             }).join('');
             
-            const elTblSpp = document.getElementById('table-spp'); if(elTblSpp) elTblSpp.innerHTML = [...st.spp].slice(-100).reverse().map(p => {
+            const elTblSpp = document.getElementById('table-spp'); if(elTblSpp && st.spp) elTblSpp.innerHTML = [...st.spp].slice(-100).reverse().map(p => {
                 let badgeHTML = p.keterangan === 'Lunas' ? '<span class="text-[10px] text-green-500 font-bold">Lunas</span>' : (p.keterangan === 'Pelunasan' ? '<span class="text-[10px] text-blue-500 font-bold">Pelunasan</span>' : `<span class="text-[10px] text-red-500 font-bold">${p.keterangan || 'Lunas'}</span>`);
                 const btnHapusSpp = isAdmin ? `<button onclick="window.hapusSPP(${p.id})" class="text-red-500 hover:text-red-700 bg-red-50 p-2 rounded-lg ml-1" title="Hapus Data (Admin)"><i class="fa-solid fa-trash"></i></button>` : '';
                 return `<tr class="hover:bg-gray-50 border-b border-gray-50"><td class="px-6 py-3 font-bold text-sm text-gray-700">${(st.siswa.find(s=>s.id===p.id_siswa)||{}).nama||'-'}</td><td class="px-6 py-3"><span class="bg-blue-100 text-blue-700 px-2 py-1 rounded-md text-xs font-bold">${p.bulan} ${p.tahun}</span><br><div class="mt-1">${badgeHTML}</div></td><td class="px-6 py-3 text-xs font-medium">${p.metode}</td><td class="px-6 py-3 text-right font-bold text-sm">${window.formatRp(p.nominal)}</td><td class="px-4 py-3 text-center whitespace-nowrap"><button onclick="window.cetakStrukById('spp', ${p.id})" class="text-gray-500 hover:text-blue-600 bg-gray-100 p-2 rounded-lg" title="Cetak Struk"><i class="fa-solid fa-print"></i></button>${btnHapusSpp}</td></tr>`
             }).join('');
             
-            const elTblAtk = document.getElementById('table-atk'); if(elTblAtk) elTblAtk.innerHTML = st.atk.map(a => {
+            const elTblAtk = document.getElementById('table-atk'); if(elTblAtk && st.atk) elTblAtk.innerHTML = st.atk.map(a => {
                 const btnHapusAtk = isAdmin ? `<button onclick="window.hapusATK(${a.id})" class="text-red-500 bg-red-50 hover:bg-red-100 p-1.5 rounded-lg ml-1" title="Hapus Barang (Admin)"><i class="fa-solid fa-trash text-[10px]"></i></button>` : '';
                 return `<tr class="hover:bg-gray-50 border-b border-gray-50"><td class="px-3 py-2"><p class="font-bold text-xs text-gray-800">${a.nama_barang}</p><p class="text-[9px] text-gray-400">${a.kode_barang||'-'}</p></td><td class="px-2 py-2 text-center"><span class="px-1.5 py-0.5 bg-gray-100 rounded text-[10px] font-bold ${a.stok===0?'text-red-500':''}">${a.stok}</span></td><td class="px-3 py-2 text-right"><p class="text-orange-600 font-bold text-xs">${window.formatRp(a.harga_jual)}</p><p class="text-[9px] text-gray-400">Modal: ${window.formatRp(a.harga_beli)}</p></td><td class="px-2 py-2 text-center whitespace-nowrap"><button onclick="window.openKonfirmasiKasir(${a.id})" class="text-blue-500 bg-blue-50 hover:bg-blue-100 p-1.5 rounded-lg" title="Tambah Ke Keranjang"><i class="fa-solid fa-cart-plus text-[10px]"></i></button>${btnHapusAtk}</td></tr>`
             }).join('');
 
-            const elTblBrg = document.getElementById('table-barang-lengkap'); if(elTblBrg) elTblBrg.innerHTML = st.atk.map(a => {
+            const elTblBrg = document.getElementById('table-barang-lengkap'); if(elTblBrg && st.atk) elTblBrg.innerHTML = st.atk.map(a => {
                 const btnHapusAtk = isAdmin ? `<button onclick="window.hapusATK(${a.id})" class="text-red-500 bg-red-50 hover:bg-red-100 p-1.5 rounded-lg ml-1" title="Hapus Barang (Admin)"><i class="fa-solid fa-trash text-[10px]"></i></button>` : '';
                 return `<tr class="hover:bg-gray-50 border-b border-gray-50"><td class="px-6 py-3 text-xs text-gray-500">${a.kode_barang||'-'}</td><td class="px-6 py-3"><p class="font-bold text-sm text-gray-800">${a.nama_barang}</p></td><td class="px-6 py-3 text-right"><p class="text-gray-500 text-xs">${window.formatRp(a.harga_beli)}</p></td><td class="px-6 py-3 text-right"><p class="text-orange-600 font-bold text-sm">${window.formatRp(a.harga_jual)}</p></td><td class="px-6 py-3 text-center"><span class="px-2 py-1 bg-gray-100 rounded text-[11px] font-bold ${a.stok===0?'text-red-500':''}">${a.stok}</span></td><td class="px-6 py-3 text-center whitespace-nowrap"><button onclick="window.bukaModalATK(${a.id})" class="text-blue-500 bg-blue-50 hover:bg-blue-100 p-1.5 rounded-lg" title="Edit/Restok"><i class="fa-solid fa-pen text-[10px]"></i></button>${btnHapusAtk}</td></tr>`
             }).join('');
 
             const allowDeleteGuru = window.currentUser && (isAdmin || (window.currentUser.akses && window.currentUser.akses.guru));
-            if(document.getElementById('table-guru')) { 
+            if(document.getElementById('table-guru') && st.guru) { 
                 document.getElementById('table-guru').innerHTML = st.guru.map(g => {
                     const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>";
                     const fotoSrc = g.foto ? g.foto : defaultAvatar;
@@ -2250,10 +2570,10 @@
             
             const hariIni = window.getToday().split(' ')[0]; 
             if(!st.penjualan) st.penjualan = [];
-            const totalPemasukanHariIni = st.penjualan.filter(p => p.tanggal.startsWith(hariIni)).reduce((sum, p) => sum + p.total, 0);
+            const totalPemasukanHariIni = st.penjualan.filter(p => p.tanggal && p.tanggal.startsWith(hariIni)).reduce((sum, p) => sum + (p.total||0), 0);
             const elPemasukan = document.getElementById('kopontren-income-today'); if(elPemasukan) elPemasukan.innerText = window.formatRp(totalPemasukanHariIni);
 
-            const elRiwayatSiswa = document.getElementById('riwayat-siswa'); if(elRiwayatSiswa && elRiwayatSiswa.value) window.renderRiwayatSiswa(parseInt(elRiwayatSiswa.value));
+            const elRiwayatSiswa = document.getElementById('riwayat-siswa'); if(elRiwayatSiswa && elRiwayatSiswa.value && typeof window.renderRiwayatSiswa === 'function') window.renderRiwayatSiswa(parseInt(elRiwayatSiswa.value));
             
             const set = st.pengaturan || { struk_judul: 'MADRASAH AL-KHOIROT', struk_alamat: 'Jl. Pendidikan No.1', struk_ucapan: '*** Terima Kasih ***', admin_user: 'admin', admin_pass: '12345', spp_nominal: '', kop_rapor: '' };
             
@@ -2264,6 +2584,8 @@
             const elPreviewAlamat = document.getElementById('preview-struk-alamat'); if(elPreviewAlamat) elPreviewAlamat.innerText = set.struk_alamat || '-';
             const elPreviewUcapan = document.getElementById('preview-struk-ucapan'); if(elPreviewUcapan) elPreviewUcapan.innerText = set.struk_ucapan || '-';
             
+            const elPreviewCompanySiswa = document.getElementById('displayCompanySiswa'); if(elPreviewCompanySiswa) elPreviewCompanySiswa.innerText = '';
+
             const elPreviewKopImg = document.getElementById('preview-kop-img'); const elPreviewKopPlaceholder = document.getElementById('preview-kop-placeholder');
             if(elPreviewKopImg && elPreviewKopPlaceholder) { if (set.kop_rapor) { elPreviewKopImg.src = set.kop_rapor; elPreviewKopImg.classList.remove('hidden'); elPreviewKopPlaceholder.classList.add('hidden'); } else { elPreviewKopImg.classList.add('hidden'); elPreviewKopPlaceholder.classList.remove('hidden'); } }
 
@@ -2274,8 +2596,15 @@
             const elSelectGuruIdCard = document.getElementById('select-guru-idcard');
             if (elSelectGuruIdCard) {
                 let opts = `<option value="">-- Pilih Nama Guru --</option>`;
-                st.guru.forEach(g => { opts += `<option value="${g.id}">${g.nama} - ${g.jabatan}</option>`; });
+                if(st.guru) st.guru.forEach(g => { opts += `<option value="${g.id}">${g.nama} - ${g.jabatan}</option>`; });
                 elSelectGuruIdCard.innerHTML = opts;
+            }
+
+            const elSelectSiswaIdCard = document.getElementById('select-siswa-idcard');
+            if (elSelectSiswaIdCard) {
+                let optsSiswa = `<option value="">-- Pilih Nama Siswa --</option>`;
+                if(st.siswa) st.siswa.forEach(s => { optsSiswa += `<option value="${s.id}">${s.nama} - ${s.kelas}</option>`; });
+                elSelectSiswaIdCard.innerHTML = optsSiswa;
             }
 
             const cardArea = document.getElementById('printable-area');
@@ -2285,27 +2614,39 @@
 
             if (cardArea && themeHeader && cardBody) {
                 if (set.bg_idcard) {
-                    if(bgImgEl) {
-                        bgImgEl.src = set.bg_idcard;
-                        bgImgEl.style.display = 'block';
-                    }
-                    themeHeader.style.backgroundColor = 'transparent'; 
-                    themeHeader.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)';
-                    themeHeader.style.color = 'white';
-                    cardBody.style.backgroundColor = 'transparent';
+                    if(bgImgEl) { bgImgEl.src = set.bg_idcard; bgImgEl.style.display = 'block'; }
+                    themeHeader.style.backgroundColor = 'transparent'; themeHeader.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)'; themeHeader.style.color = 'white'; cardBody.style.backgroundColor = 'transparent';
                 } else {
-                    if(bgImgEl) {
-                        bgImgEl.src = '';
-                        bgImgEl.style.display = 'none';
-                    }
-                    themeHeader.style.backgroundColor = 'transparent'; 
-                    themeHeader.style.textShadow = 'none'; 
-                    themeHeader.style.color = '#1f2937';
-                    cardBody.style.backgroundColor = 'transparent';
+                    if(bgImgEl) { bgImgEl.src = ''; bgImgEl.style.display = 'none'; }
+                    themeHeader.style.backgroundColor = 'transparent'; themeHeader.style.textShadow = 'none'; themeHeader.style.color = '#1f2937'; cardBody.style.backgroundColor = 'transparent';
                 }
             }
 
-            window.renderOperators(); window.updateStatSPP(); window.renderFormInputNilai(); window.renderFormCetakRapor(); window.renderAbsenGuru(); window.renderAbsenSiswa(); window.renderJadwalGuru(); window.renderRekapAbsenGuru();
+            const cardAreaSiswa = document.getElementById('printable-area-siswa');
+            const themeHeaderSiswa = document.getElementById('themeHeaderSiswa');
+            const cardBodySiswa = document.querySelector('.id-card-landscape-body');
+            const bgImgElSiswa = document.getElementById('card-bg-img-siswa');
+
+            if (cardAreaSiswa && themeHeaderSiswa && cardBodySiswa) {
+                if (set.bg_idcard_siswa) {
+                    if(bgImgElSiswa) { bgImgElSiswa.src = set.bg_idcard_siswa; bgImgElSiswa.style.display = 'block'; }
+                    themeHeaderSiswa.style.backgroundColor = 'transparent'; themeHeaderSiswa.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)'; themeHeaderSiswa.style.color = 'white'; cardBodySiswa.style.backgroundColor = 'transparent';
+                } else {
+                    if(bgImgElSiswa) { bgImgElSiswa.src = ''; bgImgElSiswa.style.display = 'none'; }
+                    themeHeaderSiswa.style.backgroundColor = 'transparent'; themeHeaderSiswa.style.textShadow = 'none'; themeHeaderSiswa.style.color = '#1f2937'; cardBodySiswa.style.backgroundColor = 'transparent';
+                }
+            }
+
+            // Proteksi Try-Catch agar saat terjadi error di modul lain, rendering komponen vital tetap dijalankan
+            try { if(typeof window.renderOperators === 'function') window.renderOperators(); } catch(e){}
+            try { if(typeof window.updateStatSPP === 'function') window.updateStatSPP(); } catch(e){}
+            try { if(typeof window.renderFormInputNilai === 'function') window.renderFormInputNilai(); } catch(e){}
+            try { if(typeof window.renderFormCetakRapor === 'function') window.renderFormCetakRapor(); } catch(e){}
+            try { if(typeof window.renderAbsenGuru === 'function') window.renderAbsenGuru(); } catch(e){}
+            try { if(typeof window.renderAbsenSiswa === 'function') window.renderAbsenSiswa(); } catch(e){}
+            try { if(typeof window.renderJadwalGuru === 'function') window.renderJadwalGuru(); } catch(e){}
+            try { if(typeof window.renderRekapAbsenGuru === 'function') window.renderRekapAbsenGuru(); } catch(e){}
+            try { if(typeof window.renderSiswa === 'function') window.renderSiswa(); } catch(e){}
         };
 
         // --- MANAJEMEN ABSENSI ---
@@ -2631,132 +2972,17 @@
                 return;
             }
 
+            // Render hanya nama tanpa menampilkan NIP/ID
             container.innerHTML = rekapData.map((g, index) => {
                 return `<tr class="hover:bg-purple-50/30 border-b border-gray-100">
                     <td class="px-4 py-3 text-center text-gray-500">${index + 1}</td>
-                    <td class="px-4 py-3 font-bold text-gray-800">${g.nama}<br><span class="text-[10px] text-gray-400 font-normal">NIP: ${g.nip || '-'}</span></td>
+                    <td class="px-4 py-3 font-bold text-gray-800">${g.nama}</td>
                     <td class="px-4 py-3 text-center"><span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-md font-bold">${g.hadir}</span></td>
                     <td class="px-4 py-3 text-center"><span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md font-bold">${g.izin}</span></td>
                     <td class="px-4 py-3 text-center"><span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md font-bold">${g.sakit}</span></td>
                     <td class="px-4 py-3 text-center"><span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-md font-bold">${g.alpa}</span></td>
                 </tr>`;
             }).join('');
-        };
-
-        window.cetakRekapAbsenGuru = () => {
-            const filterEl = document.getElementById('filter-bulan-rekap-guru');
-            const yyyy_mm = filterEl ? filterEl.value : '';
-            if(!yyyy_mm) return window.showAlert('Perhatian', 'Bulan belum dipilih', 'error');
-
-            const [yearStr, monthStr] = yyyy_mm.split('-');
-            const year = parseInt(yearStr);
-            const monthIndex = parseInt(monthStr) - 1;
-
-            const rekapData = window.appState.guru.map(g => {
-                return { id: g.id, nama: g.nama, nip: g.nip, hadir: 0, izin: 0, sakit: 0, alpa: 0 };
-            });
-
-            const hariNamaArr = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            const today = new Date();
-            
-            let lastDayToCount = 0;
-            if (year < today.getFullYear() || (year === today.getFullYear() && monthIndex < today.getMonth())) {
-                lastDayToCount = new Date(year, monthIndex + 1, 0).getDate();
-            } else if (year === today.getFullYear() && monthIndex === today.getMonth()) {
-                lastDayToCount = today.getDate();
-            }
-
-            for (let day = 1; day <= lastDayToCount; day++) {
-                const currentDate = new Date(year, monthIndex, day);
-                const namaHari = hariNamaArr[currentDate.getDay()];
-                const dateStr = `${year}-${String(monthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-
-                const recordHariIni = (window.appState.absensi_guru || []).find(a => a.tanggal === dateStr);
-                const dataAbsenHariIni = recordHariIni ? recordHariIni.data : [];
-
-                rekapData.forEach(guruRekap => {
-                    const punyaJadwal = (window.appState.jadwal_guru || []).some(j => j.hari === namaHari && String(j.id_guru) === String(guruRekap.id));
-                    const explicitRecord = dataAbsenHariIni.find(d => String(d.id_guru) === String(guruRekap.id));
-
-                    if (explicitRecord) {
-                        if(explicitRecord.status === 'Hadir') guruRekap.hadir++;
-                        else if(explicitRecord.status === 'Izin') guruRekap.izin++;
-                        else if(explicitRecord.status === 'Sakit') guruRekap.sakit++;
-                        else if(explicitRecord.status === 'Alpa') guruRekap.alpa++;
-                    } else if (punyaJadwal) {
-                        guruRekap.alpa++; // Alpa otomatis untuk print
-                    }
-                });
-            }
-
-            const printArea = document.getElementById('print-area');
-            const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            const bulanStr = `${namaBulan[monthIndex]} ${year}`;
-
-            let trRows = rekapData.map((g, idx) => `
-                <tr>
-                    <td style="border: 1px solid black; padding: 6px; text-align: center;">${idx + 1}</td>
-                    <td style="border: 1px solid black; padding: 6px;">${g.nama}</td>
-                    <td style="border: 1px solid black; padding: 6px; text-align: center;">${g.hadir}</td>
-                    <td style="border: 1px solid black; padding: 6px; text-align: center;">${g.izin}</td>
-                    <td style="border: 1px solid black; padding: 6px; text-align: center;">${g.sakit}</td>
-                    <td style="border: 1px solid black; padding: 6px; text-align: center;">${g.alpa}</td>
-                </tr>
-            `).join('');
-
-            const html = `
-                <div style="font-family: Arial, sans-serif; padding: 20px; color: black; max-width: 800px; margin: 0 auto;">
-                    <h2 style="text-align: center; margin-bottom: 5px; font-size: 16pt;">REKAPITULASI ABSENSI GURU</h2>
-                    <p style="text-align: center; margin-bottom: 20px; font-weight: bold;">Periode: ${bulanStr}</p>
-                    <table style="width: 100%; border-collapse: collapse; font-size: 10pt;">
-                        <thead style="background-color: #f3f4f6;">
-                            <tr>
-                                <th style="border: 1px solid black; padding: 8px; width: 40px;">No</th>
-                                <th style="border: 1px solid black; padding: 8px;">Nama Lengkap Guru</th>
-                                <th style="border: 1px solid black; padding: 8px; width: 70px;">Hadir</th>
-                                <th style="border: 1px solid black; padding: 8px; width: 70px;">Izin</th>
-                                <th style="border: 1px solid black; padding: 8px; width: 70px;">Sakit</th>
-                                <th style="border: 1px solid black; padding: 8px; width: 70px;">Alpa</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${trRows}
-                        </tbody>
-                    </table>
-                    <div style="margin-top: 40px; display: flex; justify-content: flex-end;">
-                        <div style="text-align: center; width: 250px;">
-                            <p>................., ...........................</p>
-                            <p style="margin-bottom: 60px;">Kepala Madrasah / Admin</p>
-                            <p style="font-weight: bold; text-decoration: underline;">${window.currentUser ? window.currentUser.user : '.......................'}</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            printArea.innerHTML = html;
-            printArea.classList.remove('hidden');
-            setTimeout(() => { window.print(); setTimeout(() => { printArea.classList.add('hidden'); printArea.innerHTML = ''; }, 500); }, 300);
-        };
-
-        window.hapusRekapAbsenGuruBulanIni = () => {
-            const filterEl = document.getElementById('filter-bulan-rekap-guru');
-            const yyyy_mm = filterEl ? filterEl.value : '';
-            if(!yyyy_mm) return window.showAlert('Perhatian', 'Pilih bulan terlebih dahulu.', 'error');
-
-            const [yearStr, monthStr] = yyyy_mm.split('-');
-            const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-            const bulanTeks = `${namaBulan[parseInt(monthStr)-1]} ${yearStr}`;
-
-            window.showConfirm('Hapus Data Bulanan', `Yakin ingin mereset/menghapus seluruh rekaman absensi guru pada bulan ${bulanTeks} secara permanen?`, () => {
-                if(window.appState.absensi_guru) {
-                    // Filter: Simpan semua data KECUALI yang tahun-bulannya sama dengan yang dipilih
-                    window.appState.absensi_guru = window.appState.absensi_guru.filter(a => !a.tanggal.startsWith(yyyy_mm));
-                    window.saveState();
-                    window.renderRekapAbsenGuru();
-                    if(typeof window.renderAbsenGuru === 'function') window.renderAbsenGuru(); // update UI harian jika terpengaruh
-                    window.showAlert('Terhapus', `Seluruh data absensi guru bulan ${bulanTeks} berhasil dihapus.`, 'success');
-                }
-            });
         };
 
         window.renderAbsenSiswa = () => {
@@ -2844,6 +3070,117 @@
                         window.renderAbsenSiswa();
                         window.showAlert('Terhapus', `Data absensi murid kelas ${kelas} tanggal ${tgl} berhasil dihapus.`, 'success');
                     }
+                }
+            });
+        };
+
+        // --- FUNGSI DOWNLOAD REKAP ABSEN KE PDF A4 ---
+        window.downloadRekapAbsenGuruPDF = () => {
+            const filterEl = document.getElementById('filter-bulan-rekap-guru');
+            const yyyy_mm = filterEl ? filterEl.value : '';
+            if(!yyyy_mm) return window.showAlert('Perhatian', 'Pilih bulan terlebih dahulu.', 'error');
+
+            const [yearStr, monthStr] = yyyy_mm.split('-');
+            const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const bulanTeks = `${namaBulan[parseInt(monthStr)-1]} ${yearStr}`;
+
+            const printArea = document.getElementById('print-area');
+            
+            // Ambil struktur tabel yang sedang tampil di layar
+            const tabelKontainer = document.getElementById('table-rekap-absen-guru').parentElement;
+            if(!tabelKontainer) return;
+            const tabelHTML = tabelKontainer.outerHTML;
+
+            // Buat kerangka halaman dengan margin dan ukuran kertas A4 (210mm x 297mm)
+            const html = `
+                <div id="pdf-rekap-container" style="width: 210mm; min-height: 297mm; padding: 20mm; background: white; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; box-sizing: border-box;">
+                    <h2 style="text-align: center; margin-bottom: 5px; font-size: 22px; color: #111;">Laporan Rekapitulasi Absensi Guru</h2>
+                    <p style="text-align: center; margin-top: 0; color: #555; margin-bottom: 30px; font-size: 14px;">Periode Bulan: <b>${bulanTeks}</b></p>
+                    
+                    <div id="table-wrapper" style="font-size: 12px; margin-bottom: 40px; color: #111;">
+                        ${tabelHTML}
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 50px;">
+                        <div style="text-align: center; width: 250px; font-size: 14px;">
+                            <p style="margin-bottom: 80px; color: #333;">Mengetahui,<br>Kepala Madrasah</p>
+                            <p style="font-weight: bold; text-decoration: underline; color: #111;">${window.currentUser && window.currentUser.user ? window.currentUser.user.toUpperCase() : '.........................................'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            printArea.innerHTML = html;
+            printArea.classList.remove('hidden');
+
+            // Hapus class Tailwind bawaan dan ganti dengan CSS sebaris agar garis tabel tercetak sempurna di PDF
+            const tableInPrint = printArea.querySelector('table');
+            if (tableInPrint) {
+                tableInPrint.style.width = '100%';
+                tableInPrint.style.borderCollapse = 'collapse';
+                
+                const cells = tableInPrint.querySelectorAll('th, td');
+                cells.forEach(c => {
+                    c.style.border = '1px solid #555';
+                    c.style.padding = '10px';
+                    c.className = ''; // Bersihkan class tailwind
+                    if(c.tagName === 'TH') {
+                        c.style.backgroundColor = '#f4f4f4';
+                        c.style.fontWeight = 'bold';
+                        c.style.textAlign = 'center';
+                        c.style.textTransform = 'uppercase';
+                    }
+                });
+            }
+
+            window.showAlert('Memproses', 'Sedang menyusun dokumen PDF ukuran A4, mohon tunggu...', 'info');
+
+            setTimeout(() => {
+                const element = document.getElementById('pdf-rekap-container');
+                html2canvas(element, {
+                    scale: 2, // Skala 2 agar teks terbaca tajam tapi file tidak terlalu berat
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                }).then(canvas => {
+                    const imgData = canvas.toDataURL('image/png');
+                    const { jsPDF } = window.jspdf;
+                    
+                    // Inisialisasi Kertas A4 mode Portrait
+                    const pdf = new jsPDF('p', 'mm', 'a4');
+                    
+                    const pdfWidth = 210; // Lebar kertas A4 dalam milimeter
+                    const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                    
+                    pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                    pdf.save(`Rekap_Absen_Guru_${bulanTeks.replace(/ /g, '_')}.pdf`);
+                    
+                    printArea.classList.add('hidden');
+                    printArea.innerHTML = '';
+                    window.showAlert('Berhasil', 'Rekap Absen Guru telah diunduh sebagai PDF.', 'success');
+                }).catch(err => {
+                    console.error(err);
+                    printArea.classList.add('hidden');
+                    window.showAlert('Gagal', 'Terjadi kesalahan saat menyusun PDF.', 'error');
+                });
+            }, 600);
+        };
+
+        window.hapusRekapAbsenGuruBulanIni = () => {
+            const filterEl = document.getElementById('filter-bulan-rekap-guru');
+            const yyyy_mm = filterEl ? filterEl.value : '';
+            if(!yyyy_mm) return window.showAlert('Perhatian', 'Pilih bulan terlebih dahulu.', 'error');
+
+            const [yearStr, monthStr] = yyyy_mm.split('-');
+            const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+            const bulanTeks = `${namaBulan[parseInt(monthStr)-1]} ${yearStr}`;
+
+            window.showConfirm('Hapus Data Bulanan', `Yakin ingin mereset/menghapus seluruh rekaman absensi guru pada bulan ${bulanTeks} secara permanen?`, () => {
+                if(window.appState.absensi_guru) {
+                    window.appState.absensi_guru = window.appState.absensi_guru.filter(a => !a.tanggal.startsWith(yyyy_mm));
+                    window.saveState();
+                    window.renderRekapAbsenGuru();
+                    if(typeof window.renderAbsenGuru === 'function') window.renderAbsenGuru(); 
+                    window.showAlert('Terhapus', `Seluruh data absensi guru bulan ${bulanTeks} berhasil dihapus.`, 'success');
                 }
             });
         };
@@ -3033,13 +3370,86 @@
             }
         };
 
-        window.previewKopRapor = (e) => {
+        window.simpanPengaturanStruk = (e) => {
+            e.preventDefault();
+            if(!window.appState.pengaturan) window.appState.pengaturan = {};
+            window.appState.pengaturan.struk_judul = document.getElementById('setting-struk-judul').value;
+            window.appState.pengaturan.struk_alamat = document.getElementById('setting-struk-alamat').value;
+            window.appState.pengaturan.struk_ucapan = document.getElementById('setting-struk-ucapan').value;
+            window.saveState(); 
+            window.updateAllViews();
+            window.showAlert('Berhasil', 'Pengaturan desain struk berhasil disimpan.', 'success');
+        };
+
+        window.simpanPengaturanLogin = (e) => {
             e.preventDefault();
             if(!window.appState.pengaturan) window.appState.pengaturan = {};
             window.appState.pengaturan.admin_user = document.getElementById('setting-admin-user').value;
             const p = document.getElementById('setting-admin-pass').value;
             if(p) window.appState.pengaturan.admin_pass = p;
-            window.saveState(); window.showAlert('Berhasil', 'Akun admin diperbarui.', 'success');
+            window.saveState(); 
+            window.showAlert('Berhasil', 'Akun admin diperbarui.', 'success');
+        };
+        
+        window.resetFormOperator = () => {
+            document.getElementById('op-id').value = '';
+            document.getElementById('op-user').value = '';
+            document.getElementById('op-pass').value = '';
+            document.getElementById('akses-siswa').checked = false;
+            document.getElementById('akses-pengaturan').checked = false;
+            document.getElementById('form-operator-title').innerText = 'Tambah Operator Baru';
+            const btnBatal = document.getElementById('btn-batal-op'); if(btnBatal) btnBatal.classList.add('hidden');
+        };
+
+        window.simpanOperator = (e) => {
+            e.preventDefault();
+            const id = document.getElementById('op-id').value;
+            const user = document.getElementById('op-user').value.trim();
+            const pass = document.getElementById('op-pass').value;
+            
+            if(!window.appState.pengaturan) window.appState.pengaturan = {};
+            if(!window.appState.pengaturan.operators) window.appState.pengaturan.operators = [];
+            
+            const akses = {
+                siswa: document.getElementById('akses-siswa').checked,
+                pengaturan: document.getElementById('akses-pengaturan').checked
+            };
+
+            if (id) {
+                const idx = window.appState.pengaturan.operators.findIndex(o => String(o.id) === String(id));
+                if (idx > -1) {
+                    window.appState.pengaturan.operators[idx].user = user;
+                    window.appState.pengaturan.operators[idx].akses = akses;
+                    if(pass) window.appState.pengaturan.operators[idx].pass = pass;
+                }
+            } else {
+                if(!pass) return window.showAlert('Gagal', 'Password wajib diisi untuk operator baru.', 'error');
+                window.appState.pengaturan.operators.push({
+                    id: Date.now().toString(), user, pass, akses
+                });
+            }
+            window.saveState(); window.renderOperators(); window.resetFormOperator();
+            window.showAlert('Berhasil', 'Data operator disimpan.', 'success');
+        };
+
+        window.editOperator = (id) => {
+            const op = window.appState.pengaturan.operators.find(o => String(o.id) === String(id));
+            if(!op) return;
+            document.getElementById('op-id').value = op.id;
+            document.getElementById('op-user').value = op.user;
+            document.getElementById('op-pass').value = ''; 
+            document.getElementById('akses-siswa').checked = op.akses.siswa || false;
+            document.getElementById('akses-pengaturan').checked = op.akses.pengaturan || false;
+            document.getElementById('form-operator-title').innerText = 'Edit Operator';
+            document.getElementById('btn-batal-op').classList.remove('hidden');
+        };
+
+        window.hapusOperator = (id) => {
+            window.showConfirm("Hapus Operator", "Yakin ingin menghapus operator ini?", () => {
+                window.appState.pengaturan.operators = window.appState.pengaturan.operators.filter(o => String(o.id) !== String(id));
+                window.saveState(); window.renderOperators();
+                window.showAlert('Terhapus', 'Operator berhasil dihapus.', 'success');
+            });
         };
 
         window.cart = [];
