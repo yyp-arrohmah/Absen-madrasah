@@ -819,7 +819,23 @@
                                 <form onsubmit="window.tambahMapel(event)" class="space-y-4">
                                     <input type="hidden" id="mapel-mode" value="add">
                                     <input type="hidden" id="mapel-id" value="">
-                                    <div><label class="block text-sm font-medium mb-1">Kelas</label><input type="text" id="mapel-kelas" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" placeholder="Cth: SATU" required></div>
+                                    
+                                    <!-- Diubah menjadi Select Dropdown -->
+                                    <div>
+                                        <label class="block text-sm font-medium mb-1">Kelas</label>
+                                        <select id="mapel-kelas" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white" required>
+                                            <option value="">-- Pilih Kelas --</option>
+                                            <option value="SHIFIR A">SHIFIR A</option>
+                                            <option value="SHIFIR B">SHIFIR B</option>
+                                            <option value="SATU">SATU</option>
+                                            <option value="DUA">DUA</option>
+                                            <option value="TIGA">TIGA</option>
+                                            <option value="EMPAT">EMPAT</option>
+                                            <option value="LIMA">LIMA</option>
+                                            <option value="ENAM">ENAM</option>
+                                        </select>
+                                    </div>
+                                    
                                     <div><label class="block text-sm font-medium mb-1">Nama Mata Pelajaran</label><input type="text" id="mapel-nama" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" placeholder="Cth: Nahwu" required></div>
                                     <button type="submit" id="btn-submit-mapel" class="w-full bg-blue-600 text-white rounded-lg p-2.5 font-bold hover:bg-blue-700 mt-2">Simpan Mapel</button>
                                     <button type="button" id="btn-cancel-mapel" onclick="window.resetFormMapel()" class="w-full bg-gray-100 text-gray-700 rounded-lg p-2.5 font-bold hover:bg-gray-200 mt-2 hidden">Batal Edit</button>
@@ -2401,6 +2417,134 @@
         };
 
         // --- MANAJEMEN MAPEL ---
+        window.resetFormMapel = () => {
+            document.getElementById('mapel-mode').value = 'add';
+            document.getElementById('mapel-id').value = '';
+            document.getElementById('mapel-kelas').value = '';
+            document.getElementById('mapel-nama').value = '';
+            document.getElementById('btn-submit-mapel').innerText = 'Simpan Mapel';
+            const btnCancel = document.getElementById('btn-cancel-mapel'); if(btnCancel) btnCancel.classList.add('hidden');
+        };
+
+        window.tambahMapel = (e) => {
+            e.preventDefault();
+            const mode = document.getElementById('mapel-mode').value;
+            const id = document.getElementById('mapel-id').value;
+            const kelas = document.getElementById('mapel-kelas').value.trim().toUpperCase();
+            const nama = document.getElementById('mapel-nama').value.trim();
+            if(!kelas || !nama) return window.showAlert('Gagal', 'Kelas dan Nama Mapel wajib diisi.', 'error');
+            if(!window.appState.mapel) window.appState.mapel = [];
+            
+            if(mode === 'add') {
+                window.appState.mapel.push({ id: Date.now(), kelas, nama });
+            } else {
+                const idx = window.appState.mapel.findIndex(m => String(m.id) === String(id));
+                if(idx > -1) window.appState.mapel[idx] = { id: parseInt(id), kelas, nama };
+            }
+            window.saveState(); window.updateAllViews(); window.resetFormMapel();
+            window.showAlert('Berhasil', 'Mata Pelajaran berhasil disimpan.', 'success');
+        };
+
+        // --- MANAJEMEN NILAI & RAPOR ---
+        window.loadStudentNilai = (idSiswa) => {
+            const student = window.appState.siswa.find(s => String(s.id) === String(idSiswa));
+            if(!student) return;
+            const mapels = (window.appState.mapel || []).filter(m => String(m.kelas).toUpperCase() === String(student.kelas).toUpperCase());
+            const record = (window.appState.nilai || []).find(n => String(n.id_siswa) === String(idSiswa));
+            
+            window.nilaiState.subjects = mapels.map(m => {
+                const existingSub = record ? record.subjects.find(s => String(s.id) === String(m.id)) : null;
+                return {
+                    id: m.id, mapel: m.nama,
+                    input1Harian: existingSub ? existingSub.input1Harian : '',
+                    input1Imda: existingSub ? existingSub.input1Imda : '',
+                    input1Nilai: existingSub ? existingSub.input1Nilai : 0,
+                    input2Harian: existingSub ? existingSub.input2Harian : '',
+                    input2Imda: existingSub ? existingSub.input2Imda : '',
+                    input2Nilai: existingSub ? existingSub.input2Nilai : 0,
+                    input3Harian: existingSub ? existingSub.input3Harian : '',
+                    input3Imda: existingSub ? existingSub.input3Imda : '',
+                    input3Nilai: existingSub ? existingSub.input3Nilai : 0
+                };
+            });
+            window.nilaiState.perilaku = record ? {...record.perilaku} : { kerajinan: 'A', kedisiplinan: 'A', kebersihan: 'A' };
+            window.nilaiState.kehadiran = record ? {...record.kehadiran} : { sakit: 0, izin: 0, alpa: 0 };
+        };
+
+        window.handleFilterKelasInput = (e) => { window.nilaiState.filterKelasInput = e.target.value; window.nilaiState.activeStudentId = ''; window.renderFormInputNilai(); };
+        window.handleFilterKelasRapor = (e) => { window.nilaiState.filterKelasRapor = e.target.value; window.nilaiState.activeStudentId = ''; window.renderFormCetakRapor(); };
+        
+        window.handleSelectStudentForNilai = (e) => { 
+            window.nilaiState.activeStudentId = e.target.value; 
+            window.loadStudentNilai(e.target.value);
+            window.renderFormInputNilai(); 
+            window.renderFormCetakRapor(); 
+        };
+        
+        window.setActiveInputMenu = (menuId) => { window.nilaiState.activeInputMenu = menuId; window.renderFormInputNilai(); };
+        window.setPrintImdaMenu = (val) => { window.nilaiState.printImdaMenu = val; window.renderFormCetakRapor(); };
+
+        window.handleSubjectChange = (subjectId, type, value) => {
+            const ns = window.nilaiState;
+            const sub = ns.subjects.find(s => String(s.id) === String(subjectId));
+            if(!sub) return;
+            
+            sub[`${ns.activeInputMenu}${type}`] = value;
+            
+            // Hitung rata-rata: (Harian + Imda) / 2
+            const harian = parseFloat(sub[`${ns.activeInputMenu}Harian`]) || 0;
+            const imda = parseFloat(sub[`${ns.activeInputMenu}Imda`]) || 0;
+            const rata = Math.round((harian + imda) / 2);
+            sub[`${ns.activeInputMenu}Nilai`] = rata;
+            
+            const rataEl = document.getElementById(`rata-${subjectId}`);
+            if(rataEl) rataEl.value = rata;
+            
+            const rataBawah = document.getElementById('rata-bawah');
+            if(rataBawah) rataBawah.innerText = window.calculateAverageRapor();
+        };
+
+        window.handlePerilakuChange = (type, value) => { window.nilaiState.perilaku[type] = value; };
+        window.handleKehadiranChange = (type, value) => { window.nilaiState.kehadiran[type] = parseInt(value) || 0; };
+
+        window.calculateAverageRapor = () => {
+            const ns = window.nilaiState;
+            if (!ns || !ns.subjects || ns.subjects.length === 0) return "0.0";
+            let total = 0;
+            ns.subjects.forEach(sub => { total += (sub[`${ns.activeInputMenu}Nilai`] || 0); });
+            return (total / ns.subjects.length).toFixed(1);
+        };
+
+        window.handleSaveNilaiRapor = () => {
+            const ns = window.nilaiState;
+            if(!ns.activeStudentId) return window.showAlert('Gagal', 'Pilih siswa terlebih dahulu.', 'error');
+            
+            if(!window.appState.nilai) window.appState.nilai = [];
+            const studentIdx = window.appState.nilai.findIndex(n => String(n.id_siswa) === String(ns.activeStudentId));
+            
+            const dataToSave = {
+                id_siswa: ns.activeStudentId,
+                subjects: ns.subjects,
+                perilaku: ns.perilaku,
+                kehadiran: ns.kehadiran
+            };
+
+            if(studentIdx > -1) window.appState.nilai[studentIdx] = dataToSave;
+            else window.appState.nilai.push(dataToSave);
+            
+            window.saveState(); window.showAlert('Tersimpan', 'Nilai akademik siswa berhasil disimpan.', 'success');
+        };
+
+        window.prosesCetakRapor = () => {
+            const printArea = document.getElementById('print-area');
+            const templateHTML = document.getElementById('rapor-print-template').innerHTML;
+            printArea.innerHTML = `<div class="rapor-print">${templateHTML}</div>`;
+            printArea.classList.remove('hidden');
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => { printArea.classList.add('hidden'); printArea.innerHTML = ''; }, 500);
+            }, 100);
+        };
 
         window.renderFormInputNilai = () => {
             const container = document.getElementById('input-nilai-container'); if(!container) return;
