@@ -2881,31 +2881,34 @@
         window.simpanAbsenGuru = () => {
             const tgl = document.getElementById('tgl-absen-guru').value;
             if(!tgl) return window.showAlert('Perhatian', 'Silakan pilih tanggal absensi.', 'error');
-            
             if(!window.appState.absensi_guru) window.appState.absensi_guru = [];
             let record = window.appState.absensi_guru.find(a => a.tanggal === tgl);
             
             const rows = document.querySelectorAll('.absen-guru-row');
             const dataAbsen = [];
+
             rows.forEach(r => {
                 const id = parseInt(r.dataset.id);
-                const statusInput = r.querySelector(`input[name="absen_guru_${id}"]:checked`);
-                if(statusInput) {
-                    const existing = record ? record.data.find(d => parseInt(d.id_guru) === id) : null;
-                    let infoToSave = '';
-                    // Pertahankan info waktu (Tepat Waktu/Terlambat) jika tidak ada perubahan status
-                    if (existing && existing.status === statusInput.value) infoToSave = existing.info || '';
-                    
-                    dataAbsen.push({ id_guru: id, status: statusInput.value, info: infoToSave });
-                }
+                const existing = record ? record.data.find(d => parseInt(d.id_guru) === id) : null;
+                let newD = { id_guru: id };
+
+                [1, 2].forEach(jamNum => {
+                    const statusInput = r.querySelector(`input[name="absen_guru_${id}_jam${jamNum}"]:checked`);
+                    if(statusInput) {
+                        newD[`status_${jamNum}`] = statusInput.value;
+                        newD[`info_${jamNum}`] = (existing && existing[`status_${jamNum}`] === statusInput.value) ? (existing[`info_${jamNum}`] || '') : '';
+                    } else if (existing && existing[`status_${jamNum}`]) {
+                        newD[`status_${jamNum}`] = existing[`status_${jamNum}`];
+                        newD[`info_${jamNum}`] = existing[`info_${jamNum}`];
+                    }
+                });
+
+                if(newD.status_1 || newD.status_2) dataAbsen.push(newD);
             });
             
-            if(record) record.data = dataAbsen;
-            else window.appState.absensi_guru.push({ tanggal: tgl, data: dataAbsen });
-            
+            if(record) record.data = dataAbsen; else window.appState.absensi_guru.push({ tanggal: tgl, data: dataAbsen });
             window.saveState(); window.showAlert('Berhasil', 'Absensi Guru telah disimpan.', 'success');
         };
-
         window.hapusAbsenGuru = () => {
             const tgl = document.getElementById('tgl-absen-guru').value;
             if(!tgl) return window.showAlert('Perhatian', 'Pilih tanggal terlebih dahulu.', 'error');
