@@ -444,7 +444,7 @@
                     <div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800">Jadwal Mengajar Guru</h2>
-                            <p class="text-gray-500 text-sm">Atur jadwal masuk kelas untuk absensi yang lebih terarah.</p>
+                             <p class="text-gray-500 text-sm">PENTING: Atur Jam 1 dan Jam 2 agar muncul di absensi.</p>
                         </div>
                         <div class="flex flex-col sm:flex-row items-center gap-2">
                             <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm w-full sm:w-auto">
@@ -2843,42 +2843,41 @@
             }
 
             container.innerHTML = guruTampil.map((g, index) => {
-                const prev = recordHariIni.data.find(d => String(d.id_guru) === String(g.id));
-                const stat = prev ? prev.status : ''; 
-                const info = prev && prev.info ? prev.info : '';
+                const prev = recordHariIni.data.find(dx => String(dx.id_guru) === String(g.id));
+                const jdwl = jadwalHariIni.find(j => String(j.id_guru) === String(g.id));
                 
-                let rowColor = '';
-                let badgeHTML = '';
-                if (stat === 'Hadir') { 
-                    rowColor = 'bg-green-50/40'; 
-                    let infoBadge = '';
-                    if (info === 'Tepat Waktu') infoBadge = `<span class="ml-1 bg-green-100 text-green-700 px-1.5 py-0.5 rounded text-[9px] font-bold border border-green-200">${info}</span>`;
-                    else if (info.includes('Terlambat')) infoBadge = `<span class="ml-1 bg-red-100 text-red-600 px-1.5 py-0.5 rounded text-[9px] font-bold border border-red-200"><i class="fa-solid fa-clock text-[8px] mr-0.5"></i>${info}</span>`;
-                    
-                    badgeHTML = `<span class="ml-2 bg-green-100 text-green-700 px-2 py-0.5 rounded-md text-[10px] font-bold shadow-sm border border-green-200"><i class="fa-solid fa-check mr-1"></i>HADIR</span>${infoBadge}`; 
-                }
-                else if (stat === 'Izin') { rowColor = 'bg-blue-50/40'; badgeHTML = '<span class="ml-2 bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md text-[10px] font-bold shadow-sm border border-blue-200"><i class="fa-solid fa-info-circle mr-1"></i>IZIN</span>'; }
-                else if (stat === 'Sakit') { rowColor = 'bg-orange-50/40'; badgeHTML = '<span class="ml-2 bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md text-[10px] font-bold shadow-sm border border-orange-200"><i class="fa-solid fa-notes-medical mr-1"></i>SAKIT</span>'; }
-                
-                return `<tr class="absen-guru-row border-b border-gray-100 hover:bg-purple-50/30 transition-colors ${rowColor}" data-id="${g.id}">
-                    <td class="px-4 py-3 text-center text-gray-500">${index+1}</td>
-                    <td class="px-4 py-3 font-bold text-sm text-gray-800">
-                        ${g.nama} 
-                        ${badgeHTML}
-                        <br><span class="text-xs font-normal text-gray-500">${g.jabatan}</span>
-                    </td>
-                    <td class="px-4 py-3 text-center">
-                        <div class="flex flex-wrap gap-2 md:gap-4 justify-center">
-                            <label class="flex items-center gap-1.5 cursor-pointer text-sm font-medium"><input type="radio" name="absen_guru_${g.id}" value="Hadir" class="w-4 h-4 text-green-600" ${stat==='Hadir'?'checked':''}> <span class="text-green-600">Hadir</span></label>
-                            <label class="flex items-center gap-1.5 cursor-pointer text-sm font-medium"><input type="radio" name="absen_guru_${g.id}" value="Izin" class="w-4 h-4 text-blue-600" ${stat==='Izin'?'checked':''}> <span class="text-blue-600">Izin</span></label>
-                            <label class="flex items-center gap-1.5 cursor-pointer text-sm font-medium"><input type="radio" name="absen_guru_${g.id}" value="Sakit" class="w-4 h-4 text-orange-500" ${stat==='Sakit'?'checked':''}> <span class="text-orange-500">Sakit</span></label>
-                            <label class="flex items-center gap-1.5 cursor-pointer text-sm font-medium"><input type="radio" name="absen_guru_${g.id}" value="Alpa" class="w-4 h-4 text-red-600" ${stat==='Alpa'?'checked':''}> <span class="text-red-600">Alpa</span></label>
+                const hasJam1 = jdwl ? jdwl.jam.includes('Jam 1') : true; 
+                const hasJam2 = jdwl ? jdwl.jam.includes('Jam 2') : false;
+
+                const generateJamUI = (jamNum, hasJam) => {
+                    if(!hasJam) return '';
+                    const stat = prev ? prev[`status_${jamNum}`] : ''; 
+                    const info = prev && prev[`info_${jamNum}`] ? prev[`info_${jamNum}`] : '';
+                    let badgeHTML = '';
+                    if (stat === 'Hadir') badgeHTML = `<span class="ml-2 bg-green-100 text-green-700 px-2 py-0.5 rounded-md text-[10px] font-bold">HADIR</span>`; 
+                    else if (stat === 'Izin') badgeHTML = '<span class="ml-2 bg-blue-100 text-blue-700 px-2 py-0.5 rounded-md text-[10px] font-bold">IZIN</span>'; 
+                    else if (stat === 'Sakit') badgeHTML = '<span class="ml-2 bg-orange-100 text-orange-700 px-2 py-0.5 rounded-md text-[10px] font-bold">SAKIT</span>'; 
+
+                    return `
+                    <div class="mb-2 p-2 border border-purple-100 rounded-lg bg-white shadow-sm w-full">
+                        <div class="text-[11px] font-bold text-purple-800 mb-2 border-b border-purple-50 pb-1 flex items-center justify-between">
+                            <span>Absensi Jam Ke-${jamNum}</span> ${badgeHTML}
                         </div>
-                    </td>
+                        <div class="flex flex-wrap gap-3 justify-center">
+                            <label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium"><input type="radio" name="absen_guru_${g.id}_jam${jamNum}" value="Hadir" class="w-3.5 h-3.5 text-green-600" ${stat==='Hadir'?'checked':''}> <span class="text-green-600">Hadir</span></label>
+                            <label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium"><input type="radio" name="absen_guru_${g.id}_jam${jamNum}" value="Izin" class="w-3.5 h-3.5 text-blue-600" ${stat==='Izin'?'checked':''}> <span class="text-blue-600">Izin</span></label>
+                            <label class="flex items-center gap-1.5 cursor-pointer text-xs font-medium"><input type="radio" name="absen_guru_${g.id}_jam${jamNum}" value="Sakit" class="w-3.5 h-3.5 text-orange-500" ${stat==='Sakit'?'checked':''}> <span class="text-orange-500">Sakit</span></label>
+                        </div>
+                    </div>`;
+                };
+
+                return `<tr class="absen-guru-row border-b border-gray-100 hover:bg-purple-50/30" data-id="${g.id}">
+                    <td class="px-4 py-3 text-center text-gray-500 align-top">${index+1}</td>
+                    <td class="px-4 py-3 font-bold text-sm text-gray-800 align-top">${g.nama}<br><span class="text-xs font-normal text-gray-500">${g.jabatan}</span><div class="mt-2 text-[10px] text-gray-400 bg-gray-50 p-1.5 rounded border border-gray-100"><b>Jadwal:</b><br>${jdwl ? jdwl.jam : 'Belum diatur'}</div></td>
+                    <td class="px-4 py-3 align-top flex flex-col items-center">${generateJamUI(1, hasJam1)}${generateJamUI(2, hasJam2)}</td>
                 </tr>`;
             }).join('');
         };
-
         window.simpanAbsenGuru = () => {
             const tgl = document.getElementById('tgl-absen-guru').value;
             if(!tgl) return window.showAlert('Perhatian', 'Silakan pilih tanggal absensi.', 'error');
