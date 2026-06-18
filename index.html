@@ -102,10 +102,31 @@
         <i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan ke Google Drive...
     </div>
 
-    
-
-    <!-- Area Cetak -->
-    <div id="print-area" class="hidden"></div>
+    !-- AREA CETAK STRUK IZIN/SAKIT (Tersembunyi) -->
+    <div id="struk-wrapper" style="position: absolute; left: -9999px; top: -9999px;">
+        <div id="template-struk" style="width: 320px; padding: 20px; background: white; color: black; font-family: 'Airal regular', Airal, monospace; font-size: 10px; line-height: 1.5; box-sizing: border-box; border: 1px solid #ddd;">
+            <div style="text-align: center; margin-bottom: 10px;">
+                <b style="font-size: 12px;">YAYASAN PENDIDIKAN ARROHMAH</b><br>
+                SURAT IZIN TIDAK MASUK SEKOLAH<br>
+                --------------------------------<br>
+                Tgl: <span id="struk-tanggal"></span> / Jam: <span id="struk-jam"></span><br>
+            </div>
+            <div style="margin-bottom: 10px; text-align: left;">
+                ASSALAMU'ALAIKUM WAR. WAB.<br>
+                Dengan hormat, saya yang bertanda tangan di bawah ini:<br>
+                Nama  : <b id="struk-nama"></b><br>
+                NIP   : <span id="struk-nip"></span><br>
+                memberitahukan bahwa hari ini saya tidak bisa hadir ke sekolah dikarenakan <b id="struk-jenis" style="font-size: 12px;"></b><br>
+                ( <span id="struk-alasan"></span> )<br><br>
+                Demikian surat izin ini saya sampaikan, atas perhatiannya saya ucapkan terima kasih.<br>
+                WASSALAMU'ALAIKUM WAR. WAB.
+            </div>
+            <div style="text-align: center; margin-top: 15px; font-size: 11px;">
+                * Validasi Sistem Cloud *<br>
+                Terima Kasih
+            </div>
+        </div>
+    </div>
 
     <!-- Alert Modal -->
     <div id="alert-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4 transition-opacity">
@@ -130,6 +151,93 @@
         </div>
     </div>
 
+    <!-- MODAL POP-UP IZIN/SAKIT OTOMATIS -->
+    <div id="modal-luar-radius" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100000] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-sm w-full text-center">
+            <div class="bg-gradient-to-r from-orange-500 to-red-500 p-6 text-white relative">
+                <div class="absolute top-0 right-0 p-4 opacity-20"><i class="fa-solid fa-clock text-6xl"></i></div>
+                <i class="fa-solid fa-clock text-4xl mb-3 relative z-10"></i>
+                <h3 class="text-xl font-bold relative z-10">Di Luar Waktu Absen</h3>
+            </div>
+            <div class="p-6 relative z-10 bg-white">
+                <p id="teks-luar-radius" class="text-gray-600 text-sm mb-5 whitespace-pre-line leading-relaxed"></p>
+                <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 mb-4">
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Pilih Keterangan Lain (Batas: Pukul 00:00 s/d Akhir Jam Ke-2):</p>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="window.bukaFormSurat('Izin')" class="w-full bg-blue-50 text-blue-700 font-bold px-4 py-2.5 rounded-xl hover:bg-blue-100 transition-colors shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-envelope-open-text"></i> Ajukan IZIN</button>
+                        <button onclick="window.bukaFormSurat('Sakit')" class="w-full bg-orange-50 text-orange-700 font-bold px-4 py-2.5 rounded-xl hover:bg-orange-100 transition-colors shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-notes-medical"></i> Ajukan SAKIT</button>
+                    </div>
+                </div>
+                <button onclick="window.tutupLuarRadiusModal()" class="w-full bg-white text-gray-500 font-bold px-4 py-2.5 rounded-xl hover:bg-gray-100 transition-colors border border-gray-200 shadow-sm">Batal / Kembali</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL INPUT KETERANGAN SURAT -->
+    <div id="modal-surat-keterangan" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100001] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-md w-full">
+            <div class="bg-blue-600 p-4 text-white flex justify-between items-center">
+                <h3 class="font-bold" id="title-surat-modal">Pengajuan Keterangan</h3>
+                <button onclick="document.getElementById('modal-surat-keterangan').classList.replace('flex','hidden')" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="mb-5">
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Alasan Ringkas:</label>
+                    <input type="text" id="input-alasan-surat" class="w-full border border-gray-300 rounded-xl p-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm" placeholder="Cth: Acara keluarga / Demam...">
+                </div>
+                <button onclick="window.prosesSuratKeterangan()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-receipt"></i> Buat Struk Pengajuan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HASIL STRUK & SHARE -->
+    <div id="modal-hasil-struk" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100005] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center flex flex-col items-center">
+            <h3 class="text-lg font-bold text-gray-800 mb-1">Bukti Pengajuan</h3>
+            <p class="text-xs text-green-600 font-bold mb-4"><i class="fa-solid fa-check-circle"></i> Absen Berhasil Tersimpan</p>
+            
+            <div class="border border-gray-200 p-2 bg-gray-50 mb-5 rounded-lg shadow-inner overflow-hidden w-full flex justify-center">
+                <img id="preview-struk-img" src="" alt="Struk" style="max-width: 100%; height: auto; border-radius: 4px;">
+            </div>
+            
+            <div class="flex gap-3 w-full">
+                <button onclick="window.downloadStruk()" class="flex-1 bg-gray-800 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-gray-900 transition-colors shadow-md flex flex-col items-center justify-center gap-1 text-sm"><i class="fa-solid fa-download"></i> Simpan</button>
+                <button onclick="window.bagikanStruk()" class="flex-1 bg-green-500 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-green-600 transition-colors shadow-md flex flex-col items-center justify-center gap-1 text-sm"><i class="fa-brands fa-whatsapp text-lg"></i> Bagikan</button>
+            </div>
+            <button onclick="document.getElementById('modal-hasil-struk').classList.replace('flex','hidden')" class="w-full mt-3 bg-gray-100 text-gray-600 font-bold px-4 py-2.5 rounded-xl hover:bg-gray-200 transition-colors text-sm">Tutup Layar</button>
+        </div>
+    </div>
+
+    <div id="scanner-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-sm w-full relative">
+            <div class="p-4 bg-gray-900 text-center text-white flex justify-between items-center">
+                <h3 class="font-bold text-sm"><i class="fa-solid fa-camera mr-2"></i>Pindai QR / Barcode</h3>
+                <button onclick="window.closeScanner()" class="text-gray-400 hover:text-white bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="reader" class="w-full bg-black min-h-[250px] flex items-center justify-center text-white text-sm">Sedang memuat kamera...</div>
+            <div class="p-4 bg-white text-center flex flex-col gap-3">
+                <p class="text-xs text-gray-500 font-medium" id="scanner-hint">Arahkan kamera ke kode...</p>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="global-cropper-input" accept="image/*" class="hidden" onchange="window.openCropper(event, window.currentCropTarget)">
+
+    <div class="modal-overlay" id="cropperModal">
+        <div class="modal-content shadow-2xl">
+            <h3 class="text-lg font-bold mb-4 text-gray-800">Sesuaikan Foto Anda</h3>
+            <div class="img-container rounded-lg overflow-hidden border border-gray-200 bg-gray-900 w-full flex justify-center items-center" style="min-height: 250px;">
+                <img id="imageToCrop" src="" alt="Gambar untuk dipotong" style="display: block; max-width: 100%; max-height: 100%;">
+            </div>
+            <div class="flex justify-between mt-4 gap-2 sm:gap-4">
+                <button type="button" class="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-bold transition text-xs sm:text-sm" onclick="window.closeCropper()">Batal</button>
+                <button type="button" class="px-3 py-2 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 rounded-lg font-bold transition text-xs sm:text-sm flex-1" onclick="document.getElementById('cropperModal').style.display='none'; document.getElementById('global-cropper-input').click();"><i class="fa-solid fa-folder-open mr-1"></i> Ganti File</button>
+                <button type="button" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-bold transition text-xs sm:text-sm flex-1" onclick="window.applyCrop()"><i class="fa-solid fa-check mr-1"></i> Terapkan</button>
+            </div>
+        </div>
+    </div>
     <!-- Modal Luar Radius (Idzin / Sakit) -->
     <div id="modal-luar-radius" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10000] hidden items-center justify-center p-4 transition-opacity">
         <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-sm w-full text-center">
@@ -1023,6 +1131,460 @@
             }
         };
 
+       // --- CROPPER ---
+        window.cropperInstance = null; window.currentCropTarget = ''; window.tempCropBase64 = '';
+        window.openCropper = (e) => {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const imgEl = document.getElementById('imageToCrop'); imgEl.src = event.target.result;
+                document.getElementById('cropperModal').style.display = 'flex';
+                if (window.cropperInstance) window.cropperInstance.destroy();
+                window.cropperInstance = new Cropper(imgEl, { aspectRatio: 3 / 4, viewMode: 1, autoCropArea: 0.8 });
+            }; reader.readAsDataURL(file); e.target.value = ''; 
+        };
+        window.closeCropper = () => { document.getElementById('cropperModal').style.display = 'none'; if (window.cropperInstance) { window.cropperInstance.destroy(); window.cropperInstance = null; } };
+        window.applyCrop = () => {
+            if (!window.cropperInstance) return;
+            const base64Img = window.cropperInstance.getCroppedCanvas({ width: 300, height: 400 }).toDataURL('image/jpeg', 0.8);
+            if (window.currentCropTarget === 'guru') { document.getElementById('preview-foto-img').src = base64Img; document.getElementById('preview-foto-container').classList.remove('hidden'); window.tempCropBase64 = base64Img; }
+            else if (window.currentCropTarget === 'idcard') { const el = document.getElementById('displayPhoto'); if(el) el.src = base64Img; }
+            window.closeCropper();
+        };
+        window.reopenCropper = (target) => {
+            window.currentCropTarget = target;
+            let existingSrc = target === 'guru' ? window.tempCropBase64 : (target === 'idcard' ? document.getElementById('displayPhoto').src : '');
+            if (existingSrc && !existingSrc.includes('svg+xml')) {
+                const imgEl = document.getElementById('imageToCrop'); imgEl.src = existingSrc; document.getElementById('cropperModal').style.display = 'flex';
+                if (window.cropperInstance) window.cropperInstance.destroy();
+                window.cropperInstance = new Cropper(imgEl, { aspectRatio: 3 / 4, viewMode: 1, autoCropArea: 0.8 });
+            } else { document.getElementById('global-cropper-input').click(); }
+        };
+
+        // 2. FUNGSI UTILITAS UMUM
+        window.saveState = async () => {}; 
+        window.formatRp = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
+        window.getToday = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
+        window.getTodayInputFormat = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
+        window.playBeep = () => { try { const audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} };
+        window.playHadirSound = () => { try { if('speechSynthesis' in window) { const utter = new SpeechSynthesisUtterance("Hadir"); utter.lang = 'id-ID'; window.speechSynthesis.speak(utter); } } catch(e) {} };
+        
+        window.showAlert = (title, message, type='info', callback=null) => { 
+            document.getElementById('alert-title').innerText = title; 
+            document.getElementById('alert-message').innerText = message; 
+            const icon = document.getElementById('alert-icon'); 
+            if(type === 'error') icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>'; 
+            else if(type === 'success') icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>'; 
+            else icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>'; 
+            document.getElementById('alert-modal').classList.replace('hidden', 'flex'); 
+            document.getElementById('alert-close-btn').onclick = () => { document.getElementById('alert-modal').classList.replace('flex', 'hidden'); if(callback) setTimeout(callback, 300); };
+        };
+
+        window.showConfirm = (title, message, callback) => {
+            document.getElementById('confirm-title').innerText = title;
+            document.getElementById('confirm-message').innerText = message;
+            document.getElementById('confirm-modal').classList.replace('hidden', 'flex');
+            document.getElementById('confirm-yes-btn').onclick = () => { document.getElementById('confirm-modal').classList.replace('flex', 'hidden'); if(callback) callback(); };
+        };
+        window.closeConfirm = () => { document.getElementById('confirm-modal').classList.replace('flex', 'hidden'); };
+
+        window.bukaModalPengaturan = (tipe) => {
+            window.showAlert('Pengaturan', 'Fitur pengaturan ' + (tipe ? tipe + ' ' : '') + 'belum tersedia di versi ini.', 'info');
+        };
+
+        window.switchTab = (tabId, btn) => { 
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active')); 
+            const targetTab = document.getElementById('tab-' + tabId); if(targetTab) targetTab.classList.add('active'); 
+            document.querySelectorAll('.nav-btn').forEach(el => { el.classList.remove('bg-madrasah-50', 'text-madrasah-700', 'active'); el.classList.add('text-gray-600'); }); 
+            if(btn) { btn.classList.add('bg-madrasah-50', 'text-madrasah-700', 'active'); btn.classList.remove('text-gray-600'); if(window.innerWidth < 1024) window.toggleSidebar(); } 
+            window.updateAllViews(); 
+        };
+        window.toggleSidebar = () => { const sb = document.getElementById('sidebar'); const ov = document.getElementById('sidebar-overlay'); if (sb.classList.contains('-translate-x-full')) { sb.classList.remove('-translate-x-full'); ov.classList.remove('hidden'); } else { sb.classList.add('-translate-x-full'); ov.classList.add('hidden'); } };
+        window.toggleSubmenu = (submenuId, iconId) => { const submenu = document.getElementById(submenuId); const icon = document.getElementById(iconId); if (submenu.classList.contains('hidden')) { submenu.classList.replace('hidden', 'flex'); icon.classList.add('rotate-180'); } else { submenu.classList.replace('flex', 'hidden'); icon.classList.remove('rotate-180'); } };
+
+        // 3. RENDER DATA (UPDATE ALL VIEWS)
+        window.updateAllViews = () => {
+            const st = window.appState;
+            const elDashSiswa = document.getElementById('dash-siswa'); if(elDashSiswa) elDashSiswa.innerText = st.siswa ? st.siswa.length : 0; 
+            
+            const elSelectGuruIdCard = document.getElementById('select-guru-idcard');
+            if (elSelectGuruIdCard) { let opts = `<option value="">-- Pilih Nama Guru --</option>`; if(st.guru) st.guru.forEach(g => { opts += `<option value="${g.id}">${g.nama} - ${g.jabatan}</option>`; }); elSelectGuruIdCard.innerHTML = opts; }
+
+            if(document.getElementById('table-guru') && st.guru) { 
+                document.getElementById('table-guru').innerHTML = st.guru.map(g => `<tr class="border-b border-gray-100 hover:bg-gray-50"><td class="px-6 py-4 font-medium text-gray-900 text-xs">${g.nip}</td><td class="px-6 py-4 flex items-center gap-3">${g.foto ? `<img src="${g.foto}" class="w-10 h-10 rounded-full object-cover border border-purple-200">` : `<div class="w-10 h-10 rounded-full bg-purple-100 text-purple-500 flex items-center justify-center font-bold">${g.nama.charAt(0)}</div>`}<div><span class="font-bold text-sm block">${g.nama}</span><span class="text-xs text-gray-500 font-normal">${g.jabatan||'-'}</span></div></td><td class="px-6 py-4 text-right"><button onclick="window.editGuru('${g.id}')" class="text-blue-500 bg-blue-50 p-2 rounded-lg mr-1"><i class="fa-solid fa-pen"></i></button><button onclick="window.hapusGuru('${g.id}')" class="text-red-500 bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>`).join(''); 
+            }
+            if(document.getElementById('table-siswa') && st.siswa) {
+                document.getElementById('table-siswa').innerHTML = st.siswa.map(s => `<tr class="border-b border-gray-100 hover:bg-gray-50"><td class="px-6 py-3 font-bold text-sm text-gray-800">${s.nis}</td><td class="px-6 py-3"><p class="font-bold text-sm text-gray-800">${s.nama}</p><p class="text-xs text-gray-500">Kls: ${s.kelas}</p></td><td class="px-6 py-3 text-right"><button onclick="window.hapusSiswa('${s.id}')" class="text-red-500 bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>`).join('');
+            }
+
+            try { if(typeof window.renderAbsenGuru === 'function') window.renderAbsenGuru(); } catch(e){}
+            try { if(typeof window.renderJadwalGuru === 'function') window.renderJadwalGuru(); } catch(e){}
+            try { if(typeof window.renderRekapAbsenGuru === 'function') window.renderRekapAbsenGuru(); } catch(e){}
+        };
+
+         // 4. CRUD GURU & SISWA DASAR
+        window.resetFormGuru = () => { document.getElementById('guru-mode').value = 'add'; document.getElementById('guru-id').value = ''; document.getElementById('guru-nip').value = ''; document.getElementById('guru-nama').value = ''; document.getElementById('guru-jabatan').value = ''; document.getElementById('btn-submit-guru').innerText = 'Simpan Data Guru'; document.getElementById('btn-cancel-guru').classList.add('hidden'); document.getElementById('preview-foto-container').classList.add('hidden'); document.getElementById('preview-foto-img').src = ''; window.tempCropBase64 = ''; };
+        window.simpanGuru = (e) => { e.preventDefault(); const mode = document.getElementById('guru-mode').value; const id = document.getElementById('guru-id').value; const nip = document.getElementById('guru-nip').value.trim(); const nama = document.getElementById('guru-nama').value.trim(); const jabatan = document.getElementById('guru-jabatan').value.trim(); const foto = window.tempCropBase64 || ''; if(mode === 'add') { window.appState.guru.push({ id: Date.now().toString(), nip, nama, jabatan, foto }); } else { const idx = window.appState.guru.findIndex(g => String(g.id) === String(id)); if (idx > -1) window.appState.guru[idx] = { ...window.appState.guru[idx], nip, nama, jabatan, foto: foto || window.appState.guru[idx].foto }; } window.saveState(); window.updateAllViews(); window.resetFormGuru(); window.showAlert('Berhasil', 'Data guru telah disimpan.', 'success'); };
+        window.editGuru = (id) => { const g = window.appState.guru.find(x => String(x.id) === String(id)); if(!g) return; document.getElementById('guru-mode').value = 'edit'; document.getElementById('guru-id').value = g.id; document.getElementById('guru-nip').value = g.nip || ''; document.getElementById('guru-nama').value = g.nama || ''; document.getElementById('guru-jabatan').value = g.jabatan || ''; document.getElementById('btn-submit-guru').innerText = 'Perbarui Guru'; document.getElementById('btn-cancel-guru').classList.remove('hidden'); if(g.foto) { document.getElementById('preview-foto-img').src = g.foto; document.getElementById('preview-foto-container').classList.remove('hidden'); window.tempCropBase64 = g.foto; } else { document.getElementById('preview-foto-container').classList.add('hidden'); window.tempCropBase64 = ''; } document.getElementById('tab-guru').scrollIntoView(); };
+        window.hapusGuru = (id) => { window.showConfirm("Hapus", "Yakin ingin menghapus guru ini?", () => { window.appState.guru = window.appState.guru.filter(g => g.id !== id); window.saveState(); window.updateAllViews(); }); };
+
+        window.resetFormSiswa = () => { document.getElementById('siswa-mode').value = 'add'; document.getElementById('siswa-id').value = ''; document.getElementById('siswa-nis').value = ''; document.getElementById('siswa-nama').value = ''; document.getElementById('siswa-kelas').value = ''; document.getElementById('btn-submit-siswa').innerText = 'Simpan Data Siswa'; document.getElementById('btn-cancel-siswa').classList.add('hidden'); };
+        window.simpanSiswa = (e) => { e.preventDefault(); const mode = document.getElementById('siswa-mode').value; const id = document.getElementById('siswa-id').value; const nis = document.getElementById('siswa-nis').value.trim(); const nama = document.getElementById('siswa-nama').value.trim(); const kelas = document.getElementById('siswa-kelas').value.trim().toUpperCase(); if(mode === 'add') { window.appState.siswa.push({ id: Date.now().toString(), nis, nama, kelas }); } else { const idx = window.appState.siswa.findIndex(s => String(s.id) === String(id)); if (idx > -1) window.appState.siswa[idx] = { ...window.appState.siswa[idx], nis, nama, kelas }; } window.saveState(); window.updateAllViews(); window.resetFormSiswa(); };
+        window.hapusSiswa = (id) => { window.showConfirm("Hapus", "Yakin ingin menghapus murid ini?", () => { window.appState.siswa = window.appState.siswa.filter(s => s.id !== id); window.saveState(); window.updateAllViews(); }); };
+
+        // 5. SISTEM LOGIN
+        window.prosesLogin = (e) => { e.preventDefault(); const user = document.getElementById('login-user').value.trim(); const pass = document.getElementById('login-pass').value; if (user === 'admin' && pass === '12345') { window.currentUser = { role: 'admin', user: 'Admin Utama' }; document.getElementById('login-screen').classList.add('hidden'); document.getElementById('main-app').classList.remove('hidden'); window.switchTab('dashboard', document.getElementById('nav-btn-dashboard')); } else { document.getElementById('login-error').classList.remove('hidden'); } };
+        window.prosesLogout = () => { window.showConfirm("Keluar", "Keluar dari sistem?", () => { window.currentUser = null; document.getElementById('login-pass').value = ''; document.getElementById('main-app').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }); };
+
+        // 6. INISIALISASI CLOUD
+        const initCloudDatabase = async () => {
+            const loader = document.getElementById('startup-loader'); const syncBadge = document.getElementById('cloud-sync-status');
+            if (SCRIPT_URL === 'https://script.google.com/macros/s/AKfyc.../exec') { loader.classList.replace('flex', 'hidden'); window.updateAllViews(); return; }
+            try {
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'GET_ALL' }) });
+                const result = await response.json();
+                if (result.success && result.data) { window.appState = { ...window.appState, ...result.data }; }
+                loader.classList.replace('flex', 'hidden'); window.updateAllViews();
+                
+                window.saveState = async () => {
+                    syncBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Menyimpan...'; syncBadge.classList.remove('opacity-0');
+                    try { await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify({ action: 'SYNC_ALL', payload: window.appState }) }); syncBadge.innerHTML = '<i class="fa-solid fa-check mr-2 text-green-400"></i>Tersimpan!'; } catch(e) { syncBadge.innerHTML = '<i class="fa-solid fa-xmark mr-2 text-red-400"></i>Gagal!'; }
+                    setTimeout(() => syncBadge.classList.add('opacity-0'), 2500);
+                };
+            } catch (error) { loader.classList.replace('flex', 'hidden'); window.updateAllViews(); }
+        };
+        window.onload = () => { initCloudDatabase(); };
+
+        // 7. FUNGSI JADWAL GURU
+        window.renderJadwalGuru = () => {
+            const container = document.getElementById('table-jadwal-guru');
+            const selectGuruId = document.getElementById('jadwal-guru-id');
+            const filterHari = document.getElementById('filter-hari-jadwal-guru');
+            if(!container || !selectGuruId) return;
+
+            let opts = `<option value="">-- Pilih Guru --</option>`;
+            window.appState.guru.forEach(g => { opts += `<option value="${g.id}">${g.nama} (${g.jabatan||'-'})</option>`; });
+            const currentVal = selectGuruId.value; selectGuruId.innerHTML = opts; selectGuruId.value = currentVal;
+
+            if(!window.appState.jadwal_guru) window.appState.jadwal_guru = [];
+            let jadwalFiltered = window.appState.jadwal_guru;
+            if(filterHari && filterHari.value) jadwalFiltered = jadwalFiltered.filter(j => j.hari === filterHari.value);
+
+            container.innerHTML = jadwalFiltered.map(j => {
+                const guru = window.appState.guru.find(g => String(g.id) === String(j.id_guru));
+                const namaGuru = guru ? guru.nama : 'Guru Dihapus';
+                return `<tr class="border-b border-gray-100 hover:bg-purple-50"><td class="px-4 py-3 font-bold text-sm text-gray-800">${namaGuru}</td><td class="px-4 py-3 text-sm text-gray-700"><span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md text-xs font-bold">${j.hari}</span><br><span class="text-xs font-medium text-gray-500 mt-1 inline-block bg-gray-50 px-2 py-0.5 rounded border border-gray-200">${j.jam}</span></td><td class="px-4 py-3 text-right"><button onclick="window.editJadwalGuru(${j.id})" class="text-blue-500 bg-blue-50 p-1.5 rounded-lg mr-1"><i class="fa-solid fa-pen"></i></button><button onclick="window.hapusJadwalGuru(${j.id})" class="text-red-500 bg-red-50 p-1.5 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>`;
+            }).join('');
+            if(jadwalFiltered.length === 0) container.innerHTML = `<tr><td colspan="3" class="text-center py-6 text-gray-500">Belum ada jadwal.</td></tr>`;
+        };
+
+        window.resetFormJadwal = () => { document.getElementById('jadwal-mode').value = 'add'; document.getElementById('jadwal-id').value = ''; document.getElementById('jadwal-guru-id').value = ''; document.getElementById('jadwal-hari').value = ''; document.getElementById('jadwal-jam1-mulai').value = ''; document.getElementById('jadwal-jam1-selesai').value = ''; document.getElementById('jadwal-jam2-mulai').value = ''; document.getElementById('jadwal-jam2-selesai').value = ''; document.getElementById('btn-submit-jadwal').innerText = 'Simpan Jadwal'; document.getElementById('btn-cancel-jadwal').classList.add('hidden'); };
+        
+        window.editJadwalGuru = (id) => {
+            const j = window.appState.jadwal_guru.find(x => String(x.id) === String(id)); if(!j) return;
+            document.getElementById('jadwal-mode').value = 'edit'; document.getElementById('jadwal-id').value = j.id; document.getElementById('jadwal-guru-id').value = j.id_guru; document.getElementById('jadwal-hari').value = j.hari;
+            let jam1Mulai = '', jam1Selesai = '', jam2Mulai = '', jam2Selesai = '';
+            const m1 = j.jam.match(/Jam 1:\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/); if (m1) { jam1Mulai = m1[1]; jam1Selesai = m1[2]; }
+            const m2 = j.jam.match(/Jam 2:\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/); if (m2) { jam2Mulai = m2[1]; jam2Selesai = m2[2]; }
+            document.getElementById('jadwal-jam1-mulai').value = jam1Mulai; document.getElementById('jadwal-jam1-selesai').value = jam1Selesai; document.getElementById('jadwal-jam2-mulai').value = jam2Mulai; document.getElementById('jadwal-jam2-selesai').value = jam2Selesai;
+            document.getElementById('btn-submit-jadwal').innerText = 'Perbarui Jadwal'; document.getElementById('btn-cancel-jadwal').classList.remove('hidden'); document.getElementById('tab-jadwal-guru').scrollIntoView();
+        };
+
+        window.simpanJadwalGuru = (e) => {
+            e.preventDefault();
+            const mode = document.getElementById('jadwal-mode').value; const id = document.getElementById('jadwal-id').value; const id_guru = document.getElementById('jadwal-guru-id').value; const hari = document.getElementById('jadwal-hari').value;
+            const jam1Mulai = document.getElementById('jadwal-jam1-mulai').value; const jam1Selesai = document.getElementById('jadwal-jam1-selesai').value; const jam2Mulai = document.getElementById('jadwal-jam2-mulai').value; const jam2Selesai = document.getElementById('jadwal-jam2-selesai').value;
+            if(!id_guru || !hari) return window.showAlert('Gagal', 'Guru dan Hari wajib diisi.', 'error');
+            
+            let jamTeks = [];
+            if(jam1Mulai && jam1Selesai) jamTeks.push(`Jam 1: ${jam1Mulai}-${jam1Selesai}`);
+            if(jam2Mulai && jam2Selesai) jamTeks.push(`Jam 2: ${jam2Mulai}-${jam2Selesai}`);
+            const jamStr = jamTeks.join(' | ') || '-';
+
+            if(!window.appState.jadwal_guru) window.appState.jadwal_guru = [];
+            if(mode === 'add') { window.appState.jadwal_guru.push({ id: Date.now(), id_guru, hari, jam: jamStr }); } else { const idx = window.appState.jadwal_guru.findIndex(j => String(j.id) === String(id)); if(idx > -1) window.appState.jadwal_guru[idx] = { id: parseInt(id), id_guru, hari, jam: jamStr }; }
+            window.saveState(); window.updateAllViews(); window.resetFormJadwal(); window.showAlert('Berhasil', 'Jadwal telah disimpan.', 'success');
+        };
+
+        window.hapusJadwalGuru = (id) => { window.showConfirm('Hapus Jadwal', 'Yakin?', () => { window.appState.jadwal_guru = window.appState.jadwal_guru.filter(j => String(j.id) !== String(id)); window.saveState(); window.updateAllViews(); }); };
+
+        // 8. PEMBUAT KARTU ID
+        window.autofillIdCard = (guruId) => { const defaultAvatar = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23cbd5e1'><path d='M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z'/></svg>"; if(!guruId) { document.getElementById('inputName').value = ''; document.getElementById('inputRole').value = ''; document.getElementById('inputId').value = ''; window.updateText('inputName', 'displayName', 'Nama Lengkap'); window.updateText('inputRole', 'displayRole', 'Jabatan'); window.updateText('inputId', 'displayId', 'ID: XXXXXX', 'ID: '); document.getElementById('displayPhoto').src = defaultAvatar; return; } const guru = window.appState.guru.find(g => String(g.id) === String(guruId)); if(guru) { document.getElementById('inputName').value = guru.nama || ''; document.getElementById('inputRole').value = guru.jabatan || ''; document.getElementById('inputId').value = guru.nip || ''; window.updateText('inputName', 'displayName', 'Nama Lengkap'); window.updateText('inputRole', 'displayRole', 'Jabatan'); window.updateText('inputId', 'displayId', 'ID: XXXXXX', 'ID: '); document.getElementById('displayPhoto').src = guru.foto ? guru.foto : defaultAvatar; } };
+        window.updateText = (inputId, displayId, fallbackText, prefix = '') => { const inputVal = document.getElementById(inputId).value.trim(); const displayEl = document.getElementById(displayId); if (inputVal) { displayEl.textContent = prefix + inputVal; if (inputId === 'inputId' && typeof JsBarcode !== 'undefined') { JsBarcode("#barcode", inputVal, { format: "CODE128", lineColor: "#333", width: 1.8, height: 40, displayValue: false, background: "transparent", margin: 0 }); } } else { displayEl.textContent = fallbackText; if (inputId === 'inputId' && typeof JsBarcode !== 'undefined') { JsBarcode("#barcode", "XXXXXX", { format: "CODE128", lineColor: "#333", width: 1.8, height: 40, displayValue: false, background: "transparent", margin: 0 }); } } };
+        window.changeBackground = (event) => { const file = event.target.files[0]; const bgImgEl = document.getElementById('card-bg-img'); const themeHeader = document.getElementById('themeHeader'); const cardBody = document.querySelector('.id-card-body'); if (file) { const reader = new FileReader(); reader.onload = function(e) { bgImgEl.src = e.target.result; bgImgEl.style.display = 'block'; themeHeader.style.backgroundColor = 'transparent'; themeHeader.style.textShadow = '1px 1px 3px rgba(0,0,0,0.8)'; themeHeader.style.color = 'white'; cardBody.style.backgroundColor = 'transparent'; }; reader.readAsDataURL(file); } else { bgImgEl.src = ''; bgImgEl.style.display = 'none'; themeHeader.style.backgroundColor = 'transparent'; themeHeader.style.textShadow = 'none'; themeHeader.style.color = '#1f2937'; cardBody.style.backgroundColor = 'transparent'; } };
+        window.hapusBackground = () => { document.getElementById('inputBg').value = ''; window.changeBackground({ target: { files: [] } }); };
+        window.downloadKartuPNG = (elementId) => { const element = document.getElementById(elementId); if (!element) return; window.showAlert('Memproses', 'Membuat PNG...', 'info'); const originalBg = element.style.background; const originalBgColor = element.style.backgroundColor; element.style.background = 'transparent'; element.style.backgroundColor = 'transparent'; html2canvas(element, { useCORS: true, scale: 4, backgroundColor: null }).then(canvas => { element.style.background = originalBg; element.style.backgroundColor = originalBgColor; const link = document.createElement('a'); link.download = `Kartu_ID.png`; link.href = canvas.toDataURL('image/png'); link.click(); window.showAlert('Berhasil', 'Kartu telah diunduh.', 'success'); }); };
+        window.downloadKartuPDF = (elementId) => { const element = document.getElementById(elementId); if (!element) return; window.showAlert('Memproses', 'Menyusun PDF...', 'info'); html2canvas(element, { useCORS: true, scale: 4, backgroundColor: '#ffffff' }).then(canvas => { const imgData = canvas.toDataURL('image/png'); const { jsPDF } = window.jspdf; const pdf = new jsPDF('p', 'mm', 'a4'); pdf.addImage(imgData, 'PNG', 15, 15, 54, 86); pdf.save(`Kartu_ID.pdf`); window.showAlert('Berhasil', 'Kartu telah diunduh.', 'success'); }); };
+
+        // 9. LOGIKA SCANNER & FITUR STRUK (BAGIKAN)
+        window.tempScanText = ''; 
+        window.tempScannerMode = '';
+        window.tempSuratStatus = '';
+        window.tempSuratSesi = '';
+        
+        window.tempStrukBase64 = '';
+        window.tempStrukFile = null;
+        
+        window.tutupLuarRadiusModal = () => { 
+            document.getElementById('modal-luar-radius').classList.replace('flex', 'hidden'); 
+            window.tempScanText = ''; window.tempScannerMode = ''; window.tempSuratSesi = '';
+        };
+
+        window.bukaFormSurat = (status) => {
+            document.getElementById('modal-luar-radius').classList.replace('flex', 'hidden'); 
+            if(window.tempScanText) {
+                window.tempSuratStatus = status;
+                document.getElementById('title-surat-modal').innerText = `Pengajuan ${status.toUpperCase()}`;
+                document.getElementById('input-alasan-surat').value = '';
+                document.getElementById('modal-surat-keterangan').classList.replace('hidden', 'flex');
+            }
+        };
+
+        window.prosesSuratKeterangan = () => {
+            const alasan = document.getElementById('input-alasan-surat').value.trim() || 'Ada keperluan / Sakit';
+            const status = window.tempSuratStatus;
+            
+            // Eksekusi Absensi secara SILENT (Tidak ada pop-up bawaan agar tidak bertumpuk)
+            const prevMode = activeScannerMode; 
+            activeScannerMode = window.tempScannerMode || activeScannerMode; 
+            const cekWaktuHasil = window.executeAbsensiData(window.tempScanText, status, true); 
+            activeScannerMode = prevMode; 
+
+            // Cek apakah ini izin di awal waktu (sebelum jam ke-1)
+            let sesiTeks = "1";
+            if (cekWaktuHasil && cekWaktuHasil.isEarlyIzin) {
+                sesiTeks = cekWaktuHasil.hasJam2 ? "1 & 2" : "1";
+            } else if (cekWaktuHasil && cekWaktuHasil.jamKe) {
+                sesiTeks = cekWaktuHasil.jamKe.toString();
+            } else {
+                sesiTeks = window.tempSuratSesi || "1";
+            }
+
+            // Buat Gambar Struk
+            window.generateStruk(alasan, status, sesiTeks);
+
+            // Sembunyikan Modal Formulir
+            document.getElementById('modal-surat-keterangan').classList.replace('flex', 'hidden');
+        };
+
+        window.generateStruk = (alasan, status, sesiStr = "1") => {
+            const rawText = window.tempScanText.trim();
+            const guru = window.appState.guru.find(g => String(g.nip) === rawText || String(g.id) === rawText);
+            if(!guru) return;
+
+            // Injeksi Data ke Template HTML Struk
+            const d = new Date();
+            const strTanggal = `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+            const strJam = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+
+            document.getElementById('struk-tanggal').innerText = strTanggal;
+            document.getElementById('struk-jam').innerText = strJam;
+            // Penting: pastikan ini bisa ditemukan berdasarkan tag HTML nya
+            document.getElementById('struk-sesi').innerText = sesiStr;
+            document.getElementById('struk-nama').innerText = guru.nama;
+            document.getElementById('struk-nip').innerText = guru.nip || '-';
+            document.getElementById('struk-jenis').innerText = status.toUpperCase();
+            document.getElementById('struk-alasan').innerText = alasan;
+
+            const element = document.getElementById('template-struk');
+            
+            // Render HTML ke Gambar Canvas
+            html2canvas(element, { scale: 3, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                window.tempStrukBase64 = imgData;
+                document.getElementById('preview-struk-img').src = imgData;
+                
+                // Konversi Canvas ke File Object (untuk Web Share API WhatsApp)
+                canvas.toBlob((blob) => {
+                    const fileName = `Bukti_${status}_${guru.nama.replace(/\s+/g, '')}.png`;
+                    window.tempStrukFile = new File([blob], fileName, { type: 'image/png' });
+                });
+
+                // Tampilkan Modal Hasil Struk
+                document.getElementById('modal-hasil-struk').classList.replace('hidden', 'flex');
+                window.tempScanText = ''; window.tempScannerMode = ''; window.tempSuratStatus = '';
+            });
+        };
+
+        window.downloadStruk = () => {
+            const link = document.createElement('a');
+            link.download = window.tempStrukFile ? window.tempStrukFile.name : 'Bukti_Pengajuan.png';
+            link.href = window.tempStrukBase64;
+            link.click();
+        };
+
+        window.bagikanStruk = async () => {
+            if (navigator.share && window.tempStrukFile) {
+                try {
+                    if (navigator.canShare && navigator.canShare({ files: [window.tempStrukFile] })) {
+                        await navigator.share({
+                            title: 'Bukti Pengajuan',
+                            text: 'Berikut adalah bukti pengajuan absensi saya dari Sistem Madrasah.',
+                            files: [window.tempStrukFile]
+                        });
+                    } else {
+                        await navigator.share({
+                            title: 'Bukti Pengajuan',
+                            text: `Sistem Madrasah: Absensi tercatat. (Catatan: Perangkat ini belum mendukung fitur berbagi gambar langsung, silakan gunakan tombol Simpan/Download).`
+                        });
+                    }
+                } catch (err) {
+                    console.log('Batal bagikan:', err);
+                }
+            } else {
+                window.showAlert('Tidak Didukung', 'Browser atau perangkat Anda belum mendukung fitur berbagi otomatis. Silakan gunakan tombol Simpan.', 'info');
+            }
+        };
+
+        // BATASAN WAKTU KHUSUS (00:00 S/D SELESAI JAM KE-2)
+        window.checkWaktuAbsenGuru = (guru, tgl, statusScan) => {
+            const parts = tgl.split('-'); const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+            const hariNamaArr = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const namaHari = hariNamaArr[d.getDay()];
+            const jadwalHariIni = (window.appState.jadwal_guru || []).filter(j => j.hari === namaHari && String(j.id_guru) === String(guru.id));
+            if (jadwalHariIni.length === 0) return { allowed: false, errorMsg: `Guru: ${guru.nama}\nTidak memiliki jadwal mengajar pada hari ini.` };
+
+            let infoWaktu = ''; const todayStr = window.getTodayInputFormat();
+            let closestJamKe = 1; let closestTime = null; let minDiff = Infinity; let closestDiffMins = 0; let jadwalMulaiStr = '';
+            
+            let maxEndTime = null; let maxEndTimeStr = '';
+            let hasJam2 = false;
+            let isEarlyIzin = false;
+
+            if (tgl === todayStr) {
+                const currentTime = new Date();
+                
+                jadwalHariIni.forEach(j => {
+                    const m1 = j.jam.match(/Jam 1:\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/);
+                    if(m1) { 
+                        const [h, min] = m1[1].split(':').map(Number); const sTime = new Date(); sTime.setHours(h, min, 0, 0); const dMins = Math.floor((currentTime - sTime) / 60000); if (Math.abs(dMins) < Math.abs(minDiff)) { minDiff = dMins; closestTime = sTime; jadwalMulaiStr = m1[1]; closestDiffMins = dMins; closestJamKe = 1; } 
+                        const [eh, emin] = m1[2].split(':').map(Number); const eTime = new Date(); eTime.setHours(eh, emin, 0, 0);
+                        if(!maxEndTime || eTime > maxEndTime) { maxEndTime = eTime; maxEndTimeStr = m1[2]; }
+                    }
+                    const m2 = j.jam.match(/Jam 2:\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/);
+                    if(m2) { 
+                        hasJam2 = true;
+                        const [h, min] = m2[1].split(':').map(Number); const sTime = new Date(); sTime.setHours(h, min, 0, 0); const dMins = Math.floor((currentTime - sTime) / 60000); if (Math.abs(dMins) < Math.abs(minDiff)) { minDiff = dMins; closestTime = sTime; jadwalMulaiStr = m2[1]; closestDiffMins = dMins; closestJamKe = 2; } 
+                        const [eh, emin] = m2[2].split(':').map(Number); const eTime = new Date(); eTime.setHours(eh, emin, 0, 0);
+                        if(!maxEndTime || eTime > maxEndTime) { maxEndTime = eTime; maxEndTimeStr = m2[2]; }
+                    }
+                });
+
+                // PENOLAKAN MUTLAK JIKA MELEWATI AKHIR JAM MENGAJAR / JAM KE-2
+                if (maxEndTime && currentTime > maxEndTime) {
+                    let errMsg = `Batas waktu pengajuan absensi atau Izin/Sakit telah DITUTUP untuk hari ini.\n\nPengajuan hanya valid dari pukul 00:00 hingga berakhirnya jam mengajar Anda (pukul ${maxEndTimeStr}).`;
+                    return { allowed: false, outOfBounds: false, errorMsg: errMsg };
+                }
+
+                if (closestTime) {
+                    if (statusScan === 'Hadir') {
+                        if (closestDiffMins < -30) {
+                            return { allowed: false, outOfBounds: true, errorMsg: `Jadwal masuk Jam Ke-${closestJamKe} adalah pukul ${jadwalMulaiStr}.\nAnda baru boleh absen 30 menit sebelumnya.` };
+                        } else if (closestDiffMins > 5) {
+                            return { allowed: false, outOfBounds: true, errorMsg: `Batas waktu absen HADIR telah habis.\nJadwal masuk Jam Ke-${closestJamKe} adalah pukul ${jadwalMulaiStr}. Toleransi hanya 5 menit.` };
+                        } else {
+                            infoWaktu = 'Tepat Waktu';
+                        }
+                    } else {
+                        // Izin / Sakit
+                        if (closestJamKe === 1 && closestDiffMins < -30) {
+                            isEarlyIzin = true;
+                            infoWaktu = 'Lebih Awal';
+                        } else {
+                            infoWaktu = 'Tepat Waktu';
+                        }
+                    }
+                }
+            }
+            return { allowed: true, infoWaktu: infoWaktu, jamKe: closestJamKe, isEarlyIzin: isEarlyIzin, hasJam2: hasJam2 };
+        };
+
+        window.openScanner = (mode) => {
+            activeScannerMode = mode; document.getElementById('scanner-modal').classList.replace('hidden', 'flex');
+            if (scannerState === 'running' || scannerState === 'starting') return;
+            scannerState = 'starting'; document.getElementById('scanner-hint').innerText = "Meminta akses kamera...";
+            html5QrCode = new Html5Qrcode("reader");
+            const startScanner = (facingModeStr) => { return html5QrCode.start({ facingMode: facingModeStr }, { fps: 10, qrbox: { width: 250, height: 250 } }, (decodedText) => { if(scannerState !== 'running') return; window.playBeep(); window.closeScanner(); setTimeout(() => window.processScanResult(decodedText), 300); }, (err) => {}); };
+            startScanner({ exact: "environment" }).then(() => { scannerState = 'running'; document.getElementById('scanner-hint').innerText = "Arahkan kamera ke QR / Barcode"; }).catch(() => { startScanner("user").then(() => { scannerState = 'running'; document.getElementById('scanner-hint').innerText = "Arahkan kamera ke QR / Barcode"; }).catch(() => { scannerState = 'stopped'; document.getElementById('scanner-hint').innerHTML = "<span class='text-red-500 font-bold'>Kamera Web Diblokir.</span>"; }); });
+        };
+        
+        window.closeScanner = () => { document.getElementById('scanner-modal').classList.replace('flex', 'hidden'); if (html5QrCode && scannerState !== 'stopped') { const attemptStop = () => { if(html5QrCode.getState && html5QrCode.getState() === 2) { html5QrCode.stop().then(() => { scannerState = 'stopped'; }).catch(()=>{}); } else { scannerState = 'stopped'; } }; if (scannerState === 'starting') { setTimeout(attemptStop, 600); } else { attemptStop(); } } else { scannerState = 'stopped'; } };
+
+        window.prosesAbsenManual = (e) => { e.preventDefault(); const inputEl = document.getElementById('input-absen-manual'); const val = inputEl.value.trim(); if(!val) return; activeScannerMode = 'absen-cepat'; window.processScanResult(val); inputEl.value = ''; };
+        window.prosesAbsenGuruManual = (e) => { e.preventDefault(); const inputEl = document.getElementById('input-absen-guru-manual'); const val = inputEl.value.trim(); if(!val) return; activeScannerMode = 'absen-guru-tab'; window.processScanResult(val); inputEl.value = ''; inputEl.focus(); };
+
+        window.processScanResult = async (rawText) => {
+            let idLokal = rawText.trim();
+            const isGuru = window.appState.guru.find(g => String(g.nip) === idLokal || String(g.id) === idLokal);
+            const isSiswa = window.appState.siswa.find(s => String(s.nis) === idLokal || String(s.id) === idLokal);
+            if (!isGuru && !isSiswa) return window.showAlert('Tidak Ditemukan', `ID / Barcode "${idLokal}" tidak terdaftar.`, 'error');
+            window.executeAbsensiData(rawText);
+        };
+
+        window.executeAbsensiData = (rawText, forceStatus = null, silent = false) => {
+            let idLokal = rawText.trim();
+            if (activeScannerMode === 'absen-cepat' || activeScannerMode === 'absen-guru-tab') {
+                const tglEl = document.getElementById('tgl-absen-guru');
+                const tgl = (activeScannerMode === 'absen-guru-tab' && tglEl && tglEl.value) ? tglEl.value : window.getTodayInputFormat();
+                const modeScanEl = document.getElementById('mode-scan-guru');
+                const finalStatus = forceStatus || (modeScanEl ? modeScanEl.value : 'Hadir');
+                
+                const guru = window.appState.guru.find(g => String(g.nip) === idLokal || String(g.id) === idLokal);
+                if (guru) {
+                    const cekWaktu = window.checkWaktuAbsenGuru(guru, tgl, finalStatus);
+                    if (!cekWaktu.allowed) {
+                        // Apabila ditolak karena waktu (tapi belum lewat akhir jam mengajar)
+                        if (cekWaktu.outOfBounds && finalStatus === 'Hadir') {
+                            window.tempScanText = rawText; 
+                            window.tempScannerMode = activeScannerMode;
+                            window.tempSuratSesi = cekWaktu.jamKe;
+                            const modal = document.getElementById('modal-luar-radius');
+                            document.getElementById('teks-luar-radius').innerHTML = `Halo <b class="text-gray-800">${guru.nama}</b>,<br>${cekWaktu.errorMsg.replace(/\n/g, '<br>')}<br><br><span class="text-xs text-red-500 font-bold">Apakah Anda ingin mengajukan Keterangan Lain?</span>`;
+                            modal.classList.replace('hidden', 'flex'); 
+                            return;
+                        }
+                        if(!silent) return window.showAlert('Absen Ditolak', cekWaktu.errorMsg, 'error');
+                        return;
+                    }
+
+                    if(!window.appState.absensi_guru) window.appState.absensi_guru = [];
+                    let record = window.appState.absensi_guru.find(a => a.tanggal === tgl);
+                    if (!record) { record = { tanggal: tgl, data: [] }; window.appState.absensi_guru.push(record); }
+                    const dIdx = record.data.findIndex(d => String(d.id_guru) === String(guru.id));
+                    
+                    let targetGuruData;
+                    if (dIdx > -1) {
+                        targetGuruData = record.data[dIdx];
+                    } else {
+                        targetGuruData = { id_guru: parseInt(guru.id) };
+                        record.data.push(targetGuruData);
+                    }
+
+                    if (cekWaktu.isEarlyIzin) {
+                        // Pengajuan izin sebelum 30 menit jam ke-1
+                        targetGuruData['status_1'] = finalStatus;
+                        targetGuruData['info_1'] = cekWaktu.infoWaktu;
+                        if (cekWaktu.hasJam2) {
+                            targetGuruData['status_2'] = finalStatus;
+                            targetGuruData['info_2'] = cekWaktu.infoWaktu;
+                        }
+                    } else {
+                        let jamKeyStatus = `status_${cekWaktu.jamKe}`; 
+                        let jamKeyInfo = `info_${cekWaktu.jamKe}`;
+                        targetGuruData[jamKeyStatus] = finalStatus; 
+                        targetGuruData[jamKeyInfo] = cekWaktu.infoWaktu;
+                    }
+                    
+                    window.saveState(); window.renderAbsenGuru();
+                    
+                    if(finalStatus === 'Hadir') window.playHadirSound(); else window.playBeep();
+                    if(!silent) {
+                        let msgExt = cekWaktu.isEarlyIzin ? ` (Pusat Jam Ke-1 dan Jam Ke-2)` : ` (Jam Ke-${cekWaktu.jamKe})`;
+                        return window.showAlert('Absen Berhasil', `Guru: ${guru.nama}\nTelah tercatat ${finalStatus.toUpperCase()}${msgExt}.`, 'success');
+                    }
+                    return cekWaktu;
+                }
+        
         // Pointer untuk Form Rapor & Modul Lama
         window.activeFilterTabungan = 'harian'; 
         let syncTimeout = null;
