@@ -109,7 +109,7 @@
                 Demikian surat izin ini. atas perhatiannya saya ucapkan terima kasih.<br>
                 WASSALAMUALAIKUM WAR. WAB.<br>
                   Hormat kami<br>
-                <b id="struk-nama"></b><br>
+            </div>
             </div>
         </div>
     </div>
@@ -167,8 +167,11 @@
                 <button onclick="document.getElementById('modal-surat-keterangan').classList.replace('flex','hidden')" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="p-6">
+                <div class="mb-4" id="quick-reasons-container">
+                    <!-- Quick reasons will be injected here -->
+                </div>
                 <div class="mb-5">
-                    <label class="block text-sm font-bold text-gray-700 mb-2">Alasan Ringkas:</label>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Alasan Ringkas (Bisa diketik manual):</label>
                     <input type="text" id="input-alasan-surat" class="w-full border border-gray-300 rounded-xl p-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm" placeholder="Cth: Acara keluarga / Demam...">
                 </div>
                 <button onclick="window.prosesSuratKeterangan()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
@@ -251,14 +254,14 @@
                             <label class="block text-[11px] font-bold text-gray-700 mb-1">Username</label>
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"><i class="fa-solid fa-user text-xs"></i></div>
-                                <input type="text" id="login-user" value="" class="w-full border-2 border-gray-200 rounded-xl pl-8 p-2.5 focus:border-blue-500 focus:ring-0 outline-none text-xs" required placeholder="Masukkan username...">
+                                <input type="text" id="login-user" value="admin" class="w-full border-2 border-gray-200 rounded-xl pl-8 p-2.5 focus:border-blue-500 focus:ring-0 outline-none text-xs" required placeholder="Masukkan username...">
                             </div>
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-700 mb-1">Password</label>
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"><i class="fa-solid fa-lock text-xs"></i></div>
-                                <input type="password" id="login-pass" value="" class="w-full border-2 border-gray-200 rounded-xl pl-8 p-2.5 focus:border-blue-500 focus:ring-0 outline-none text-xs" required placeholder="••••••••">
+                                <input type="password" id="login-pass" value="12345" class="w-full border-2 border-gray-200 rounded-xl pl-8 p-2.5 focus:border-blue-500 focus:ring-0 outline-none text-xs" required placeholder="••••••••">
                             </div>
                         </div>
                         <button type="submit" class="w-full bg-blue-600 text-white font-bold rounded-xl px-4 py-2.5 hover:bg-blue-700 shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 mt-2 text-sm"><i class="fa-solid fa-right-to-bracket"></i> Masuk</button>
@@ -1308,7 +1311,44 @@
         window.tempInfoJarak = ''; window.tempScanText = ''; window.tempScannerMode = ''; window.tempSuratSesi = ''; window.tempSuratStatus = ''; window.tempStrukBase64 = ''; window.tempStrukFile = null;
         window.showLuarRadiusModal = (rawText, dist, radiusM, namaOrang, mode) => { window.tempScanText = rawText; window.tempScannerMode = mode; document.getElementById('teks-luar-radius').innerHTML = `Halo <b class="text-gray-800">${namaOrang||'Anda'}</b>,<br>Jarak: <b class="text-red-500">${Math.round(dist)}m</b> (Maks ${radiusM}m).<br>Di luar jangkauan GPS untuk Hadir.`; document.getElementById('modal-luar-radius').classList.replace('hidden', 'flex'); };
         window.tutupLuarRadiusModal = () => { document.getElementById('modal-luar-radius').classList.replace('flex', 'hidden'); };
-        window.bukaFormSurat = (status) => { document.getElementById('modal-luar-radius').classList.replace('flex', 'hidden'); if(window.tempScanText) { window.tempSuratStatus = status; document.getElementById('title-surat-modal').innerText = `Pengajuan ${status.toUpperCase()}`; document.getElementById('input-alasan-surat').value = ''; document.getElementById('modal-surat-keterangan').classList.replace('hidden', 'flex'); } };
+        
+        window.setAlasanSurat = (alasan) => {
+            document.getElementById('input-alasan-surat').value = alasan;
+        };
+
+        window.bukaFormSurat = (status) => { 
+            document.getElementById('modal-luar-radius').classList.replace('flex', 'hidden'); 
+            if(window.tempScanText) { 
+                window.tempSuratStatus = status; 
+                document.getElementById('title-surat-modal').innerText = `Pengajuan ${status.toUpperCase()}`; 
+                document.getElementById('input-alasan-surat').value = ''; 
+                
+                const reasonsContainer = document.getElementById('quick-reasons-container');
+                if (status.toLowerCase() === 'izin') {
+                    reasonsContainer.innerHTML = `
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Pilihan Cepat:</label>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="window.setAlasanSurat('Acara Walimah')" class="bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-blue-100 transition-colors shadow-sm">Acara Walimah</button>
+                            <button onclick="window.setAlasanSurat('Acara Keluarga')" class="bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-blue-100 transition-colors shadow-sm">Acara Keluarga</button>
+                            <button onclick="window.setAlasanSurat('Ada Kepentingan')" class="bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-blue-100 transition-colors shadow-sm">Ada Kepentingan</button>
+                        </div>
+                    `;
+                } else if (status.toLowerCase() === 'sakit') {
+                    reasonsContainer.innerHTML = `
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Pilihan Cepat:</label>
+                        <div class="flex flex-wrap gap-2">
+                            <button onclick="window.setAlasanSurat('Tidak Enak Badan')" class="bg-orange-50 text-orange-600 border border-orange-200 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-orange-100 transition-colors shadow-sm">Tidak Enak Badan</button>
+                            <button onclick="window.setAlasanSurat('Demam / Flu')" class="bg-orange-50 text-orange-600 border border-orange-200 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-orange-100 transition-colors shadow-sm">Demam / Flu</button>
+                            <button onclick="window.setAlasanSurat('Periksa ke Dokter')" class="bg-orange-50 text-orange-600 border border-orange-200 px-3 py-1.5 rounded-xl text-sm font-medium hover:bg-orange-100 transition-colors shadow-sm">Periksa ke Dokter</button>
+                        </div>
+                    `;
+                } else {
+                    reasonsContainer.innerHTML = '';
+                }
+
+                document.getElementById('modal-surat-keterangan').classList.replace('hidden', 'flex'); 
+            } 
+        };
         
         window.prosesSuratKeterangan = () => { 
             const alasan = document.getElementById('input-alasan-surat').value.trim() || 'Ada keperluan / Sakit'; 
