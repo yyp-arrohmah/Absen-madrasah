@@ -33,7 +33,7 @@
         }
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
         .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
         .tab-content.active { display: block; }
@@ -44,6 +44,31 @@
         ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* --- STYLING CETAK STRUK THERMAL --- */
+        @media print {
+            body > *:not(#print-area) { display: none !important; }
+            body { background: white; margin: 0; padding: 0; }
+            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; color: black; }
+            @page { margin: 0; }
+            .id-card { box-shadow: none !important; border: 1px solid #000 !important; border-radius: 8px !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
+        }
+        .thermal-receipt { font-family: 'Courier New', Courier, monospace; width: 100%; max-width: 300px; margin: 0 auto; padding: 15px; background: white; color: black; font-size: 12px; }
+        .thermal-receipt h2 { font-size: 16px; font-weight: bold; margin: 0 0 5px 0; text-align: center; }
+        .thermal-receipt p { margin: 2px 0; text-align: center; font-size: 11px; }
+        .thermal-receipt .divider { border-bottom: 1px dashed black; margin: 8px 0; }
+        .thermal-receipt .flex-row { display: flex; justify-content: space-between; margin-bottom: 3px; font-size: 11px;}
+        .thermal-receipt .bold { font-weight: bold; }
+        .thermal-receipt .text-lg { font-size: 14px; }
+        
+        /* --- STYLING CETAK RAPOR A4 --- */
+        .rapor-print { font-family: 'Arial', sans-serif; background: white; color: black; width: 100%; max-width: 100%; margin: 0 auto; padding: 20px; font-size: 10pt;}
+        .rapor-print table { border-collapse: collapse; width: 100%; }
+        .rapor-print th, .rapor-print td { border: 1px solid black; padding: 6px; }
+        .rapor-print .no-border { border: none !important; }
+        .rapor-print .no-border td { border: none !important; padding: 2px 4px; }
+        .kop-rapor-garis { border-bottom: 3px solid black; padding-bottom: 4px; margin-bottom: 2px; position: relative; }
+        .kop-rapor-garis::after { content: ''; position: absolute; left: 0; bottom: -3px; width: 100%; height: 1px; background-color: black; }
 
         /* --- STYLING KARTU ID --- */
         .id-card { width: 54mm !important; height: 86mm !important; background: white; border-radius: 8px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; position: relative; border: 1px solid #e2e8f0; display: flex; flex-direction: column; background-size: cover; background-position: center; font-family: 'Inter', sans-serif; }
