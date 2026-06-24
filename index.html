@@ -33,7 +33,7 @@
         }
     </script>
     <style>
-         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; }
         .tab-content { display: none; animation: fadeIn 0.3s ease-in-out; }
         .tab-content.active { display: block; }
@@ -45,40 +45,14 @@
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* --- STYLING CETAK STRUK THERMAL --- */
-        @media print {
-            body > *:not(#print-area) { display: none !important; }
-            body { background: white; margin: 0; padding: 0; }
-            #print-area { display: block !important; position: absolute; left: 0; top: 0; width: 100%; color: black; }
-            @page { margin: 0; }
-            .id-card { box-shadow: none !important; border: 1px solid #000 !important; border-radius: 8px !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
-        }
-        .thermal-receipt { font-family: 'Courier New', Courier, monospace; width: 100%; max-width: 300px; margin: 0 auto; padding: 15px; background: white; color: black; font-size: 12px; }
-        .thermal-receipt h2 { font-size: 16px; font-weight: bold; margin: 0 0 5px 0; text-align: center; }
-        .thermal-receipt p { margin: 2px 0; text-align: center; font-size: 11px; }
-        .thermal-receipt .divider { border-bottom: 1px dashed black; margin: 8px 0; }
-        .thermal-receipt .flex-row { display: flex; justify-content: space-between; margin-bottom: 3px; font-size: 11px;}
-        .thermal-receipt .bold { font-weight: bold; }
-        .thermal-receipt .text-lg { font-size: 14px; }
-        
-        /* --- STYLING CETAK RAPOR A4 --- */
-        .rapor-print { font-family: 'Arial', sans-serif; background: white; color: black; width: 100%; max-width: 100%; margin: 0 auto; padding: 20px; font-size: 10pt;}
-        .rapor-print table { border-collapse: collapse; width: 100%; }
-        .rapor-print th, .rapor-print td { border: 1px solid black; padding: 6px; }
-        .rapor-print .no-border { border: none !important; }
-        .rapor-print .no-border td { border: none !important; padding: 2px 4px; }
-        .kop-rapor-garis { border-bottom: 3px solid black; padding-bottom: 4px; margin-bottom: 2px; position: relative; }
-        .kop-rapor-garis::after { content: ''; position: absolute; left: 0; bottom: -3px; width: 100%; height: 1px; background-color: black; }
-
         /* --- STYLING KARTU ID --- */
         .id-card { width: 54mm !important; height: 86mm !important; background: white; border-radius: 8px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; position: relative; border: 1px solid #e2e8f0; display: flex; flex-direction: column; background-size: cover; background-position: center; font-family: 'Inter', sans-serif; }
         .id-card-header { height: 26mm !important; background: transparent !important; display: flex; align-items: center; justify-content: center; color: #1f2937; position: relative; padding: 10px !important; text-align: center; z-index: 5; transition: background 0.3s; }
         #displayCompany { font-size: 11px !important; font-weight: 700 !important; margin-top: -8px !important; line-height: 1.2 !important; }
         .id-card-body { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 0 10px 10px !important; position: relative; z-index: 10; border-radius: 12px 12px 0 0 !important; margin-top: -8px !important; background: transparent; }
-        .profile-img-container { width: 29mm !important; height: 32mm !important; border-radius: 100%; padding: 2px !important; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-top: 1mm !important; position: relative; z-index: 20; cursor: pointer; transition: transform 0.2s; }
-        .profile-img-container:hover { transform: scale(1.05); }
-        .profile-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; background: #f1f5f9; }
-        .name-container { margin-top: 9px !important; width: 100%; text-align: center; }
+        .profile-img-container { width: 28mm !important; height: 36mm !important; border-radius: 8px; padding: 2px !important; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 20; cursor: pointer; transition: transform 0.2s; }
+        .profile-img { width: 100%; height: 100%; border-radius: 6px; object-fit: cover; background: #f1f5f9; }
+        .name-container { margin-top: 3px !important; width: 100%; text-align: center; }
         #displayName { font-size: 10px !important; font-weight: 800 !important; color: #1f2937; line-height: 1.1 !important; margin-bottom: 5px !important; }
         #displayRole { font-size: 8px !important; color: #4b5563 !important; font-weight: 600 !important; text-transform: uppercase; letter-spacing: 0.5px !important; }
         #displayId { font-size: 8px !important; font-weight: 800 !important; letter-spacing: 1px !important; color: #111827 !important; }
@@ -126,10 +100,10 @@
             </div>
             <div style="margin-bottom: 10px; text-align: left;">
                 ASSALAMUALAIKUM WAR. WAB.:<br>
-                saya yang bertandatangan di bawah ini:<br>
+                saya yang bertandatangan di bawah ini:<br><br>
                 Nama  : <b id="struk-nama"></b><br>
                 NIP/ID: <span id="struk-nip"></span><br>
-                Sesi  : Jam Ke-<span id="struk-sesi"></span><br>
+                Sesi  : Jam Ke-<span id="struk-sesi"></span><br><br>
                 Hari ini tidak dapat hadir dengan keterangan: <b id="struk-jenis" style="font-size: 12px;"></b>{<span id="struk-alasan"></span> )<br>
                 Demikian surat izin ini. atas perhatiannya saya ucapkan terima kasih.<br>
                 WASSALAMUALAIKUM WAR. WAB.<br>
@@ -279,14 +253,14 @@
                             <label class="block text-[11px] font-bold text-gray-700 mb-1">Username</label>
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"><i class="fa-solid fa-user text-xs"></i></div>
-                                <input type="text" id="login-user" value="" class="w-full border-2 border-gray-200 rounded-xl pl-8 p-2.5 focus:border-blue-500 focus:ring-0 outline-none text-xs" required placeholder="Masukkan username...">
+                                <input type="text" id="login-user" value="admin" class="w-full border-2 border-gray-200 rounded-xl pl-8 p-2.5 focus:border-blue-500 focus:ring-0 outline-none text-xs" required placeholder="Masukkan username...">
                             </div>
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-700 mb-1">Password</label>
                             <div class="relative group">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400"><i class="fa-solid fa-lock text-xs"></i></div>
-                                <input type="password" id="login-pass" value="" class="w-full border-2 border-gray-200 rounded-xl pl-8 p-2.5 focus:border-blue-500 focus:ring-0 outline-none text-xs" required placeholder="••••••••">
+                                <input type="password" id="login-pass" value="12345" class="w-full border-2 border-gray-200 rounded-xl pl-8 p-2.5 focus:border-blue-500 focus:ring-0 outline-none text-xs" required placeholder="••••••••">
                             </div>
                         </div>
                         <button type="submit" class="w-full bg-blue-600 text-white font-bold rounded-xl px-4 py-2.5 hover:bg-blue-700 shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 mt-2 text-sm"><i class="fa-solid fa-right-to-bracket"></i> Masuk</button>
@@ -384,9 +358,11 @@
                <!-- DASHBOARD -->
                 <div id="tab-dashboard" class="tab-content active max-w-6xl mx-auto">
                     <div class="mb-8"><h2 class="text-2xl font-bold text-gray-800">Ringkasan Sistem</h2><p class="text-gray-500 text-sm">Informasi dasar madrasah.</p></div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div><div><p class="text-gray-500 text-xs font-bold uppercase">Total Murid</p><h3 class="text-2xl font-bold" id="dash-siswa">0</h3></div></div>
                         <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl"><i class="fa-solid fa-chalkboard-user"></i></div><div><p class="text-gray-500 text-xs font-bold uppercase">Total Guru</p><h3 class="text-2xl font-bold" id="dash-guru">0</h3></div></div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center text-xl"><i class="fa-solid fa-user-check"></i></div><div><p class="text-gray-500 text-xs font-bold uppercase">Murid Hadir</p><h3 class="text-2xl font-bold text-green-600" id="dash-siswa-hadir">0</h3></div></div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl relative"><i class="fa-solid fa-chalkboard-user"></i><i class="fa-solid fa-check absolute bottom-2 right-1 text-[12px] bg-white rounded-full text-teal-600"></i></div><div><p class="text-gray-500 text-xs font-bold uppercase">Guru Hadir</p><h3 class="text-2xl font-bold text-teal-600" id="dash-guru-hadir">0</h3></div></div>
                     </div>
                 </div>
 
@@ -519,7 +495,7 @@
                                         </select>
                                     </div>
                                     <div class="p-3 bg-purple-50 rounded-lg border border-purple-100">
-                                        <label class="block text-sm font-bold mb-2 text-purple-800">Jam Ke-1</label>
+                                        <label class="block text-sm font-bold mb-2 text-purple-800">Jam Ke-1 / Jam Rapat</label>
                                         <div class="flex items-center gap-2">
                                             <input type="time" id="jadwal-jam1-mulai" class="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-purple-500 text-sm cursor-pointer">
                                             <span class="font-bold text-purple-400">s/d</span>
@@ -852,16 +828,6 @@
                     </div>
                 </div>
 
-                <!-- TAB INPUT NILAI (AKADEMIK) -->
-                <div id="tab-nilai" class="tab-content max-w-6xl mx-auto scroll-mt-6">
-                    <div id="input-nilai-container"></div>
-                </div>
-
-                <!-- TAB CETAK RAPOR (AKADEMIK) -->
-                <div id="tab-rapor" class="tab-content max-w-6xl mx-auto scroll-mt-6">
-                    <div id="cetak-rapor-container"></div>
-                </div>
-
             </div>
         </main>
     </div>
@@ -1147,10 +1113,33 @@
         window.prosesLogout = () => { window.showConfirm("Keluar", "Keluar dari sistem?", () => { window.currentUser = null; document.getElementById('login-pass').value = ''; document.getElementById('main-app').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); }); };
 
         // 6. RENDER DATA GLOBAL
-        window.updateAllViews = () => {
-            const st = window.appState; const isAdmin = window.currentUser && window.currentUser.role === 'admin';
+        window.updateDashboardStats = () => {
+            const st = window.appState;
             document.getElementById('dash-siswa').innerText = st.siswa ? st.siswa.length : 0; 
             document.getElementById('dash-guru').innerText = st.guru ? st.guru.length : 0; 
+            
+            const todayStr = window.getTodayInputFormat();
+            
+            let siswaHadirCount = 0;
+            if (st.absensi_siswa) {
+                const recordSiswa = st.absensi_siswa.find(a => a.tanggal === todayStr);
+                if (recordSiswa) siswaHadirCount = recordSiswa.data.filter(d => d.status === 'Hadir').length;
+            }
+            const dashSiswaHadirEl = document.getElementById('dash-siswa-hadir');
+            if(dashSiswaHadirEl) dashSiswaHadirEl.innerText = siswaHadirCount;
+
+            let guruHadirCount = 0;
+            if (st.absensi_guru) {
+                const recordGuru = st.absensi_guru.find(a => a.tanggal === todayStr);
+                if (recordGuru) guruHadirCount = recordGuru.data.filter(d => d.status_1 === 'Hadir' || d.status_2 === 'Hadir').length;
+            }
+            const dashGuruHadirEl = document.getElementById('dash-guru-hadir');
+            if(dashGuruHadirEl) dashGuruHadirEl.innerText = guruHadirCount;
+        };
+
+        window.updateAllViews = () => {
+            const st = window.appState; const isAdmin = window.currentUser && window.currentUser.role === 'admin';
+            window.updateDashboardStats();
             
             // Render Guru Table
             const elTblGuru = document.getElementById('table-guru');
@@ -1190,10 +1179,10 @@
         window.renderSiswa = () => { const container = document.getElementById('table-siswa'); if(!container) return; const allowEdit = window.currentUser && (window.currentUser.role === 'admin' || window.currentUser.akses.siswa); container.innerHTML = window.appState.siswa.map(s => `<tr class="border-b border-gray-100 hover:bg-blue-50/40"><td class="px-6 py-3 font-bold text-sm text-gray-800">${s.nis}</td><td class="px-6 py-3 flex items-center gap-3">${s.foto ? `<img src="${s.foto}" class="w-10 h-14 rounded-md object-cover">` : `<div class="w-10 h-14 rounded-md bg-blue-100 flex items-center justify-center font-bold text-blue-600">${s.nama.charAt(0)}</div>`}<div><p class="font-bold text-sm text-gray-800">${s.nama}</p><p class="text-xs text-gray-500">Kls: ${s.kelas}</p></div></td><td class="px-6 py-3 text-right">${allowEdit ? `<button onclick="window.editSiswa('${s.id}')" class="text-blue-500 bg-blue-50 p-2 rounded-lg mr-1"><i class="fa-solid fa-pen"></i></button><button onclick="window.hapusSiswa('${s.id}')" class="text-red-500 bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : ''}</td></tr>`).join(''); if(window.appState.siswa.length === 0) container.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-500">Belum ada murid terdaftar.</td></tr>`; };
 
         // 9. JADWAL GURU
-        window.renderJadwalGuru = () => { const container = document.getElementById('table-jadwal-guru'); const selectGuru = document.getElementById('jadwal-guru-id'); const filterGuru = document.getElementById('filter-jadwal-guru'); const filterHari = document.getElementById('filter-hari-jadwal-guru'); if(!container || !selectGuru) return; let opts=`<option value="">-- Pilih Guru --</option>`; let fOpts=`<option value="">Semua Guru</option>`; window.appState.guru.forEach(g => { opts+=`<option value="${g.id}">${g.nama}</option>`; fOpts+=`<option value="${g.id}">${g.nama}</option>`; }); const cG=selectGuru.value; const cF=filterGuru.value; selectGuru.innerHTML=opts; selectGuru.value=cG; filterGuru.innerHTML=fOpts; filterGuru.value=cF; let jFiltered = window.appState.jadwal_guru || []; if(cF) jFiltered=jFiltered.filter(j=>String(j.id_guru)===String(cF)); if(filterHari&&filterHari.value) jFiltered=jFiltered.filter(j=>j.hari===filterHari.value); const hariOrd = {'Senin':1,'Selasa':2,'Rabu':3,'Kamis':4,'Jumat':5,'Sabtu':6,'Ahad':7}; jFiltered.sort((a,b)=>hariOrd[a.hari]-hariOrd[b.hari]); container.innerHTML = jFiltered.map(j=>{ const g=window.appState.guru.find(x=>String(x.id)===String(j.id_guru)); return `<tr class="border-b border-gray-100 hover:bg-purple-50"><td class="px-4 py-3 font-bold text-sm text-gray-800">${g?g.nama:'-'}</td><td class="px-4 py-3 text-sm text-gray-700"><span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md text-xs font-bold">${j.hari}</span><br><span class="text-xs inline-block border bg-gray-50 px-2 mt-1 rounded">${j.jam}</span></td><td class="px-4 py-3 text-right"><button onclick="window.editJadwalGuru(${j.id})" class="text-blue-500 bg-blue-50 p-1.5 rounded-lg mr-1"><i class="fa-solid fa-pen"></i></button><button onclick="window.hapusJadwalGuru(${j.id})" class="text-red-500 bg-red-50 p-1.5 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>`; }).join(''); if(jFiltered.length===0) container.innerHTML=`<tr><td colspan="3" class="text-center py-6 text-gray-500">Belum ada jadwal.</td></tr>`; };
+        window.renderJadwalGuru = () => { const container = document.getElementById('table-jadwal-guru'); const selectGuru = document.getElementById('jadwal-guru-id'); const filterGuru = document.getElementById('filter-jadwal-guru'); const filterHari = document.getElementById('filter-hari-jadwal-guru'); if(!container || !selectGuru) return; let opts=`<option value="">-- Pilih Guru --</option><option value="SEMUA" class="font-bold text-blue-600 bg-blue-50">&#10024; Semua Guru (Jadwal Rapat / Bersama)</option>`; let fOpts=`<option value="">Semua Guru</option>`; window.appState.guru.forEach(g => { opts+=`<option value="${g.id}">${g.nama}</option>`; fOpts+=`<option value="${g.id}">${g.nama}</option>`; }); const cG=selectGuru.value; const cF=filterGuru.value; selectGuru.innerHTML=opts; selectGuru.value=cG; filterGuru.innerHTML=fOpts; filterGuru.value=cF; let jFiltered = window.appState.jadwal_guru || []; if(cF) jFiltered=jFiltered.filter(j=>String(j.id_guru)===String(cF)); if(filterHari&&filterHari.value) jFiltered=jFiltered.filter(j=>j.hari===filterHari.value); const hariOrd = {'Senin':1,'Selasa':2,'Rabu':3,'Kamis':4,'Jumat':5,'Sabtu':6,'Ahad':7}; jFiltered.sort((a,b)=>hariOrd[a.hari]-hariOrd[b.hari]); container.innerHTML = jFiltered.map(j=>{ const g=window.appState.guru.find(x=>String(x.id)===String(j.id_guru)); return `<tr class="border-b border-gray-100 hover:bg-purple-50"><td class="px-4 py-3 font-bold text-sm text-gray-800">${g?g.nama:'-'}</td><td class="px-4 py-3 text-sm text-gray-700"><span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md text-xs font-bold">${j.hari}</span><br><span class="text-xs inline-block border bg-gray-50 px-2 mt-1 rounded">${j.jam}</span></td><td class="px-4 py-3 text-right"><button onclick="window.editJadwalGuru(${j.id})" class="text-blue-500 bg-blue-50 p-1.5 rounded-lg mr-1"><i class="fa-solid fa-pen"></i></button><button onclick="window.hapusJadwalGuru(${j.id})" class="text-red-500 bg-red-50 p-1.5 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>`; }).join(''); if(jFiltered.length===0) container.innerHTML=`<tr><td colspan="3" class="text-center py-6 text-gray-500">Belum ada jadwal.</td></tr>`; };
         window.resetFormJadwal = () => { document.getElementById('jadwal-mode').value='add'; document.getElementById('jadwal-id').value=''; document.getElementById('jadwal-guru-id').value=''; document.getElementById('jadwal-hari').value=''; ['jam1-mulai','jam1-selesai','jam2-mulai','jam2-selesai'].forEach(id=>document.getElementById('jadwal-'+id).value=''); document.getElementById('btn-submit-jadwal').innerText='Simpan Jadwal'; document.getElementById('btn-cancel-jadwal').classList.add('hidden'); };
         window.editJadwalGuru = (id) => { const j = window.appState.jadwal_guru.find(x=>String(x.id)===String(id)); if(!j) return; document.getElementById('jadwal-mode').value='edit'; document.getElementById('jadwal-id').value=j.id; document.getElementById('jadwal-guru-id').value=j.id_guru; document.getElementById('jadwal-hari').value=j.hari; let j1m='',j1s='',j2m='',j2s=''; const m1=j.jam.match(/Jam 1:\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/); if(m1){j1m=m1[1];j1s=m1[2];} const m2=j.jam.match(/Jam 2:\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/); if(m2){j2m=m2[1];j2s=m2[2];} document.getElementById('jadwal-jam1-mulai').value=j1m; document.getElementById('jadwal-jam1-selesai').value=j1s; document.getElementById('jadwal-jam2-mulai').value=j2m; document.getElementById('jadwal-jam2-selesai').value=j2s; document.getElementById('btn-submit-jadwal').innerText='Perbarui Jadwal'; document.getElementById('btn-cancel-jadwal').classList.remove('hidden'); document.getElementById('tab-jadwal-guru').scrollIntoView(); };
-        window.simpanJadwalGuru = (e) => { e.preventDefault(); const mode=document.getElementById('jadwal-mode').value; const id=document.getElementById('jadwal-id').value; const id_guru=document.getElementById('jadwal-guru-id').value; const hari=document.getElementById('jadwal-hari').value; const j1m=document.getElementById('jadwal-jam1-mulai').value; const j1s=document.getElementById('jadwal-jam1-selesai').value; const j2m=document.getElementById('jadwal-jam2-mulai').value; const j2s=document.getElementById('jadwal-jam2-selesai').value; if(!id_guru||!hari) return window.showAlert('Gagal','Pilih Guru dan Hari','error'); let jamArr=[]; if(j1m&&j1s) jamArr.push(`Jam 1: ${j1m} - ${j1s}`); if(j2m&&j2s) jamArr.push(`Jam 2: ${j2m} - ${j2s}`); const jamStr = jamArr.length>0 ? jamArr.join('<hr class="my-1 border-gray-300">') : 'Tidak diatur'; if(!window.appState.jadwal_guru) window.appState.jadwal_guru=[]; if(mode==='add') window.appState.jadwal_guru.push({id:Date.now(), id_guru:parseInt(id_guru), hari, jam:jamStr}); else { const idx=window.appState.jadwal_guru.findIndex(x=>String(x.id)===String(id)); if(idx>-1) window.appState.jadwal_guru[idx]={id:parseInt(id),id_guru:parseInt(id_guru),hari,jam:jamStr}; } window.saveState(); window.renderJadwalGuru(); window.resetFormJadwal(); window.showAlert('Berhasil','Jadwal tersimpan','success'); };
+        window.simpanJadwalGuru = (e) => { e.preventDefault(); const mode=document.getElementById('jadwal-mode').value; const id=document.getElementById('jadwal-id').value; const id_guru=document.getElementById('jadwal-guru-id').value; const hari=document.getElementById('jadwal-hari').value; const j1m=document.getElementById('jadwal-jam1-mulai').value; const j1s=document.getElementById('jadwal-jam1-selesai').value; const j2m=document.getElementById('jadwal-jam2-mulai').value; const j2s=document.getElementById('jadwal-jam2-selesai').value; if(!id_guru||!hari) return window.showAlert('Gagal','Pilih Guru dan Hari','error'); let jamArr=[]; if(j1m&&j1s) jamArr.push(`Jam 1: ${j1m} - ${j1s}`); if(j2m&&j2s) jamArr.push(`Jam 2: ${j2m} - ${j2s}`); const jamStr = jamArr.length>0 ? jamArr.join('<hr class="my-1 border-gray-300">') : 'Tidak diatur'; if(!window.appState.jadwal_guru) window.appState.jadwal_guru=[]; if(id_guru === 'SEMUA') { if(mode === 'edit') return window.showAlert('Gagal', 'Opsi Semua Guru hanya untuk Tambah Jadwal Baru.', 'error'); window.showConfirm("Jadwal Bersama", `Terapkan jadwal ini untuk SEMUA GURU pada hari ${hari}?`, () => { let c = 0; window.appState.guru.forEach(g => { window.appState.jadwal_guru.push({id:Date.now() + c++, id_guru:parseInt(g.id), hari, jam:jamStr}); }); window.saveState(); window.renderJadwalGuru(); window.resetFormJadwal(); window.showAlert('Berhasil','Jadwal rapat/bersama berhasil ditambahkan.','success'); }); return; } if(mode==='add') window.appState.jadwal_guru.push({id:Date.now(), id_guru:parseInt(id_guru), hari, jam:jamStr}); else { const idx=window.appState.jadwal_guru.findIndex(x=>String(x.id)===String(id)); if(idx>-1) window.appState.jadwal_guru[idx]={id:parseInt(id),id_guru:parseInt(id_guru),hari,jam:jamStr}; } window.saveState(); window.renderJadwalGuru(); window.resetFormJadwal(); window.showAlert('Berhasil','Jadwal tersimpan','success'); };
         window.hapusJadwalGuru = (id) => { window.showConfirm("Hapus", "Yakin hapus jadwal?", ()=>{ window.appState.jadwal_guru=window.appState.jadwal_guru.filter(j=>String(j.id)!==String(id)); window.saveState(); window.renderJadwalGuru(); }); };
 
         // 10. MAPEL CRUD
@@ -1287,9 +1276,9 @@
                 if(newD.status_1 || newD.status_2) dataAbsen.push(newD);
             });
             if(record) record.data = dataAbsen; else window.appState.absensi_guru.push({ tanggal: tgl, data: dataAbsen });
-            window.saveState(); window.showAlert('Berhasil', 'Absensi disimpan.', 'success');
+            window.saveState(); window.updateDashboardStats(); window.showAlert('Berhasil', 'Absensi disimpan.', 'success');
         };
-        window.hapusAbsenGuru = () => { const tgl = document.getElementById('tgl-absen-guru').value; if(!tgl) return; window.showConfirm('Hapus', `Reset absen tgl ${tgl}?`, () => { window.appState.absensi_guru = window.appState.absensi_guru.filter(a => a.tanggal !== tgl); window.saveState(); window.renderAbsenGuru(); }); };
+        window.hapusAbsenGuru = () => { const tgl = document.getElementById('tgl-absen-guru').value; if(!tgl) return; window.showConfirm('Hapus', `Reset absen tgl ${tgl}?`, () => { window.appState.absensi_guru = window.appState.absensi_guru.filter(a => a.tanggal !== tgl); window.saveState(); window.renderAbsenGuru(); window.updateDashboardStats(); }); };
         
         window.renderRekapAbsenGuru = () => {
             const container = document.getElementById('table-rekap-absen-guru'); const filterEl = document.getElementById('filter-bulan-rekap-guru'); if(!container||!filterEl) return;
@@ -1338,9 +1327,9 @@
                 const id = parseInt(r.dataset.id); const input = r.querySelector(`input[name="absen_siswa_${id}"]:checked`);
                 if(input) { const dIdx = record.data.findIndex(d => d.id_siswa === id); if(dIdx > -1) record.data[dIdx].status = input.value; else record.data.push({ id_siswa: id, status: input.value }); }
             });
-            window.saveState(); window.showAlert('Berhasil', `Absensi kelas ${kelas} disimpan.`, 'success');
+            window.saveState(); window.updateDashboardStats(); window.showAlert('Berhasil', `Absensi kelas ${kelas} disimpan.`, 'success');
         };
-        window.hapusAbsenSiswa = () => { const tgl = document.getElementById('tgl-absen-siswa').value; const kelas = document.getElementById('filter-kelas-absen').value; if(!tgl || !kelas) return; window.showConfirm('Hapus', `Reset absen kelas ${kelas} tgl ${tgl}?`, () => { let record = window.appState.absensi_siswa.find(a => a.tanggal === tgl); if(record) { const ids = window.appState.siswa.filter(s => String(s.kelas).toLowerCase() === String(kelas).toLowerCase()).map(s => s.id); record.data = record.data.filter(d => !ids.includes(d.id_siswa)); window.saveState(); window.renderAbsenSiswa(); } }); };
+        window.hapusAbsenSiswa = () => { const tgl = document.getElementById('tgl-absen-siswa').value; const kelas = document.getElementById('filter-kelas-absen').value; if(!tgl || !kelas) return; window.showConfirm('Hapus', `Reset absen kelas ${kelas} tgl ${tgl}?`, () => { let record = window.appState.absensi_siswa.find(a => a.tanggal === tgl); if(record) { const ids = window.appState.siswa.filter(s => String(s.kelas).toLowerCase() === String(kelas).toLowerCase()).map(s => s.id); record.data = record.data.filter(d => !ids.includes(d.id_siswa)); window.saveState(); window.renderAbsenSiswa(); window.updateDashboardStats(); } }); };
 
         // 13. SCANNER, GPS & SURAT IZIN
         window.tempInfoJarak = ''; window.tempScanText = ''; window.tempScannerMode = ''; window.tempSuratSesi = ''; window.tempSuratStatus = ''; window.tempStrukBase64 = ''; window.tempStrukFile = null;
@@ -1501,7 +1490,7 @@
                     targetD['status_1'] = finalStatus; targetD['info_1'] = cekWaktu.infoWaktu; 
                     if(cekWaktu.hasJam2) { targetD['status_2'] = finalStatus; targetD['info_2'] = cekWaktu.infoWaktu; }
                     
-                    window.saveState(); window.renderAbsenGuru(); if(finalStatus === 'Hadir') window.playHadirSound(); else window.playBeep();
+                    window.saveState(); window.renderAbsenGuru(); window.updateDashboardStats(); if(finalStatus === 'Hadir') window.playHadirSound(); else window.playBeep();
                     if(!silent) return window.showAlert('Absen Berhasil', `Guru: ${guru.nama}\nTelah tercatat ${finalStatus.toUpperCase()}.${cekWaktu.infoWaktu&&cekWaktu.infoWaktu.includes('Terlambat')?'\nCatatan: '+cekWaktu.infoWaktu:''}${infoJarak}`, 'success');
                     return cekWaktu;
                 }
@@ -1513,7 +1502,7 @@
                         if(!window.appState.absensi_siswa) window.appState.absensi_siswa = [];
                         let recordS = window.appState.absensi_siswa.find(a => a.tanggal === tgl); if (!recordS) { recordS = { tanggal: tgl, data: [] }; window.appState.absensi_siswa.push(recordS); }
                         const dIdx = recordS.data.findIndex(d => String(d.id_siswa) === String(siswa.id)); if(dIdx > -1) recordS.data[dIdx].status = finalStatus; else recordS.data.push({ id_siswa: siswa.id, status: finalStatus });
-                        window.saveState(); window.renderAbsenSiswa(); if(finalStatus === 'Hadir') window.playHadirSound(); else window.playBeep();
+                        window.saveState(); window.renderAbsenSiswa(); window.updateDashboardStats(); if(finalStatus === 'Hadir') window.playHadirSound(); else window.playBeep();
                         if(!silent) return window.showAlert('Absen Berhasil', `Murid: ${siswa.nama}\nTelah tercatat ${finalStatus.toUpperCase()} hari ini.${infoJarak}`, 'success');
                         return;
                     }
@@ -1526,7 +1515,7 @@
                     const filterEl = document.getElementById('filter-kelas-absen'); if(filterEl && filterEl.value !== String(siswa.kelas).toUpperCase()) filterEl.value = String(siswa.kelas).toUpperCase();
                     if(!window.appState.absensi_siswa) window.appState.absensi_siswa = []; let record = window.appState.absensi_siswa.find(a => a.tanggal === tgl); if (!record) { record = { tanggal: tgl, data: [] }; window.appState.absensi_siswa.push(record); }
                     const dIdx = record.data.findIndex(d => String(d.id_siswa) === String(siswa.id)); if(dIdx > -1) record.data[dIdx].status = finalStatus; else record.data.push({ id_siswa: siswa.id, status: finalStatus });
-                    window.saveState(); window.renderAbsenSiswa(); if(finalStatus === 'Hadir') window.playHadirSound(); else window.playBeep();
+                    window.saveState(); window.renderAbsenSiswa(); window.updateDashboardStats(); if(finalStatus === 'Hadir') window.playHadirSound(); else window.playBeep();
                     if(!silent) return window.showAlert('Berhasil Absen', `Murid: ${siswa.nama}\nTelah ditandai ${finalStatus.toUpperCase()}!${infoJarak}`, 'success');
                 } else { if(!silent) return window.showAlert('Tidak Ditemukan', `Barcode bukan Murid.`, 'error'); }
             }
