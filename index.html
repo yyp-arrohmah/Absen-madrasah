@@ -360,7 +360,14 @@
             <header class="flex justify-between items-center mb-6 lg:mb-8 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
                 <div class="flex items-center gap-3">
                     <button class="lg:hidden text-gray-600 bg-gray-100 w-10 h-10 rounded-xl flex items-center justify-center hover:bg-gray-200" onclick="window.toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-                    <div><h1 class="text-lg lg:text-xl font-bold text-gray-800">Sistem Informasi Madrasah</h1><p class="text-xs text-gray-500 hidden sm:block" id="current-username">Panel Admin</p></div>
+                    <div>
+                        <h1 class="text-lg lg:text-xl font-bold text-gray-800">Sistem Informasi Madrasah</h1>
+                        <div class="flex items-center gap-2">
+                            <p class="text-[11px] font-bold text-gray-500 hidden sm:block" id="current-username">Panel Admin</p>
+                            <span class="hidden sm:block text-gray-300">|</span>
+                            <p class="text-xs font-bold text-emerald-600 hidden sm:block" id="current-hijri-date-dashboard">Memuat Tanggal...</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="flex items-center gap-3">
                     <button id="nav-btn-pengaturan" onclick="window.bukaModalPengaturan('lokasi')" class="w-10 h-10 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors shadow-sm"><i class="fa-solid fa-gear"></i></button>
@@ -431,12 +438,13 @@
                             </button>
                             <div class="flex flex-col justify-center bg-white px-3 py-1.5 rounded-xl border border-gray-200 shadow-sm w-full sm:w-auto min-w-[210px]">
                                 <div class="flex items-center justify-between gap-2">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap"><i class="fa-solid fa-calendar mr-1 text-purple-500"></i> Masehi:</label>
-                                    <input type="date" id="tgl-absen-guru" class="outline-none text-xs font-bold bg-transparent cursor-pointer text-gray-700 text-right" onchange="window.renderAbsenGuru()">
-                                </div>
-                                <div class="flex items-center justify-between gap-2 border-t border-gray-100 pt-1 mt-1">
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap"><i class="fa-solid fa-moon mr-1 text-purple-500"></i> Hijriyah:</label>
-                                    <span id="label-hijri-absen" class="text-xs font-bold text-purple-700 text-right">-</span>
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap"><i class="fa-solid fa-moon mr-1 text-purple-500"></i> Tanggal Hijriyah:</label>
+                                    <div class="flex gap-1 text-xs font-bold text-purple-700">
+                                        <select id="hijri-tgl-absen-guru" class="bg-transparent outline-none cursor-pointer text-right appearance-none" onchange="window.syncMasehiDate('absen-guru')"></select>
+                                        <select id="hijri-bln-absen-guru" class="bg-transparent outline-none cursor-pointer appearance-none w-20 truncate" onchange="window.syncMasehiDate('absen-guru')"></select>
+                                        <select id="hijri-thn-absen-guru" class="bg-transparent outline-none cursor-pointer appearance-none" onchange="window.syncMasehiDate('absen-guru')"></select>
+                                    </div>
+                                    <input type="hidden" id="tgl-absen-guru">
                                 </div>
                             </div>
                         </div>
@@ -501,8 +509,13 @@
                                 <h3 class="font-bold mb-4"><i class="fa-solid fa-calendar-plus text-emerald-500 mr-2"></i>Tambah Agenda / Libur</h3>
                                 <form onsubmit="window.simpanAgenda(event)" class="space-y-4">
                                     <div>
-                                        <label class="block text-sm font-medium mb-1 text-gray-700">Tanggal</label>
-                                        <input type="date" id="agenda-tgl" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500" required>
+                                        <label class="block text-sm font-medium mb-1 text-gray-700">Tanggal (Hijriyah)</label>
+                                        <div class="flex gap-2 text-sm">
+                                            <select id="hijri-tgl-agenda" class="border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 w-full" onchange="window.syncMasehiDate('agenda')"></select>
+                                            <select id="hijri-bln-agenda" class="border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 w-full" onchange="window.syncMasehiDate('agenda')"></select>
+                                            <select id="hijri-thn-agenda" class="border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-emerald-500 w-full" onchange="window.syncMasehiDate('agenda')"></select>
+                                        </div>
+                                        <input type="hidden" id="agenda-tgl" required>
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium mb-1 text-gray-700">Keterangan</label>
@@ -907,67 +920,15 @@
                                     <option value="ENAM">ENAM</option>
                                 </select>
                             </div>
-                            <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm">
-                                <label class="text-sm font-bold text-gray-700"><i class="fa-solid fa-calendar-day mr-1 text-blue-600"></i> Tanggal:</label>
-                                <input type="date" id="tgl-absen-siswa" class="outline-none text-sm font-medium bg-transparent cursor-pointer text-gray-700" onchange="window.renderAbsenSiswa()">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="overflow-x-auto pb-4">
-                            <table class="w-full text-sm text-left">
-                                <thead class="bg-blue-50 text-xs text-blue-900 font-bold uppercase border-b border-blue-100">
-                                    <tr>
-                                        <th class="px-4 py-3.5 w-16 text-center">No</th>
-                                        <th class="px-4 py-3.5 min-w-[200px]">Nama Murid & NIS</th>
-                                        <th class="px-4 py-3.5 text-center min-w-[300px]">Keterangan Kehadiran</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="table-absen-siswa" class="divide-y divide-gray-100 bg-white">
-                                    <tr><td colspan="3" class="px-4 py-8 text-center text-gray-500">Pilih kelas terlebih dahulu.</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2">
-                            <button onclick="window.hapusAbsenSiswa()" class="w-full sm:w-auto bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-colors"><i class="fa-solid fa-trash-can"></i> Hapus Absen</button>
-                            <button onclick="window.simpanAbsenSiswa()" class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md transition-colors"><i class="fa-solid fa-save"></i> Simpan Absensi Murid</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- TAB DATA MAPEL (AKADEMIK) -->
-                <div id="tab-mapel" class="tab-content max-w-6xl mx-auto scroll-mt-6">
-                    <div class="mb-8"><h2 class="text-2xl font-bold text-gray-800">Manajemen Mata Pelajaran</h2></div>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-1">
-                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
-                                <h3 class="font-bold mb-4"><i class="fa-solid fa-book-medical text-blue-500 mr-2"></i>Tambah Mapel</h3>
-                                <form onsubmit="window.tambahMapel(event)" class="space-y-4">
-                                    <input type="hidden" id="mapel-mode" value="add">
-                                    <input type="hidden" id="mapel-id" value="">
-                                    <div>
-                                        <label class="block text-sm font-medium mb-1">Kelas</label>
-                                        <select id="mapel-kelas" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 bg-white" required>
-                                            <option value="">-- Pilih Kelas --</option>
-                                            <option value="SATU">SATU</option>
-                                            <option value="DUA">DUA</option>
-                                            <option value="TIGA">TIGA</option>
-                                            <option value="EMPAT">EMPAT</option>
-                                            <option value="LIMA">LIMA</option>
-                                            <option value="ENAM">ENAM</option>
-                                        </select>
+                            <div class="flex flex-col justify-center bg-white px-3 py-1.5 rounded-xl border border-gray-200 shadow-sm w-full sm:w-auto min-w-[210px]">
+                                <div class="flex items-center justify-between gap-2">
+                                    <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider whitespace-nowrap"><i class="fa-solid fa-moon mr-1 text-blue-500"></i> Tanggal Hijriyah:</label>
+                                    <div class="flex gap-1 text-xs font-bold text-blue-700">
+                                        <select id="hijri-tgl-absen-siswa" class="bg-transparent outline-none cursor-pointer text-right appearance-none" onchange="window.syncMasehiDate('absen-siswa')"></select>
+                                        <select id="hijri-bln-absen-siswa" class="bg-transparent outline-none cursor-pointer appearance-none w-20 truncate" onchange="window.syncMasehiDate('absen-siswa')"></select>
+                                        <select id="hijri-thn-absen-siswa" class="bg-transparent outline-none cursor-pointer appearance-none" onchange="window.syncMasehiDate('absen-siswa')"></select>
                                     </div>
-                                    
-                                    <div><label class="block text-sm font-medium mb-1">Nama Mata Pelajaran</label><input type="text" id="mapel-nama" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-blue-500" placeholder="Cth: Nahwu" required></div>
-                                    <button type="submit" id="btn-submit-mapel" class="w-full bg-blue-600 text-white rounded-lg p-2.5 font-bold hover:bg-blue-700 mt-2">Simpan Mapel</button>
-                                    <button type="button" id="btn-cancel-mapel" onclick="window.resetFormMapel()" class="w-full bg-gray-100 text-gray-700 rounded-lg p-2.5 font-bold hover:bg-gray-200 mt-2 hidden">Batal Edit</button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="lg:col-span-2">
-                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div class="overflow-x-auto">
-                                    <table class="w-full text-sm text-left"><thead class="bg-gray-100/80 text-xs text-gray-500 uppercase border-b"><tr><th class="px-6 py-3">Kelas</th><th class="px-6 py-3">Mata Pelajaran</th><th class="px-6 py-3 text-right">Aksi</th></tr></thead><tbody id="table-mapel" class="divide-y divide-gray-100 bg-white"></tbody></table>
+                                    <input type="hidden" id="tgl-absen-siswa">
                                 </div>
                             </div>
                         </div>
@@ -1133,8 +1094,110 @@
         window.playBeep = () => { try { const audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} };
         window.playHadirSound = () => { try { if('speechSynthesis' in window) { const utter = new SpeechSynthesisUtterance("Hadir"); utter.lang = 'id-ID'; window.speechSynthesis.speak(utter); } } catch(e) {} };
         window.getDistanceFromLatLonInM = (lat1, lon1, lat2, lon2) => { const R = 6371e3; const p1 = lat1 * Math.PI/180; const p2 = lat2 * Math.PI/180; const dp = (lat2-lat1) * Math.PI/180; const dl = (lon2-lon1) * Math.PI/180; const a = Math.sin(dp/2) * Math.sin(dp/2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl/2) * Math.sin(dl/2); return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); };
-        window.getDatesInHijriMonth = (targetHYear, targetHMonth) => { let dates = []; let estGYear = Math.floor((targetHYear * 0.97) + 622) - 1; let d = new Date(estGYear, 0, 1); let limit = 0; while(limit < 2500) { try { const fmt = new Intl.DateTimeFormat('en-US-u-ca-islamic', {month:'numeric', year:'numeric'}).format(d); const parts = fmt.split('/'); const hM = parseInt(parts[0]); const hY = parseInt(parts[1].replace(/[^0-9]/g, '')); if (hY === targetHYear && hM === targetHMonth) { dates.push(new Date(d)); } else if (dates.length > 0) { break; } d.setDate(d.getDate() + 1); limit++; } catch(e) { d.setDate(d.getDate() + 1); limit++; } } return dates; };
-        window.initHijriFilter = () => { try { const fmt = new Intl.DateTimeFormat('en-US-u-ca-islamic', {month:'numeric', year:'numeric'}).format(new Date()); const parts = fmt.split('/'); const currM = parseInt(parts[0]); const currY = parseInt(parts[1].replace(/[^0-9]/g, '')); const selM = document.getElementById('filter-bulan-hijri'); const selY = document.getElementById('filter-tahun-hijri'); if(selM) selM.value = currM; if(selY) { if(![...selY.options].find(o => parseInt(o.value) === currY)) { selY.innerHTML += `<option value="${currY}">${currY} H</option>`; } selY.value = currY; } } catch(e){} };
+        
+        window.getHijriComponents = (dateObj) => {
+            try {
+                const fmt = new Intl.DateTimeFormat('en-US-u-ca-islamic', {day:'numeric', month:'numeric', year:'numeric'}).format(dateObj);
+                const parts = fmt.split('/'); 
+                return { m: parseInt(parts[0]), d: parseInt(parts[1]), y: parseInt(parts[2].replace(/[^0-9]/g, '')) };
+            } catch(e) { return { d: 1, m: 1, y: 1446 }; }
+        };
+
+        window.getDatesInHijriMonth = (targetHYear, targetHMonth) => { 
+            let dates = []; 
+            let estGYear = Math.floor((targetHYear * 0.97) + 622) - 1; 
+            let d = new Date(estGYear, 0, 1); 
+            let limit = 0; 
+            while(limit < 2500) { 
+                try { 
+                    const h = window.getHijriComponents(d);
+                    if (h.y === targetHYear && h.m === targetHMonth) { 
+                        dates.push(new Date(d)); 
+                    } else if (dates.length > 0) { 
+                        break; 
+                    } 
+                    d.setDate(d.getDate() + 1); 
+                    limit++; 
+                } catch(e) { d.setDate(d.getDate() + 1); limit++; } 
+            } 
+            return dates; 
+        };
+        
+        window.populateHijriDropdowns = (prefix) => {
+            let tglOpts = ''; for(let i=1; i<=30; i++) tglOpts += `<option value="${i}">${i}</option>`;
+            let blnOpts = `<option value="1">Muharram</option><option value="2">Safar</option><option value="3">Rabi'ul Awal</option><option value="4">Rabi'ul Akhir</option><option value="5">Jumadil Awal</option><option value="6">Jumadil Akhir</option><option value="7">Rajab</option><option value="8">Sya'ban</option><option value="9">Ramadhan</option><option value="10">Syawal</option><option value="11">Dzulqa'dah</option><option value="12">Dzulhijjah</option>`;
+            let thnOpts = ''; for(let i=1440; i<=1460; i++) thnOpts += `<option value="${i}">${i}</option>`;
+            const elTgl = document.getElementById(`hijri-tgl-${prefix}`); if(elTgl) elTgl.innerHTML = tglOpts;
+            const elBln = document.getElementById(`hijri-bln-${prefix}`); if(elBln) elBln.innerHTML = blnOpts;
+            const elThn = document.getElementById(`hijri-thn-${prefix}`); if(elThn) elThn.innerHTML = thnOpts;
+        };
+
+        window.syncMasehiDate = (type) => {
+            const elTgl = document.getElementById(`hijri-tgl-${type}`); const elBln = document.getElementById(`hijri-bln-${type}`); const elThn = document.getElementById(`hijri-thn-${type}`);
+            if(!elTgl || !elBln || !elThn) return;
+            const hTgl = parseInt(elTgl.value); const hBln = parseInt(elBln.value); const hThn = parseInt(elThn.value);
+            const dates = window.getDatesInHijriMonth(hThn, hBln);
+            if(dates.length > 0) {
+                let targetDate = dates[hTgl - 1];
+                if (!targetDate) { targetDate = dates[dates.length - 1]; elTgl.value = dates.length; } // Handle 30th day if month only has 29
+                const yyyy = targetDate.getFullYear(); const mm = String(targetDate.getMonth() + 1).padStart(2, '0'); const dd = String(targetDate.getDate()).padStart(2, '0');
+                
+                let hiddenId = `tgl-${type}`; if(type === 'agenda') hiddenId = 'agenda-tgl';
+                const masehiInput = document.getElementById(hiddenId); 
+                if(masehiInput) masehiInput.value = `${yyyy}-${mm}-${dd}`;
+                
+                if (type === 'absen-guru') window.renderAbsenGuru();
+                if (type === 'absen-siswa') window.renderAbsenSiswa();
+            }
+        };
+
+        window.syncHijriDate = (type, dateObj = null) => {
+            let d = dateObj;
+            if (!d) {
+                let hiddenId = `tgl-${type}`; if (type === 'agenda') hiddenId = 'agenda-tgl';
+                const tglVal = document.getElementById(hiddenId)?.value;
+                if(!tglVal) return;
+                const parts = tglVal.split('-'); d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+            }
+            
+            const h = window.getHijriComponents(d);
+            const elTgl = document.getElementById(`hijri-tgl-${type}`); const elBln = document.getElementById(`hijri-bln-${type}`); const elThn = document.getElementById(`hijri-thn-${type}`);
+            if(elTgl) elTgl.value = h.d;
+            if(elBln) elBln.value = h.m;
+            if(elThn) { if(![...elThn.options].find(o => parseInt(o.value) === h.y)) elThn.innerHTML += `<option value="${h.y}">${h.y}</option>`; elThn.value = h.y; }
+        };
+
+        window.initHijriFilter = () => { 
+            window.populateHijriDropdowns('absen-guru');
+            window.populateHijriDropdowns('absen-siswa');
+            window.populateHijriDropdowns('agenda');
+            window.initKalenderState();
+            
+            const today = new Date();
+            
+            const inputTglGuru = document.getElementById('tgl-absen-guru');
+            if(inputTglGuru) inputTglGuru.value = window.getTodayInputFormat();
+            window.syncHijriDate('absen-guru', today);
+            
+            const inputTglSiswa = document.getElementById('tgl-absen-siswa');
+            if(inputTglSiswa) inputTglSiswa.value = window.getTodayInputFormat();
+            window.syncHijriDate('absen-siswa', today);
+            
+            const inputTglAgenda = document.getElementById('agenda-tgl');
+            if(inputTglAgenda) inputTglAgenda.value = window.getTodayInputFormat();
+            window.syncHijriDate('agenda', today);
+            
+            try { 
+                const hc = window.getHijriComponents(today);
+                const selM = document.getElementById('filter-bulan-hijri'); 
+                const selY = document.getElementById('filter-tahun-hijri'); 
+                if(selM) selM.value = hc.m; 
+                if(selY) { 
+                    if(![...selY.options].find(o => parseInt(o.value) === hc.y)) { selY.innerHTML += `<option value="${hc.y}">${hc.y} H</option>`; } 
+                    selY.value = hc.y; 
+                } 
+            } catch(e){} 
+        };
 
         // 3. UI HELPERS
         window.showAlert = (title, message, type='info', callback=null) => { 
@@ -1317,6 +1380,11 @@
             document.getElementById('dash-siswa').innerText = st.siswa ? st.siswa.length : 0; 
             document.getElementById('dash-guru').innerText = st.guru ? st.guru.length : 0; 
             
+            const hc = window.getHijriComponents(new Date());
+            const hStr = `${hc.d} ${["Muharram", "Safar", "Rabi'ul Awal", "Rabi'ul Akhir", "Jumadil Awal", "Jumadil Akhir", "Rajab", "Sya'ban", "Ramadhan", "Syawal", "Dzulqa'dah", "Dzulhijjah"][hc.m-1]} ${hc.y} H`;
+            const dashDateEl = document.getElementById('current-hijri-date-dashboard');
+            if(dashDateEl) dashDateEl.innerText = hStr;
+            
             const todayStr = window.getTodayInputFormat();
             
             let siswaHadirCount = 0;
@@ -1456,16 +1524,17 @@
 
         window.renderAbsenGuru = () => {
             const container = document.getElementById('table-absen-guru'); if(!container) return;
-            const tglEl = document.getElementById('tgl-absen-guru'); if(!tglEl) return; if(!tglEl.value) tglEl.value = window.getTodayInputFormat();
-            const tgl = tglEl.value; const recordHariIni = (window.appState.absensi_guru||[]).find(a => a.tanggal === tgl) || { data: [] };
+            const tglEl = document.getElementById('tgl-absen-guru'); if(!tglEl) return; 
+            
+            let isDefaulted = false;
+            if(!tglEl.value) { tglEl.value = window.getTodayInputFormat(); isDefaulted = true; }
+            const tgl = tglEl.value; 
+            
+            if(isDefaulted && typeof window.syncHijriDate === 'function') window.syncHijriDate('absen-guru');
+            
+            const recordHariIni = (window.appState.absensi_guru||[]).find(a => a.tanggal === tgl) || { data: [] };
             const parts = tgl.split('-'); const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2])); const namaHari = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][d.getDay()];
             
-            // Konversi dan Tampilkan Label Hijriyah
-            try { 
-                const hLabel = document.getElementById('label-hijri-absen'); 
-                if(hLabel) hLabel.innerText = new Intl.DateTimeFormat('id-ID-u-ca-islamic-nu-latn', {day:'numeric', month:'long', year:'numeric'}).format(d); 
-            } catch(e){}
-
             const jadwalHariIni = (window.appState.jadwal_guru || []).filter(j => j.hari === namaHari);
             const idGuruTerjadwal = new Set(jadwalHariIni.map(j => String(j.id_guru)));
             const guruTampil = window.appState.guru.filter(g => idGuruTerjadwal.has(String(g.id)) || recordHariIni.data.some(d => String(d.id_guru) === String(g.id)));
@@ -1589,7 +1658,11 @@
                 const parts = r.tanggal.split('-');
                 const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
                 const namaHari = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'][d.getDay()];
-                const tglFormat = `<span class="font-bold">${namaHari}</span>, ${parts[2]}/${parts[1]}/${parts[0]}`;
+                
+                let hijriStr = '';
+                try { hijriStr = new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(d); } catch(e){}
+                
+                const tglFormat = `<div class="font-bold text-purple-700 leading-tight mb-1">${hijriStr}</div><div class="text-[11px] text-gray-500">${namaHari}, ${parts[2]}/${parts[1]}/${parts[0]}</div>`;
                 const infoText = [r.i1, r.i2].filter(x => x && x.trim() !== '' && !x.includes('Tepat Waktu')).join(', ') || '-';
 
                 return `
@@ -1606,15 +1679,26 @@
         // ==========================================
         // LOGIKA KALENDER HIJRIYAH & MASEHI
         // ==========================================
-        window.currentKalenderDate = new Date();
+        window.initKalenderState = () => {
+            const hc = window.getHijriComponents(new Date());
+            window.currentHijriYear = hc.y;
+            window.currentHijriMonth = hc.m;
+        };
 
         window.ubahBulanKalender = (step) => {
-            window.currentKalenderDate.setMonth(window.currentKalenderDate.getMonth() + step);
+            window.currentHijriMonth += step;
+            if (window.currentHijriMonth > 12) {
+                window.currentHijriMonth = 1;
+                window.currentHijriYear++;
+            } else if (window.currentHijriMonth < 1) {
+                window.currentHijriMonth = 12;
+                window.currentHijriYear--;
+            }
             window.renderKalender();
         };
 
         window.resetBulanKalender = () => {
-            window.currentKalenderDate = new Date();
+            window.initKalenderState();
             window.renderKalender();
         };
 
@@ -1623,54 +1707,51 @@
             const title = document.getElementById('kalender-title');
             if(!grid || !title) return;
 
-            const today = new Date();
-            const year = window.currentKalenderDate.getFullYear();
-            const month = window.currentKalenderDate.getMonth();
+            const hY = window.currentHijriYear;
+            const hM = window.currentHijriMonth;
+            const dates = window.getDatesInHijriMonth(hY, hM);
+            
+            if(dates.length === 0) return;
 
-            // Dapatkan tanggal awal dan jumlah hari dalam bulan ini
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const startingDay = firstDay.getDay(); // 0 = Ahad, 1 = Senin, dst
-            const totalDays = lastDay.getDate();
-
-            // Format judul: Masehi (Hijriyah)
-            const masehiFormatter = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' });
-            const hijriFormatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { month: 'long', year: 'numeric' });
-    
-            // Tampilkan 2 bulan hijriyah jika bulan masehi memotong pergantian bulan hijriyah
-            const hijriStart = hijriFormatter.format(firstDay);
-            const hijriEnd = hijriFormatter.format(lastDay);
-            let hijriTitle = hijriStart;
-            if(hijriStart !== hijriEnd) {
-                hijriTitle = `${hijriStart.split(' ')[0]} - ${hijriEnd}`;
+            const firstDate = dates[0];
+            const totalDays = dates.length;
+            const startingDay = firstDate.getDay(); // 0 = Ahad, 1 = Senin
+            
+            const namaBulanHijri = ["Muharram", "Safar", "Rabi'ul Awal", "Rabi'ul Akhir", "Jumadil Awal", "Jumadil Akhir", "Rajab", "Sya'ban", "Ramadhan", "Syawal", "Dzulqa'dah", "Dzulhijjah"];
+            
+            // Tampilkan rentang masehi di bawahnya
+            const firstM = dates[0];
+            const lastM = dates[totalDays - 1];
+            const fmtM = new Intl.DateTimeFormat('id-ID', { month: 'long', year: 'numeric' });
+            let masehiTitle = fmtM.format(firstM);
+            if(firstM.getMonth() !== lastM.getMonth()) {
+                masehiTitle = `${firstM.toLocaleString('id-ID',{month:'long'})} - ${fmtM.format(lastM)}`;
             }
 
-            title.innerHTML = `${masehiFormatter.format(firstDay)}<br><span class="text-[10px] text-emerald-600 font-normal uppercase tracking-wider">${hijriTitle}</span>`;
+            title.innerHTML = `${namaBulanHijri[hM-1]} ${hY} H<br><span class="text-[10px] text-emerald-600 font-normal uppercase tracking-wider">${masehiTitle}</span>`;
 
             let html = '';
-    
+            
             // Sel kosong sebelum tanggal 1
             for (let i = 0; i < startingDay; i++) {
                 html += `<div class="bg-white min-h-[80px] p-2 opacity-50"></div>`;
             }
 
-            // Isi tanggal
-            const hijriDayFormatter = new Intl.DateTimeFormat('id-ID-u-ca-islamic', { day: 'numeric' });
-            
-            for (let day = 1; day <= totalDays; day++) {
-                const currentDate = new Date(year, month, day);
-                const hijriDay = hijriDayFormatter.format(currentDate);
-                
-                // Cek apakah ini hari ini
-                const isToday = currentDate.getDate() === today.getDate() && currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear();
-                
-                // Cek hari jumat (merah)
-                const isFriday = currentDate.getDay() === 5;
+            const today = new Date();
+            today.setHours(0,0,0,0);
 
-                // Cek Agenda / Libur
-                const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-                const agendaHariIni = (window.appState.agenda || []).filter(a => a.tgl === dateStr);
+            for (let i = 0; i < totalDays; i++) {
+                const currentDate = dates[i];
+                const hD = i + 1;
+                const mD = currentDate.getDate();
                 
+                const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth()+1).padStart(2,'0')}-${String(currentDate.getDate()).padStart(2,'0')}`;
+                
+                currentDate.setHours(0,0,0,0);
+                const isToday = currentDate.getTime() === today.getTime();
+                const isFriday = currentDate.getDay() === 5;
+                
+                const agendaHariIni = (window.appState.agenda || []).filter(a => a.tgl === dateStr);
                 let isLibur = isFriday;
                 let agendaHTML = '';
 
@@ -1699,8 +1780,8 @@
                     <div class="${bgClass} min-h-[90px] p-2 relative flex flex-col cursor-default overflow-hidden">
                         ${badgeToday}
                         <div class="flex justify-between items-start w-full relative z-0 mb-1">
-                            <span class="font-black text-2xl leading-none ${textClassHijri}">${hijriDay}</span>
-                            <span class="text-[10px] font-bold ${textClassMasehi} bg-gray-50/80 px-1.5 py-0.5 rounded-md border border-gray-100/80">${day}</span>
+                            <span class="font-black text-2xl leading-none ${textClassHijri}">${hD}</span>
+                            <span class="text-[10px] font-bold ${textClassMasehi} bg-gray-50/80 px-1.5 py-0.5 rounded-md border border-gray-100/80">${mD}</span>
                         </div>
                         <div class="mt-auto pt-1 w-full flex flex-col gap-0.5">
                             ${agendaHTML}
@@ -1709,7 +1790,6 @@
                 `;
             }
 
-            // Sel kosong di akhir untuk melengkapi baris (kelipatan 7)
             const totalCells = startingDay + totalDays;
             const remainingCells = (7 - (totalCells % 7)) % 7;
             for (let i = 0; i < remainingCells; i++) {
@@ -1724,11 +1804,20 @@
             const listContainer = document.getElementById('list-agenda-kalender');
             if(!listContainer) return;
             
-            const year = window.currentKalenderDate.getFullYear();
-            const month = window.currentKalenderDate.getMonth() + 1;
-            const prefix = `${year}-${String(month).padStart(2,'0')}`;
+            const hY = window.currentHijriYear;
+            const hM = window.currentHijriMonth;
+            const dates = window.getDatesInHijriMonth(hY, hM);
+            if(dates.length === 0) return;
             
-            const agendaBulanIni = (window.appState.agenda || []).filter(a => a.tgl.startsWith(prefix)).sort((a,b) => a.tgl.localeCompare(b.tgl));
+            const startMasehi = dates[0];
+            const endMasehi = dates[dates.length - 1];
+            
+            const startStr = `${startMasehi.getFullYear()}-${String(startMasehi.getMonth()+1).padStart(2,'0')}-${String(startMasehi.getDate()).padStart(2,'0')}`;
+            const endStr = `${endMasehi.getFullYear()}-${String(endMasehi.getMonth()+1).padStart(2,'0')}-${String(endMasehi.getDate()).padStart(2,'0')}`;
+            
+            const agendaBulanIni = (window.appState.agenda || []).filter(a => {
+                return a.tgl >= startStr && a.tgl <= endStr;
+            }).sort((a,b) => a.tgl.localeCompare(b.tgl));
             
             if(agendaBulanIni.length === 0) {
                 listContainer.innerHTML = '<div class="p-5 text-center text-sm font-medium text-gray-400">Belum ada agenda di bulan ini.</div>';
@@ -1737,11 +1826,14 @@
             
             listContainer.innerHTML = agendaBulanIni.map(a => {
                 const parts = a.tgl.split('-');
-                const tglStr = `${parts[2]}/${parts[1]}/${parts[0]}`;
+                const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+                const hComp = window.getHijriComponents(d);
+                
+                const hStr = `${hComp.d} ${["Muharram", "Safar", "Rabi'ul Awal", "Rabi'ul Akhir", "Jumadil Awal", "Jumadil Akhir", "Rajab", "Sya'ban", "Ramadhan", "Syawal", "Dzulqa'dah", "Dzulhijjah"][hComp.m-1]}`;
                 const color = a.tipe === 'Libur' ? 'text-red-600 bg-red-50 border-red-200' : 'text-blue-600 bg-blue-50 border-blue-200';
                 return `<div class="p-4 flex justify-between items-center hover:bg-gray-50 transition-colors">
                     <div>
-                        <div class="text-xs font-bold ${a.tipe === 'Libur' ? 'text-red-500' : 'text-gray-800'} mb-1">${tglStr}</div>
+                        <div class="text-xs font-bold ${a.tipe === 'Libur' ? 'text-red-500' : 'text-gray-800'} mb-1">${hStr}</div>
                         <div class="text-sm font-bold text-gray-800 leading-tight">${a.ket}</div>
                         <span class="inline-block mt-1.5 text-[9px] px-1.5 py-0.5 rounded border font-bold uppercase tracking-wider ${color}">${a.tipe}</span>
                     </div>
@@ -1763,13 +1855,14 @@
             
             window.saveState();
             
-            // Pindahkan kalender ke bulan agenda yang baru ditambahkan
             const parts = tgl.split('-');
-            window.currentKalenderDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, 1);
+            const d = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+            const hc = window.getHijriComponents(d);
+            window.currentHijriYear = hc.y;
+            window.currentHijriMonth = hc.m;
             
             window.renderKalender();
             
-            document.getElementById('agenda-tgl').value = '';
             document.getElementById('agenda-ket').value = '';
             window.showAlert('Berhasil', 'Agenda / Hari Libur berhasil ditambahkan.', 'success');
         };
@@ -1939,8 +2032,23 @@
             const guru = window.appState.guru.find(g => String(g.nip) === idLokal || String(g.id) === idLokal); 
             if(!guru) return; 
 
+            let hTglStruk = '';
+            const today = new Date();
+            if(jmlHari > 1 && customTglStr) {
+                const parts = customTglStr.split(' s/d ');
+                if(parts.length === 2) {
+                    const p1 = parts[0].split('/'); const d1 = new Date(parseInt(p1[2]), parseInt(p1[1])-1, parseInt(p1[0]));
+                    const p2 = parts[1].split('/'); const d2 = new Date(parseInt(p2[2]), parseInt(p2[1])-1, parseInt(p2[0]));
+                    const hc1 = window.getHijriComponents(d1); const hc2 = window.getHijriComponents(d2);
+                    hTglStruk = `${hc1.d}/${hc1.m}/${hc1.y} - ${hc2.d}/${hc2.m}/${hc2.y} H`;
+                }
+            } else {
+                const hc = window.getHijriComponents(today);
+                hTglStruk = `${hc.d}/${hc.m}/${hc.y} H`;
+            }
+
             const d = new Date(); 
-            document.getElementById('struk-tanggal').innerText = customTglStr || `${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`; 
+            document.getElementById('struk-tanggal').innerText = hTglStruk; 
             document.getElementById('struk-jam').innerText = `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; 
             document.getElementById('struk-sesi').innerText = sesiStr; 
             document.getElementById('struk-nama').innerText = guru.nama; 
