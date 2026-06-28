@@ -170,6 +170,180 @@
                 <div class="mb-4" id="quick-reasons-container">
                     <!-- Quick reasons will be injected here -->
                 </div>
+                <div class="mb-5 flex gap-3">
+                    <div class="flex-1">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Alasan Ringkas:</label>
+                        <input type="text" id="input-alasan-surat" class="w-full border border-gray-300 rounded-xl p-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm" placeholder="Cth: Acara keluarga / Demam...">
+                    </div>
+                    <div class="w-24 shrink-0">
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Jml Hari:</label>
+                        <input type="number" id="input-hari-surat" class="w-full border border-gray-300 rounded-xl p-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm text-center font-bold" value="1" min="1" max="14">
+                    </div>
+                </div>
+                <button onclick="window.prosesSuratKeterangan()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-colors flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-receipt"></i> Buat Struk Pengajuan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HASIL STRUK & SHARE -->
+    <div id="modal-hasil-struk" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100005] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center flex flex-col items-center">
+            <h3 class="text-lg font-bold text-gray-800 mb-1">Bukti Pengajuan</h3>
+            <p class="text-xs text-green-600 font-bold mb-4"><i class="fa-solid fa-check-circle"></i> Absen Berhasil Tersimpan</p>
+            
+            <div class="border border-gray-200 p-2 bg-gray-50 mb-5 rounded-lg shadow-inner overflow-hidden w-full flex justify-center">
+                <img id="preview-struk-img" src="" alt="Struk" style="max-width: 100%; height: auto; border-radius: 4px;">
+            </div>
+            
+            <div class="flex gap-3 w-full">
+                <button onclick="window.downloadStruk()" class="flex-1 bg-gray-800 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-gray-900 transition-colors shadow-md flex flex-col items-center justify-center gap-1 text-sm"><i class="fa-solid fa-download"></i> Simpan</button>
+                <button onclick="window.bagikanStruk()" class="flex-1 bg-green-500 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-green-600 transition-colors shadow-md flex flex-col items-center justify-center gap-1 text-sm"><i class="fa-brands fa-whatsapp text-lg"></i> Bagikan</button>
+            </div>
+            <button onclick="document.getElementById('modal-hasil-struk').classList.replace('flex','hidden')" class="w-full mt-3 bg-gray-100 text-gray-600 font-bold px-4 py-2.5 rounded-xl hover:bg-gray-200 transition-colors text-sm">Tutup Layar</button>
+        </div>
+    </div>
+
+    <!-- Scanner Camera -->
+    <div id="scanner-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] hidden flex-col items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-sm w-full relative">
+            <div class="p-4 bg-gray-900 text-center text-white flex justify-between items-center">
+                <h3 class="font-bold text-sm"><i class="fa-solid fa-camera mr-2"></i>Pindai QR / Barcode</h3>
+                <button onclick="window.closeScanner()" class="text-gray-400 hover:text-white bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="reader" class="w-full bg-black min-h-[250px] flex items-center justify-center text-white text-sm">Sedang memuat kamera...</div>
+            <div class="p-4 bg-white text-center flex flex-col gap-3">
+                <p class="text-xs text-gray-500 font-medium" id="scanner-hint">Arahkan kamera ke kode...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Input File Tersembunyi untuk Cropper -->
+    <input type="file" id="global-cropper-input" accept="image/*" class="hidden" onchange="window.openCropper(event, window.currentCropTarget)">
+
+    <!-- Modal untuk Cropper (Edit Foto) -->
+    <div class="modal-overlay" id="cropperModal">
+        <div class="modal-content shadow-2xl">
+            <h3 class="text-lg font-bold mb-4 text-gray-800">Sesuaikan Foto Anda</h3>
+            
+            <div class="img-container rounded-lg overflow-hidden border border-gray-200 bg-gray-900 w-full flex justify-center items-center" style="min-height: 250px;">
+                <img id="imageToCrop" src="" alt="Gambar untuk dipotong" style="display: block; max-width: 100%; max-height: 100%;">
+            </div>
+            
+            <div class="flex justify-between mt-4 gap-2 sm:gap-4">
+                <button type="button" class="px-3 py-2 bg-gray-200 hover:bg-gray-300 text-gray-800 rounded-lg font-bold transition text-xs sm:text-sm" onclick="window.closeCropper()">Batal</button>
+                <button type="button" class="px-3 py-2 bg-orange-50 hover:bg-orange-100 text-orange-600 border border-orange-200 rounded-lg font-bold transition text-xs sm:text-sm flex-1" onclick="document.getElementById('cropperModal').style.display='none'; document.getElementById('global-cropper-input').click();"><i class="fa-solid fa-folder-open mr-1"></i> Ganti File</button>
+                <button type="button" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg fon        .id-card-landscape { width: 86mm !important; height: 54mm !important; background: white; border-radius: 8px !important; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; position: relative; border: 1px solid #e2e8f0; display: flex; flex-direction: column; background-size: cover; background-position: center; font-family: 'Inter', sans-serif; }
+        .id-card-landscape-header { height: 10mm !important; background: transparent !important; display: flex; align-items: center; justify-content: center; color: #1f2937; position: relative; padding: 5px !important; text-align: center; z-index: 5; transition: background 0.3s; }
+        .id-card-landscape-body { flex: 1; display: flex; flex-direction: row; align-items: center; padding: 5px 15px !important; position: relative; z-index: 10; background: transparent; gap: 15px; }
+        .profile-img-container-landscape { width: 25mm !important; height: 32mm !important; border-radius: 6px; padding: 2px !important; background: white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); position: relative; z-index: 20; cursor: pointer; transition: transform 0.2s; overflow: hidden; }
+        .profile-img-landscape { width: 100%; height: 100%; object-fit: cover; background: #f1f5f9; border-radius: 4px; }
+        .info-landscape { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        .info-landscape h2 { font-size: 10px !important; font-weight: 800 !important; color: #1f2937; line-height: 1.2 !important; margin-bottom: 2px !important; }
+        .info-landscape p { font-size: 9px !important; color:  #1f2937 !important; font-weight: 600 !important; margin-bottom: 2px !important; }
+        .barcode-container-landscape { margin-top: 10px !important; width: 110%; text-align: left; }
+        .barcode-container-landscape svg { height: 26px !important; max-width: 110% !important; display: inline-block; }
+
+        /* Modal Cropper */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 999999; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); }
+        .modal-content { background: white; padding: 20px; border-radius: 16px; width: 90%; max-width: 450px; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans antialiased text-gray-800 overflow-x-hidden">
+
+    <!-- Loader Database -->
+    <div id="startup-loader" class="fixed inset-0 bg-white/95 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center">
+        <i class="fa-brands fa-google-drive text-6xl text-blue-600 mb-4 animate-pulse"></i>
+        <h2 class="text-xl font-bold text-gray-800" id="loader-text">Memuat Sistem Madrasah...</h2>
+        <p class="text-gray-500 text-sm mt-2 font-medium">Menyinkronkan dengan Cloud...</p>
+    </div>
+    
+    <div id="cloud-sync-status" class="fixed bottom-6 right-6 bg-gray-900/90 text-white text-sm px-4 py-3 rounded-xl shadow-2xl opacity-0 transition-opacity duration-300 z-[9000] flex items-center font-medium pointer-events-none">
+        <i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan ke Cloud...
+    </div>
+
+    <!-- AREA CETAK STRUK IZIN/SAKIT (Tersembunyi) -->
+    <div id="struk-wrapper" style="position: absolute; left: -9999px; top: -9999px;">
+        <div id="template-struk" style="width: 320px; padding: 20px; background: white; color: black; font-family: 'Airal regular', Airal, monospace; font-size: 10px; line-height: 1.5; box-sizing: border-box; border: 1px solid #ddd;">
+            <div style="text-align: center; margin-bottom: 10px;">
+                <b style="font-size: 12px;">YAYASAN PENDIDIKAN ARROHMAH</b><br>
+                SURAT KETERANGAN ABSENSI<br>
+                --------------------------------<br>
+                Tgl: <span id="struk-tanggal"></span> / Jam: <span id="struk-jam"></span><br>
+            </div>
+            <div style="margin-bottom: 7px; text-align: left;">
+                ASSALAMUALAIKUM WAR. WAB.:<br>
+                saya yang bertandatangan di bawah ini:<br><br>
+                Nama   : <b id="struk-nama"></b><br>
+                NIP/ID: <span id="struk-nip"></span><br>
+                Sesi   : Jam Ke-<span id="struk-sesi"></span><br><br>
+                Hari ini tidak dapat hadir dengan keterangan: <b id="struk-jenis" style="font-size: 9px;"></b> { <span id="struk-alasan"></span> }<br>
+                Demikian keterangan ini dibuat. atas perhatiannya saya ucapkan terima kasih.<br>
+                WASSALAMUALAIKUM WAR. WAB.<br>
+                  Hormat kami<br>
+            </div>
+            </div><b id="struk-nama-bawah"></b><br>
+        </div>
+    </div>
+
+    <!-- Alert Modal -->
+    <div id="alert-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
+            <div id="alert-icon" class="text-5xl mb-4 text-blue-500"><i class="fa-solid fa-circle-info"></i></div>
+            <h3 id="alert-title" class="text-xl font-bold text-gray-800 mb-2"></h3>
+            <p id="alert-message" class="text-gray-500 text-sm mb-6 whitespace-pre-line"></p>
+            <button id="alert-close-btn" class="bg-gray-800 text-white font-medium px-6 py-2.5 rounded-xl w-full hover:bg-gray-700">Mengerti</button>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[10000] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full text-center">
+            <div class="text-5xl mb-4 text-orange-500"><i class="fa-solid fa-circle-question"></i></div>
+            <h3 id="confirm-title" class="text-xl font-bold text-gray-800 mb-2">Konfirmasi</h3>
+            <p id="confirm-message" class="text-gray-500 text-sm mb-6">Apakah Anda yakin?</p>
+            <div class="flex gap-3">
+                <button onclick="window.closeConfirm()" class="flex-1 bg-gray-100 text-gray-700 font-bold px-4 py-2.5 rounded-xl hover:bg-gray-200 transition-colors">Batal</button>
+                <button id="confirm-yes-btn" class="flex-1 bg-blue-600 text-white font-bold px-4 py-2.5 rounded-xl hover:bg-blue-700 transition-colors shadow-md">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL POP-UP IZIN/SAKIT OTOMATIS (Luar Radius) -->
+    <div id="modal-luar-radius" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100000] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-sm w-full text-center">
+            <div class="bg-gradient-to-r from-orange-500 to-red-500 p-6 text-white relative">
+                <div class="absolute top-0 right-0 p-4 opacity-20"><i class="fa-solid fa-clock text-6xl"></i></div>
+                <i class="fa-solid fa-clock text-4xl mb-3 relative z-10"></i>
+                <h3 class="text-xl font-bold relative z-10">Pengajuan Keterangan</h3>
+            </div>
+            <div class="p-6 relative z-10 bg-white">
+                <p id="teks-luar-radius" class="text-gray-600 text-sm mb-5 whitespace-pre-line leading-relaxed"></p>
+                <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 mb-4">
+                    <p class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Pilih Keterangan Lain:</p>
+                    <div class="flex flex-col gap-2">
+                        <button onclick="window.bukaFormSurat('Cuti Tugas')" class="w-full bg-indigo-50 text-indigo-700 font-bold px-4 py-2.5 rounded-xl hover:bg-indigo-100 transition-colors shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-briefcase"></i> Ajukan CUTI TUGAS</button>
+                        <button onclick="window.bukaFormSurat('Izin')" class="w-full bg-blue-50 text-blue-700 font-bold px-4 py-2.5 rounded-xl hover:bg-blue-100 transition-colors shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-envelope-open-text"></i> Ajukan IZIN</button>
+                        <button onclick="window.bukaFormSurat('Sakit')" class="w-full bg-orange-50 text-orange-700 font-bold px-4 py-2.5 rounded-xl hover:bg-orange-100 transition-colors shadow-sm flex items-center justify-center gap-2"><i class="fa-solid fa-notes-medical"></i> Ajukan SAKIT</button>
+                    </div>
+                </div>
+                <button onclick="window.tutupLuarRadiusModal()" class="w-full bg-white text-gray-500 font-bold px-4 py-2.5 rounded-xl hover:bg-gray-100 transition-colors border border-gray-200 shadow-sm">Batal / Kembali</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL INPUT KETERANGAN SURAT -->
+    <div id="modal-surat-keterangan" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100001] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-md w-full">
+            <div class="bg-blue-600 p-4 text-white flex justify-between items-center" id="header-surat-modal">
+                <h3 class="font-bold" id="title-surat-modal">Pengajuan Keterangan</h3>
+                <button onclick="document.getElementById('modal-surat-keterangan').classList.replace('flex','hidden')" class="text-white/70 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="mb-4" id="quick-reasons-container">
+                    <!-- Quick reasons will be injected here -->
+                </div>
                 <div class="mb-5">
                     <label class="block text-sm font-bold text-gray-700 mb-2">Alasan Ringkas (Bisa diketik manual):</label>
                     <input type="text" id="input-alasan-surat" class="w-full border border-gray-300 rounded-xl p-3 text-sm outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-sm" placeholder="Cth: Acara keluarga / Demam...">
