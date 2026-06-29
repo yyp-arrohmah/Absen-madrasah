@@ -89,7 +89,7 @@
         <i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan ke Cloud...
     </div>
 
-    <!-- AREA CETAK STRUK IZIN/SAKIT (Tersembunyi) -->
+     <!-- AREA CETAK STRUK IZIN/SAKIT (Tersembunyi) -->
     <div id="struk-wrapper" style="position: absolute; left: -9999px; top: -9999px;">
         <div id="template-struk" style="width: 320px; padding: 20px; background: white; color: black; font-family: 'Arial regular', Arial, monospace; font-size: 10px; line-height: 1.5; box-sizing: border-box; border: 1px solid #ddd;">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -107,8 +107,6 @@
                 Demikian keterangan ini dibuat. atas perhatiannya saya ucapkan terima kasih.<br>
                 WASSALAMUALAIKUM WAR. WAB.<br>
                   Hormat kami<br>Jam: <span id="struk-jam"></span><br>
-            </div>
-            </div><span id="struk-nama"></b><br>
         </div>
     </div>
 
@@ -1559,6 +1557,14 @@
         };
         window.simpanAbsenGuru = () => {
             const tgl = document.getElementById('tgl-absen-guru').value; if(!tgl) return window.showAlert('Gagal', 'Pilih tanggal.', 'error');
+            
+            const isLibur = (window.appState.agenda || []).find(a => a.tgl === tgl && a.tipe === 'Libur');
+            let invalid = false;
+            document.querySelectorAll('.absen-guru-row input[type="radio"]:checked').forEach(el => {
+                if (isLibur && el.value !== 'Cuti Tugas' && el.value !== 'Cuti') invalid = true;
+            });
+            if (invalid) return window.showAlert('Gagal Menyimpan', `Hari ini Libur (${isLibur.ket}).\nSistem menolak absen selain pengajuan Cuti.`, 'error');
+
             if(!window.appState.absensi_guru) window.appState.absensi_guru = []; let record = window.appState.absensi_guru.find(a => a.tanggal === tgl);
             const dataAbsen = [];
             document.querySelectorAll('.absen-guru-row').forEach(r => {
@@ -1898,6 +1904,14 @@
         };
         window.simpanAbsenSiswa = () => {
             const tgl = document.getElementById('tgl-absen-siswa').value; const kelas = document.getElementById('filter-kelas-absen').value; if(!tgl || !kelas) return;
+            
+            const isLibur = (window.appState.agenda || []).find(a => a.tgl === tgl && a.tipe === 'Libur');
+            let invalid = false;
+            document.querySelectorAll('.absen-siswa-row input[type="radio"]:checked').forEach(el => {
+                if (isLibur && el.value !== 'Cuti Tugas' && el.value !== 'Cuti') invalid = true;
+            });
+            if (invalid) return window.showAlert('Gagal Menyimpan', `Hari ini Libur (${isLibur.ket}).\nSistem menolak absen murid di hari libur.`, 'error');
+
             if(!window.appState.absensi_siswa) window.appState.absensi_siswa = []; let record = window.appState.absensi_siswa.find(a => a.tanggal === tgl); if(!record) { record = { tanggal: tgl, data: [] }; window.appState.absensi_siswa.push(record); }
             document.querySelectorAll('.absen-siswa-row').forEach(r => {
                 const id = parseInt(r.dataset.id); const input = r.querySelector(`input[name="absen_siswa_${id}"]:checked`);
@@ -1972,6 +1986,23 @@
             const alasan = document.getElementById('input-alasan-surat').value.trim() || 'Ada keperluan / Sakit'; 
             const jmlHari = parseInt(document.getElementById('input-hari-surat').value) || 1;
             const status = window.tempSuratStatus;
+
+            // CEK LIBUR UNTUK SURAT KETERANGAN
+            if (status.toLowerCase() !== 'cuti tugas' && status.toLowerCase() !== 'cuti') {
+                const today = new Date();
+                for (let i = 0; i < jmlHari; i++) {
+                    const targetDate = new Date(today);
+                    targetDate.setDate(today.getDate() + i);
+                    const yyyy = targetDate.getFullYear();
+                    const mm = String(targetDate.getMonth() + 1).padStart(2, '0');
+                    const dd = String(targetDate.getDate()).padStart(2, '0');
+                    const tglStr = `${yyyy}-${mm}-${dd}`;
+                    const isLibur = (window.appState.agenda || []).find(a => a.tgl === tglStr && a.tipe === 'Libur');
+                    if (isLibur) {
+                        return window.showAlert('Pengajuan Ditolak', `Terdapat hari libur (${isLibur.ket}) pada tanggal ${dd}/${mm}/${yyyy}.\nSelain pengajuan Cuti, sistem menolak absen di hari libur.`, 'error');
+                    }
+                }
+            }
 
             let idLokal = window.tempScanText.trim();
             if(idLokal.includes('mmuibt.net')) { try { const b64 = idLokal.split('id=')[1]; idLokal = atob(b64).split('#')[0]; } catch(e){} }
@@ -2086,6 +2117,17 @@
             const namaOrang = isGuru ? isGuru.nama : isSiswa.nama;
             const modeScanEl = document.getElementById('mode-scan-guru'); const statusScan = (activeScannerMode === 'absen-guru-tab' && modeScanEl) ? modeScanEl.value : 'Hadir'; 
             window.tempInfoJarak = '';
+
+            // CEK LIBUR
+            let tglId = 'tgl-absen-guru';
+            if (activeScannerMode === 'absen-siswa-tab') tglId = 'tgl-absen-siswa';
+            const tglEl = document.getElementById(tglId);
+            const tgl = (tglEl && tglEl.value) ? tglEl.value : window.getTodayInputFormat();
+            const isLibur = (window.appState.agenda || []).find(a => a.tgl === tgl && a.tipe === 'Libur');
+            
+            if (isLibur && statusScan.toLowerCase() !== 'cuti tugas' && statusScan.toLowerCase() !== 'cuti') {
+                return window.showAlert('Absen Ditolak', `Hari ini Libur: ${isLibur.ket}\nSistem menolak absen selain pengajuan "Cuti".`, 'error');
+            }
 
             // CEK WAKTU DULU SEBELUM MINTA GPS (Hanya untuk Guru)
             let cekWaktu = null;
