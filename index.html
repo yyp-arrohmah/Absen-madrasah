@@ -204,6 +204,62 @@
         </div>
     </div>
 
+    <!-- MODAL JADWAL GURU -->
+    <div id="modal-jadwal-guru" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100005] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-md w-full relative">
+            <div class="bg-purple-600 p-4 text-white flex justify-between items-center">
+                <h3 class="font-bold flex items-center text-sm" id="form-jadwal-title"><i class="fa-solid fa-calendar-plus mr-2"></i>Form Jadwal Mengajar</h3>
+                <button onclick="window.tutupModalJadwal()" class="text-white/70 hover:text-white bg-purple-700 w-8 h-8 flex justify-center items-center rounded-full"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6">
+                <form onsubmit="window.simpanJadwalGuru(event)" class="space-y-4">
+                    <input type="hidden" id="jadwal-mode" value="add">
+                    <input type="hidden" id="jadwal-id" value="">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Nama Guru</label>
+                        <select id="jadwal-guru-id" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 bg-white shadow-sm" required>
+                            <option value="">-- Pilih Guru --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-1">Hari</label>
+                        <select id="jadwal-hari" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 bg-white shadow-sm" required>
+                            <option value="">-- Pilih Hari --</option>
+                            <option value="Ahad">Ahad</option>
+                            <option value="Senin">Senin</option>
+                            <option value="Selasa">Selasa</option>
+                            <option value="Rabu">Rabu</option>
+                            <option value="Kamis">Kamis</option>
+                            <option value="Jumat">Jumat</option>
+                            <option value="Sabtu">Sabtu</option>
+                        </select>
+                    </div>
+                    <div class="p-4 bg-purple-50/50 rounded-xl border border-purple-100">
+                        <label class="block text-sm font-bold mb-2 text-purple-800">Jam Ke-1 / Jam Rapat</label>
+                        <div class="flex items-center gap-2">
+                            <input type="time" id="jadwal-jam1-mulai" class="w-full border border-gray-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm cursor-pointer shadow-sm">
+                            <span class="font-bold text-purple-400">s/d</span>
+                            <input type="time" id="jadwal-jam1-selesai" class="w-full border border-gray-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm cursor-pointer shadow-sm">
+                        </div>
+                    </div>
+                    <div class="p-4 bg-gray-50 rounded-xl border border-gray-200">
+                        <label class="block text-sm font-bold mb-2 text-gray-700">Jam Ke-2 <span class="font-normal text-xs text-gray-500">(Opsional)</span></label>
+                        <div class="flex items-center gap-2">
+                            <input type="time" id="jadwal-jam2-mulai" class="w-full border border-gray-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm cursor-pointer shadow-sm">
+                            <span class="font-bold text-gray-400">s/d</span>
+                            <input type="time" id="jadwal-jam2-selesai" class="w-full border border-gray-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm cursor-pointer shadow-sm">
+                        </div>
+                    </div>
+                    <div class="pt-2">
+                        <button type="submit" id="btn-submit-jadwal" class="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl p-3.5 font-bold shadow-md transition-colors flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-save"></i> Simpan Jadwal
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Scanner Camera -->
     <div id="scanner-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] hidden flex-col items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-sm w-full relative">
@@ -543,95 +599,43 @@
                 </div>
                 
                 <!-- TAB JADWAL GURU -->
-                <div id="tab-jadwal-guru" class="tab-content max-w-6xl mx-auto scroll-mt-6">
-                    <div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                <div id="tab-jadwal-guru" class="tab-content max-w-7xl mx-auto scroll-mt-6">
+                    <div class="mb-6 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
                         <div>
                             <h2 class="text-2xl font-bold text-gray-800">Jadwal Mengajar Guru</h2>
-                             <p class="text-gray-500 text-sm">Atur jam mengajar agar sistem tahu jadwal absen.</p>
+                             <p class="text-gray-500 text-sm">Tampilan satu pekan. Klik tombol (+) pada tabel untuk mengatur jam mengajar.</p>
                         </div>
-                        <div class="flex flex-col sm:flex-row items-center gap-2">
-                            <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm w-full sm:w-auto">
-                                <label class="text-sm font-bold text-gray-700 whitespace-nowrap"><i class="fa-solid fa-calendar-day mr-1 text-purple-600"></i> Hari:</label>
-                                <select id="filter-hari-jadwal-guru" class="outline-none text-sm font-bold text-gray-700 bg-transparent cursor-pointer w-full" onchange="window.renderJadwalGuru()">
-                                    <option value="">Semua Hari</option>
-                                    <option value="Ahad">Ahad</option>
-                                    <option value="Senin">Senin</option>
-                                    <option value="Selasa">Selasa</option>
-                                    <option value="Rabu">Rabu</option>
-                                    <option value="Kamis">Kamis</option>
-                                    <option value="Sabtu">Sabtu</option>
-                                </select>
-                            </div>
+                        <div class="flex flex-col sm:flex-row items-center gap-3">
                             <div class="flex items-center gap-2 bg-white px-4 py-2 rounded-xl border border-gray-200 shadow-sm w-full sm:w-auto">
                                 <label class="text-sm font-bold text-gray-700"><i class="fa-solid fa-filter mr-1 text-purple-600"></i> Guru:</label>
                                 <select id="filter-jadwal-guru" class="outline-none text-sm font-bold text-gray-700 bg-transparent cursor-pointer w-full" onchange="window.renderJadwalGuru()">
                                     <option value="">Semua Guru</option>
                                 </select>
                             </div>
+                            <button onclick="window.bukaModalJadwal()" class="w-full sm:w-auto bg-purple-600 hover:bg-purple-700 text-white px-5 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 shadow-md transition-colors">
+                                <i class="fa-solid fa-plus"></i> Tambah Jadwal
+                            </button>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div class="lg:col-span-1">
-                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6" id="form-jadwal-container">
-                                <h3 class="font-bold mb-4" id="form-jadwal-title"><i class="fa-solid fa-calendar-plus text-purple-500 mr-2"></i>Tambah Jadwal</h3>
-                                <form onsubmit="window.simpanJadwalGuru(event)" class="space-y-4">
-                                    <input type="hidden" id="jadwal-mode" value="add">
-                                    <input type="hidden" id="jadwal-id" value="">
-                                    <div>
-                                        <label class="block text-sm font-medium mb-1">Nama Guru</label>
-                                        <select id="jadwal-guru-id" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 bg-white" required>
-                                            <option value="">-- Pilih Guru --</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium mb-1">Hari</label>
-                                        <select id="jadwal-hari" class="w-full border p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 bg-white" required>
-                                            <option value="">-- Pilih Hari --</option>
-                                            <option value="Ahad">Ahad</option>
-                                            <option value="Senin">Senin</option>
-                                            <option value="Selasa">Selasa</option>
-                                            <option value="Rabu">Rabu</option>
-                                            <option value="Kamis">Kamis</option>
-                                            <option value="Sabtu">Sabtu</option>
-                                        </select>
-                                    </div>
-                                    <div class="p-3 bg-purple-50 rounded-lg border border-purple-100">
-                                        <label class="block text-sm font-bold mb-2 text-purple-800">Jam Ke-1 / Jam Rapat</label>
-                                        <div class="flex items-center gap-2">
-                                            <input type="time" id="jadwal-jam1-mulai" class="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-purple-500 text-sm cursor-pointer">
-                                            <span class="font-bold text-purple-400">s/d</span>
-                                            <input type="time" id="jadwal-jam1-selesai" class="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-purple-500 text-sm cursor-pointer">
-                                        </div>
-                                    </div>
-                                    <div class="p-3 bg-gray-50 rounded-lg border border-gray-200">
-                                        <label class="block text-sm font-bold mb-2 text-gray-700">Jam Ke-2 <span class="font-normal text-xs text-gray-500">(Opsional)</span></label>
-                                        <div class="flex items-center gap-2">
-                                            <input type="time" id="jadwal-jam2-mulai" class="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-purple-500 text-sm cursor-pointer">
-                                            <span class="font-bold text-gray-400">s/d</span>
-                                            <input type="time" id="jadwal-jam2-selesai" class="w-full border p-2 rounded outline-none focus:ring-2 focus:ring-purple-500 text-sm cursor-pointer">
-                                        </div>
-                                    </div>
-                                    <button type="submit" id="btn-submit-jadwal" class="w-full bg-purple-600 text-white rounded-lg p-2.5 font-bold hover:bg-purple-700 mt-2 shadow-md">Simpan Jadwal</button>
-                                    <button type="button" id="btn-cancel-jadwal" onclick="window.resetFormJadwal()" class="w-full bg-gray-100 text-gray-700 rounded-lg p-2.5 font-bold hover:bg-gray-200 mt-2 hidden">Batal Edit</button>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="lg:col-span-2">
-                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                                <div class="overflow-x-auto">
-                                    <table class="w-full text-sm text-left">
-                                        <thead class="bg-purple-50 text-xs text-purple-900 font-bold uppercase border-b border-purple-100">
-                                            <tr>
-                                                <th class="px-4 py-3">Nama Guru</th>
-                                                <th class="px-4 py-3">Waktu</th>
-                                                <th class="px-4 py-3 text-right">Aksi</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="table-jadwal-guru" class="divide-y divide-gray-100 bg-white">
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                    
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm text-left border-collapse">
+                                <thead class="bg-purple-50 text-xs text-purple-900 font-bold uppercase border-b border-purple-100">
+                                    <tr>
+                                        <th class="px-4 py-3.5 min-w-[150px] sticky left-0 bg-purple-50 z-10 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Nama Guru</th>
+                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Ahad</th>
+                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Senin</th>
+                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Selasa</th>
+                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Rabu</th>
+                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Kamis</th>
+                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100 text-red-600">Jumat</th>
+                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Sabtu</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table-jadwal-guru" class="divide-y divide-gray-100 bg-white relative z-0">
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -1462,11 +1466,125 @@
         window.renderSiswa = () => { const container = document.getElementById('table-siswa'); if(!container) return; const allowEdit = window.currentUser && (window.currentUser.role === 'admin' || window.currentUser.akses.siswa); container.innerHTML = window.appState.siswa.map(s => `<tr class="border-b border-gray-100 hover:bg-blue-50/40"><td class="px-6 py-3 font-bold text-sm text-gray-800">${s.nis}</td><td class="px-6 py-3 flex items-center gap-3">${s.foto ? `<img src="${s.foto}" class="w-10 h-14 rounded-md object-cover">` : `<div class="w-10 h-14 rounded-md bg-blue-100 flex items-center justify-center font-bold text-blue-600">${s.nama.charAt(0)}</div>`}<div><p class="font-bold text-sm text-gray-800">${s.nama}</p><p class="text-xs text-gray-500">Kls: ${s.kelas}</p></div></td><td class="px-6 py-3 text-right">${allowEdit ? `<button onclick="window.editSiswa('${s.id}')" class="text-blue-500 bg-blue-50 p-2 rounded-lg mr-1"><i class="fa-solid fa-pen"></i></button><button onclick="window.hapusSiswa('${s.id}')" class="text-red-500 bg-red-50 p-2 rounded-lg"><i class="fa-solid fa-trash"></i></button>` : ''}</td></tr>`).join(''); if(window.appState.siswa.length === 0) container.innerHTML = `<tr><td colspan="3" class="text-center py-8 text-gray-500">Belum ada murid terdaftar.</td></tr>`; };
 
         // 9. JADWAL GURU
-        window.renderJadwalGuru = () => { const container = document.getElementById('table-jadwal-guru'); const selectGuru = document.getElementById('jadwal-guru-id'); const filterGuru = document.getElementById('filter-jadwal-guru'); const filterHari = document.getElementById('filter-hari-jadwal-guru'); if(!container || !selectGuru) return; let opts=`<option value="">-- Pilih Guru --</option><option value="SEMUA" class="font-bold text-blue-600 bg-blue-50">&#10024; Semua Guru (Jadwal Rapat / Bersama)</option>`; let fOpts=`<option value="">Semua Guru</option>`; window.appState.guru.forEach(g => { opts+=`<option value="${g.id}">${g.nama}</option>`; fOpts+=`<option value="${g.id}">${g.nama}</option>`; }); const cG=selectGuru.value; const cF=filterGuru.value; selectGuru.innerHTML=opts; selectGuru.value=cG; filterGuru.innerHTML=fOpts; filterGuru.value=cF; let jFiltered = window.appState.jadwal_guru || []; if(cF) jFiltered=jFiltered.filter(j=>String(j.id_guru)===String(cF)); if(filterHari&&filterHari.value) jFiltered=jFiltered.filter(j=>j.hari===filterHari.value); const hariOrd = {'Senin':1,'Selasa':2,'Rabu':3,'Kamis':4,'Jumat':5,'Sabtu':6,'Ahad':7}; jFiltered.sort((a,b)=>hariOrd[a.hari]-hariOrd[b.hari]); container.innerHTML = jFiltered.map(j=>{ const g=window.appState.guru.find(x=>String(x.id)===String(j.id_guru)); return `<tr class="border-b border-gray-100 hover:bg-purple-50"><td class="px-4 py-3 font-bold text-sm text-gray-800">${g?g.nama:'-'}</td><td class="px-4 py-3 text-sm text-gray-700"><span class="bg-purple-100 text-purple-700 px-2 py-0.5 rounded-md text-xs font-bold">${j.hari}</span><br><span class="text-xs inline-block border bg-gray-50 px-2 mt-1 rounded">${j.jam}</span></td><td class="px-4 py-3 text-right"><button onclick="window.editJadwalGuru(${j.id})" class="text-blue-500 bg-blue-50 p-1.5 rounded-lg mr-1"><i class="fa-solid fa-pen"></i></button><button onclick="window.hapusJadwalGuru(${j.id})" class="text-red-500 bg-red-50 p-1.5 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>`; }).join(''); if(jFiltered.length===0) container.innerHTML=`<tr><td colspan="3" class="text-center py-6 text-gray-500">Belum ada jadwal.</td></tr>`; };
-        window.resetFormJadwal = () => { document.getElementById('jadwal-mode').value='add'; document.getElementById('jadwal-id').value=''; document.getElementById('jadwal-guru-id').value=''; document.getElementById('jadwal-hari').value=''; ['jam1-mulai','jam1-selesai','jam2-mulai','jam2-selesai'].forEach(id=>document.getElementById('jadwal-'+id).value=''); document.getElementById('btn-submit-jadwal').innerText='Simpan Jadwal'; document.getElementById('btn-cancel-jadwal').classList.add('hidden'); };
-        window.editJadwalGuru = (id) => { const j = window.appState.jadwal_guru.find(x=>String(x.id)===String(id)); if(!j) return; document.getElementById('jadwal-mode').value='edit'; document.getElementById('jadwal-id').value=j.id; document.getElementById('jadwal-guru-id').value=j.id_guru; document.getElementById('jadwal-hari').value=j.hari; let j1m='',j1s='',j2m='',j2s=''; const m1=j.jam.match(/Jam 1:\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/); if(m1){j1m=m1[1];j1s=m1[2];} const m2=j.jam.match(/Jam 2:\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/); if(m2){j2m=m2[1];j2s=m2[2];} document.getElementById('jadwal-jam1-mulai').value=j1m; document.getElementById('jadwal-jam1-selesai').value=j1s; document.getElementById('jadwal-jam2-mulai').value=j2m; document.getElementById('jadwal-jam2-selesai').value=j2s; document.getElementById('btn-submit-jadwal').innerText='Perbarui Jadwal'; document.getElementById('btn-cancel-jadwal').classList.remove('hidden'); document.getElementById('tab-jadwal-guru').scrollIntoView(); };
-        window.simpanJadwalGuru = (e) => { e.preventDefault(); const mode=document.getElementById('jadwal-mode').value; const id=document.getElementById('jadwal-id').value; const id_guru=document.getElementById('jadwal-guru-id').value; const hari=document.getElementById('jadwal-hari').value; const j1m=document.getElementById('jadwal-jam1-mulai').value; const j1s=document.getElementById('jadwal-jam1-selesai').value; const j2m=document.getElementById('jadwal-jam2-mulai').value; const j2s=document.getElementById('jadwal-jam2-selesai').value; if(!id_guru||!hari) return window.showAlert('Gagal','Pilih Guru dan Hari','error'); let jamArr=[]; if(j1m&&j1s) jamArr.push(`Jam 1: ${j1m} - ${j1s}`); if(j2m&&j2s) jamArr.push(`Jam 2: ${j2m} - ${j2s}`); const jamStr = jamArr.length>0 ? jamArr.join('<hr class="my-1 border-gray-300">') : 'Tidak diatur'; if(!window.appState.jadwal_guru) window.appState.jadwal_guru=[]; if(id_guru === 'SEMUA') { if(mode === 'edit') return window.showAlert('Gagal', 'Opsi Semua Guru hanya untuk Tambah Jadwal Baru.', 'error'); window.showConfirm("Jadwal Bersama", `Terapkan jadwal ini untuk SEMUA GURU pada hari ${hari}?`, () => { let c = 0; window.appState.guru.forEach(g => { window.appState.jadwal_guru.push({id:Date.now() + c++, id_guru:parseInt(g.id), hari, jam:jamStr}); }); window.saveState(); window.renderJadwalGuru(); window.resetFormJadwal(); window.showAlert('Berhasil','Jadwal rapat/bersama berhasil ditambahkan.','success'); }); return; } if(mode==='add') window.appState.jadwal_guru.push({id:Date.now(), id_guru:parseInt(id_guru), hari, jam:jamStr}); else { const idx=window.appState.jadwal_guru.findIndex(x=>String(x.id)===String(id)); if(idx>-1) window.appState.jadwal_guru[idx]={id:parseInt(id),id_guru:parseInt(id_guru),hari,jam:jamStr}; } window.saveState(); window.renderJadwalGuru(); window.resetFormJadwal(); window.showAlert('Berhasil','Jadwal tersimpan','success'); };
-        window.hapusJadwalGuru = (id) => { window.showConfirm("Hapus", "Yakin hapus jadwal?", ()=>{ window.appState.jadwal_guru=window.appState.jadwal_guru.filter(j=>String(j.id)!==String(id)); window.saveState(); window.renderJadwalGuru(); }); };
+        window.renderJadwalGuru = () => {
+            const container = document.getElementById('table-jadwal-guru');
+            const selectGuru = document.getElementById('jadwal-guru-id');
+            const filterGuru = document.getElementById('filter-jadwal-guru');
+            if(!container || !selectGuru) return;
+            
+            let opts = `<option value="">-- Pilih Guru --</option><option value="SEMUA" class="font-bold text-blue-600 bg-blue-50">&#10024; Semua Guru (Jadwal Rapat / Bersama)</option>`;
+            let fOpts = `<option value="">Semua Guru</option>`;
+            (window.appState.guru || []).forEach(g => {
+                opts += `<option value="${g.id}">${g.nama}</option>`;
+                fOpts += `<option value="${g.id}">${g.nama}</option>`;
+            });
+            const cG = selectGuru.value; const cF = filterGuru.value;
+            selectGuru.innerHTML = opts; selectGuru.value = cG;
+            filterGuru.innerHTML = fOpts; filterGuru.value = cF;
+
+            let guruList = window.appState.guru || [];
+            if(cF) guruList = guruList.filter(g => String(g.id) === String(cF));
+
+            const hariList = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            let html = '';
+            let adaJadwalTotal = false;
+
+            guruList.forEach(g => {
+                const schedules = (window.appState.jadwal_guru || []).filter(j => String(j.id_guru) === String(g.id));
+                if (schedules.length === 0 && !cF) return; // Sembunyikan guru yang kosong jadwalnya jika tidak difilter
+                adaJadwalTotal = true;
+
+                html += `<tr class="border-b border-gray-100 hover:bg-purple-50/20">
+                    <td class="px-4 py-3 font-bold text-sm text-gray-800 sticky left-0 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] min-w-[150px] z-0">${g.nama}</td>`;
+
+                hariList.forEach(hari => {
+                    const j = schedules.find(x => x.hari === hari);
+                    if (j) {
+                        html += `<td class="px-2 py-2 align-top border-l border-gray-100 bg-purple-50/30">
+                            <div class="bg-white border border-purple-200 rounded-lg p-2 relative group shadow-sm w-full h-full min-h-[60px] flex flex-col justify-center overflow-hidden">
+                                <div class="text-[10px] text-gray-700 text-center leading-relaxed font-medium">${j.jam}</div>
+                                <div class="absolute inset-0 bg-black/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[1px]">
+                                    <button onclick="window.editJadwalGuru('${j.id}')" class="text-white bg-blue-500 hover:bg-blue-600 w-7 h-7 rounded-full shadow flex items-center justify-center transition-transform hover:scale-110"><i class="fa-solid fa-pen text-[10px]"></i></button>
+                                    <button onclick="window.hapusJadwalGuru('${j.id}')" class="text-white bg-red-500 hover:bg-red-600 w-7 h-7 rounded-full shadow flex items-center justify-center transition-transform hover:scale-110"><i class="fa-solid fa-trash text-[10px]"></i></button>
+                                </div>
+                            </div>
+                        </td>`;
+                    } else {
+                        html += `<td class="px-2 py-2 align-top border-l border-gray-100">
+                            <div onclick="window.bukaModalJadwal('${g.id}', '${hari}')" class="h-full min-h-[60px] border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center text-gray-300 hover:bg-purple-50 hover:border-purple-400 hover:text-purple-600 cursor-pointer transition-colors w-full group/add">
+                                <i class="fa-solid fa-plus text-lg group-hover/add:scale-110 transition-transform"></i>
+                            </div>
+                        </td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
+
+            if (!adaJadwalTotal) {
+                container.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-gray-500 font-medium">Belum ada jadwal mengajar terdaftar.</td></tr>`;
+            } else {
+                container.innerHTML = html;
+            }
+        };
+
+        window.bukaModalJadwal = (id_guru = '', hari = '', isEdit = false) => {
+            if (!isEdit) { 
+                window.resetFormJadwal(); 
+                document.getElementById('form-jadwal-title').innerHTML = '<i class="fa-solid fa-calendar-plus mr-2"></i>Form Tambah Jadwal'; 
+                document.getElementById('btn-submit-jadwal').innerHTML = '<i class="fa-solid fa-save"></i> Simpan Jadwal'; 
+            }
+            if (id_guru) document.getElementById('jadwal-guru-id').value = id_guru;
+            if (hari) document.getElementById('jadwal-hari').value = hari;
+            document.getElementById('modal-jadwal-guru').classList.replace('hidden', 'flex');
+        };
+
+        window.tutupModalJadwal = () => { document.getElementById('modal-jadwal-guru').classList.replace('flex', 'hidden'); };
+        
+        window.resetFormJadwal = () => { document.getElementById('jadwal-mode').value='add'; document.getElementById('jadwal-id').value=''; document.getElementById('jadwal-guru-id').value=''; document.getElementById('jadwal-hari').value=''; ['jam1-mulai','jam1-selesai','jam2-mulai','jam2-selesai'].forEach(id=>document.getElementById('jadwal-'+id).value=''); };
+        
+        window.editJadwalGuru = (id) => { 
+            const j = window.appState.jadwal_guru.find(x=>String(x.id)===String(id)); if(!j) return; 
+            document.getElementById('jadwal-mode').value='edit'; document.getElementById('jadwal-id').value=j.id; document.getElementById('jadwal-guru-id').value=j.id_guru; document.getElementById('jadwal-hari').value=j.hari; 
+            let j1m='',j1s='',j2m='',j2s=''; const m1=j.jam.match(/Jam 1:\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/); if(m1){j1m=m1[1];j1s=m1[2];} const m2=j.jam.match(/Jam 2:\s*(\d{2}:\d{2})\s*-\s*(\d{2}:\d{2})/); if(m2){j2m=m2[1];j2s=m2[2];} 
+            document.getElementById('jadwal-jam1-mulai').value=j1m; document.getElementById('jadwal-jam1-selesai').value=j1s; document.getElementById('jadwal-jam2-mulai').value=j2m; document.getElementById('jadwal-jam2-selesai').value=j2s; 
+            document.getElementById('form-jadwal-title').innerHTML = '<i class="fa-solid fa-pen mr-2"></i>Edit Jadwal Mengajar'; document.getElementById('btn-submit-jadwal').innerHTML = '<i class="fa-solid fa-check"></i> Perbarui Jadwal';
+            window.bukaModalJadwal(null, null, true); 
+        };
+        
+        window.simpanJadwalGuru = (e) => { 
+            e.preventDefault(); const mode=document.getElementById('jadwal-mode').value; const id=document.getElementById('jadwal-id').value; const id_guru=document.getElementById('jadwal-guru-id').value; const hari=document.getElementById('jadwal-hari').value; const j1m=document.getElementById('jadwal-jam1-mulai').value; const j1s=document.getElementById('jadwal-jam1-selesai').value; const j2m=document.getElementById('jadwal-jam2-mulai').value; const j2s=document.getElementById('jadwal-jam2-selesai').value; 
+            if(!id_guru||!hari) return window.showAlert('Gagal','Pilih Guru dan Hari','error'); 
+            let jamArr=[]; if(j1m&&j1s) jamArr.push(`Jam 1: ${j1m} - ${j1s}`); if(j2m&&j2s) jamArr.push(`Jam 2: ${j2m} - ${j2s}`); 
+            const jamStr = jamArr.length>0 ? jamArr.join('<hr class="my-1 border-gray-300">') : 'Tidak diatur'; 
+            if(!window.appState.jadwal_guru) window.appState.jadwal_guru=[]; 
+            
+            // Cek konflik jika menambah jadwal di hari yang sama untuk guru yang sama
+            if(mode === 'add') {
+                const existing = window.appState.jadwal_guru.find(j => String(j.id_guru) === String(id_guru) && j.hari === hari);
+                if(existing && id_guru !== 'SEMUA') {
+                    return window.showAlert('Gagal', `Jadwal hari ${hari} untuk guru ini sudah ada.\nSilakan Edit jadwal yang sudah ada di tabel.`, 'error');
+                }
+            }
+
+            if(id_guru === 'SEMUA') { 
+                if(mode === 'edit') return window.showAlert('Gagal', 'Opsi Semua Guru hanya untuk Tambah Jadwal Baru.', 'error'); 
+                window.showConfirm("Jadwal Bersama", `Terapkan jadwal ini untuk SEMUA GURU pada hari ${hari}?`, () => { 
+                    let c = 0; window.appState.guru.forEach(g => { 
+                        // Tambahkan jika guru tersebut belum punya jadwal di hari tsb
+                        const e = window.appState.jadwal_guru.find(j => String(j.id_guru) === String(g.id) && j.hari === hari);
+                        if (!e) window.appState.jadwal_guru.push({id:Date.now() + c++, id_guru:parseInt(g.id), hari, jam:jamStr}); 
+                    }); 
+                    window.saveState(); window.renderJadwalGuru(); window.tutupModalJadwal(); window.showAlert('Berhasil','Jadwal rapat/bersama ditambahkan.','success'); 
+                }); 
+                return; 
+            } 
+            
+            if(mode==='add') window.appState.jadwal_guru.push({id:Date.now(), id_guru:parseInt(id_guru), hari, jam:jamStr}); 
+            else { const idx=window.appState.jadwal_guru.findIndex(x=>String(x.id)===String(id)); if(idx>-1) window.appState.jadwal_guru[idx]={id:parseInt(id),id_guru:parseInt(id_guru),hari,jam:jamStr}; } 
+            window.saveState(); window.renderJadwalGuru(); window.tutupModalJadwal(); window.showAlert('Berhasil','Jadwal tersimpan','success'); 
+        };
+
+        window.hapusJadwalGuru = (id) => { window.showConfirm("Hapus", "Yakin hapus jadwal ini?", ()=>{ window.appState.jadwal_guru=window.appState.jadwal_guru.filter(j=>String(j.id)!==String(id)); window.saveState(); window.renderJadwalGuru(); }); };
 
         // 10. MAPEL CRUD
         window.renderMapel = () => { const container = document.getElementById('table-mapel'); if(!container) return; container.innerHTML = (window.appState.mapel||[]).map(m => `<tr class="hover:bg-gray-50"><td class="px-6 py-4 text-xs font-bold">${m.kelas}</td><td class="px-6 py-4 font-bold text-sm">${m.nama}</td><td class="px-6 py-4 text-right"><button onclick="window.hapusMapel('${m.id}')" class="text-red-500 bg-red-50 p-1.5 rounded-lg"><i class="fa-solid fa-trash"></i></button></td></tr>`).join(''); };
