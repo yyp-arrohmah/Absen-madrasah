@@ -70,6 +70,9 @@
         <i class="fa-solid fa-spinner fa-spin mr-2"></i> Menyimpan ke Cloud...
     </div>
 
+    <!-- TOAST CONTAINER UNTUK NOTIF CEPAT -->
+    <div id="toast-container" class="fixed top-4 right-4 z-[9999999] flex flex-col gap-2 pointer-events-none"></div>
+
     <div id="struk-wrapper" style="position: absolute; left: -9999px; top: -9999px;">
         <div id="template-struk" style="width: 320px; padding: 20px; background: white; color: black; font-family: 'Arial regular', Arial, monospace; font-size: 10px; line-height: 1.5; box-sizing: border-box; border: 1px solid #ddd;">
             <div style="text-align: center; margin-bottom: 10px;">
@@ -235,12 +238,366 @@
         </div>
     </div>
 
+    <!-- MODAL LUAR RADIUS -->
+    <div id="modal-luar-radius" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100050] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl relative">
+            <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4 text-red-500 text-3xl"><i class="fa-solid fa-location-dot"></i></div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Di Luar Jangkauan</h3>
+            <p id="teks-luar-radius" class="text-sm text-gray-600 mb-6"></p>
+            <div class="flex flex-col gap-3">
+                <button onclick="window.bukaFormSurat('Izin')" class="w-full bg-blue-50 hover:bg-blue-100 text-blue-600 font-bold py-3 rounded-xl border border-blue-200 transition-colors">Ajukan Izin</button>
+                <button onclick="window.bukaFormSurat('Sakit')" class="w-full bg-orange-50 hover:bg-orange-100 text-orange-600 font-bold py-3 rounded-xl border border-orange-200 transition-colors">Ajukan Sakit</button>
+                <button onclick="window.tutupLuarRadiusModal()" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-3 rounded-xl transition-colors">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL SURAT KETERANGAN -->
+    <div id="modal-surat-keterangan" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100060] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl overflow-hidden max-w-md w-full shadow-2xl flex flex-col">
+            <div id="header-surat-modal" class="p-4 text-white flex justify-between items-center bg-blue-600">
+                <h3 class="font-bold flex items-center text-sm" id="title-surat-modal"><i class="fa-solid fa-envelope-open-text mr-2"></i>Formulir</h3>
+                <button onclick="document.getElementById('modal-surat-keterangan').classList.replace('flex','hidden')" class="text-white/70 hover:text-white bg-black/20 w-8 h-8 rounded-full flex justify-center items-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6">
+                <div class="mb-4">
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Lama Waktu (Hari)</label>
+                    <input type="number" id="input-hari-surat" class="w-full border border-gray-300 p-3 rounded-xl outline-none focus:border-blue-500 bg-gray-50 font-bold" min="1" value="1">
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Pilih Sesi Izin/Sakit (Hari Ini)</label>
+                    <div class="flex gap-2">
+                        <label class="flex-1 bg-gray-50 border border-gray-200 rounded-lg p-2 text-center cursor-pointer hover:bg-gray-100"><input type="checkbox" id="check-sesi-1" class="mr-1" checked> Sesi 1</label>
+                        <label class="flex-1 bg-gray-50 border border-gray-200 rounded-lg p-2 text-center cursor-pointer hover:bg-gray-100"><input type="checkbox" id="check-sesi-2" class="mr-1" checked> Sesi 2</label>
+                        <label class="flex-1 bg-gray-50 border border-gray-200 rounded-lg p-2 text-center cursor-pointer hover:bg-gray-100"><input type="checkbox" id="check-sesi-3" class="mr-1" checked> Sesi 3</label>
+                    </div>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-bold text-gray-700 mb-1.5">Alasan / Keterangan</label>
+                    <textarea id="input-alasan-surat" class="w-full border border-gray-300 p-3 rounded-xl outline-none focus:border-blue-500 resize-none h-24 bg-gray-50" placeholder="Tuliskan alasan lengkap..."></textarea>
+                </div>
+                <button onclick="window.prosesSuratKeterangan()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-xl shadow-md transition-colors text-sm">Ajukan Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL HASIL STRUK -->
+    <div id="modal-hasil-struk" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100070] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl flex flex-col items-center">
+            <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center text-green-500 text-2xl mb-4"><i class="fa-solid fa-check"></i></div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Pengajuan Berhasil</h3>
+            <p class="text-xs text-gray-500 mb-4 text-center">Struk bukti pengajuan telah dibuat.</p>
+            <div class="border border-gray-200 p-2 rounded-xl bg-gray-50 w-full flex justify-center mb-6">
+                <img id="preview-struk-img" src="" class="max-h-64 object-contain shadow-sm border border-gray-300">
+            </div>
+            <div class="flex gap-2 w-full">
+                <button onclick="window.downloadStruk()" class="flex-1 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold py-2.5 rounded-xl text-sm border border-blue-200 transition-colors flex justify-center items-center gap-2"><i class="fa-solid fa-download"></i> Simpan</button>
+                <button onclick="window.bagikanStruk()" class="flex-1 bg-green-50 hover:bg-green-100 text-green-700 font-bold py-2.5 rounded-xl text-sm border border-green-200 transition-colors flex justify-center items-center gap-2"><i class="fa-solid fa-share-nodes"></i> Bagikan</button>
+            </div>
+            <button onclick="document.getElementById('modal-hasil-struk').classList.replace('flex','hidden')" class="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2.5 rounded-xl text-sm mt-3 transition-colors">Tutup</button>
+        </div>
+    </div>
+
+    <!-- MODAL SLIP HONOR -->
+    <div id="modal-slip-honor" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100080] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl overflow-hidden max-w-sm w-full shadow-2xl flex flex-col">
+            <div class="p-4 bg-purple-600 text-white flex justify-between items-center">
+                <h3 class="font-bold text-sm"><i class="fa-solid fa-file-invoice-dollar mr-2"></i>Slip Honor</h3>
+                <button onclick="document.getElementById('modal-slip-honor').classList.replace('flex','hidden')" class="text-white/70 hover:text-white bg-black/20 w-8 h-8 rounded-full flex justify-center items-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-6 bg-gray-50 flex justify-center">
+                <div id="printable-slip-honor" class="bg-white p-5 border border-gray-200 shadow-sm w-full max-w-[300px] text-xs">
+                    <div class="text-center border-b border-gray-400 pb-2 mb-3">
+                        <h4 class="font-bold text-sm">YAYASAN ARROHMAH</h4>
+                        <p class="text-[10px]">SLIP BISYAROH GURU</p>
+                        <p class="text-[10px]" id="slip-honor-periode"></p>
+                    </div>
+                    <div class="mb-3">
+                        <div class="grid grid-cols-[80px_1fr]"><span class="text-gray-500">Nama</span><span class="font-bold" id="slip-honor-nama"></span></div>
+                        <div class="grid grid-cols-[80px_1fr]"><span class="text-gray-500">Jabatan</span><span class="font-bold" id="slip-honor-jabatan"></span></div>
+                    </div>
+                    <div class="border-t border-dashed border-gray-300 py-2 space-y-1">
+                        <div class="flex justify-between"><span class="text-gray-600">H. Mengajar (<span id="slip-honor-hadir"></span>)</span><span id="slip-honor-tarif-mengajar" class="text-right"></span></div>
+                        <div class="flex justify-between"><span class="text-gray-600">H. Piket (<span id="slip-honor-piket"></span>)</span><span id="slip-honor-tarif-piket" class="text-right"></span></div>
+                        <div class="flex justify-between"><span class="text-gray-600">Transport</span><span id="slip-honor-transport" class="text-right"></span></div>
+                        <div class="flex justify-between"><span class="text-gray-600">Tunjangan</span><span id="slip-honor-tunjangan" class="text-right"></span></div>
+                    </div>
+                    <div class="border-t-2 border-gray-800 pt-2 flex justify-between font-bold text-sm mt-1">
+                        <span>TOTAL</span><span id="slip-honor-total"></span>
+                    </div>
+                    <div class="mt-6 text-center text-[9px] text-gray-500" id="slip-honor-tgl-cetak"></div>
+                </div>
+            </div>
+            <div class="p-4 bg-white border-t border-gray-100 flex gap-2">
+                <button onclick="window.cetakSlipHonorPDF()" class="flex-1 bg-red-50 text-red-600 border border-red-200 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-red-100"><i class="fa-solid fa-file-pdf"></i> PDF</button>
+                <button onclick="window.cetakSlipHonorPNG()" class="flex-1 bg-blue-50 text-blue-600 border border-blue-200 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 hover:bg-blue-100"><i class="fa-solid fa-image"></i> PNG</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PENGATURAN -->
+    <div id="modal-pengaturan" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100090] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-3xl overflow-hidden max-w-2xl w-full h-auto max-h-[90vh] flex flex-col">
+            <div class="p-4 bg-gray-800 text-white flex justify-between items-center shrink-0">
+                <h3 class="font-bold flex items-center text-sm"><i class="fa-solid fa-gear mr-2"></i>Pengaturan Sistem</h3>
+                <button onclick="document.getElementById('modal-pengaturan').classList.replace('flex','hidden')" class="text-white/70 hover:text-white bg-gray-700 w-8 h-8 rounded-full flex justify-center items-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="flex flex-col sm:flex-row h-full overflow-hidden">
+                <div class="w-full sm:w-48 bg-gray-50 border-r border-gray-200 shrink-0 flex flex-row sm:flex-col overflow-x-auto sm:overflow-y-auto">
+                    <button id="tab-btn-lokasi" onclick="window.switchSettingTab('lokasi')" class="p-3 text-left text-xs font-bold text-gray-500 border-b-2 sm:border-b-0 sm:border-l-4 border-transparent hover:bg-gray-100 whitespace-nowrap">Lokasi & GPS</button>
+                    <button id="tab-btn-tampilan" onclick="window.switchSettingTab('tampilan')" class="p-3 text-left text-xs font-bold text-gray-500 border-b-2 sm:border-b-0 sm:border-l-4 border-transparent hover:bg-gray-100 whitespace-nowrap">Tampilan (Logo)</button>
+                    <button id="tab-btn-kalender" onclick="window.switchSettingTab('kalender')" class="p-3 text-left text-xs font-bold text-gray-500 border-b-2 sm:border-b-0 sm:border-l-4 border-transparent hover:bg-gray-100 whitespace-nowrap">Sistem Kalender</button>
+                    <button id="tab-btn-login" onclick="window.switchSettingTab('login')" class="p-3 text-left text-xs font-bold text-gray-500 border-b-2 sm:border-b-0 sm:border-l-4 border-transparent hover:bg-gray-100 whitespace-nowrap">Keamanan Admin</button>
+                    <button id="tab-btn-operator" onclick="window.switchSettingTab('operator')" class="p-3 text-left text-xs font-bold text-gray-500 border-b-2 sm:border-b-0 sm:border-l-4 border-transparent hover:bg-gray-100 whitespace-nowrap">Kelola Operator</button>
+                </div>
+                <div class="p-4 sm:p-6 flex-1 overflow-y-auto bg-white">
+                    <!-- Tab Lokasi -->
+                    <div id="setting-tab-lokasi" class="hidden space-y-4">
+                        <h4 class="font-bold text-gray-800 border-b pb-2 mb-4">Pengaturan Jangkauan GPS</h4>
+                        <div class="flex items-center justify-between bg-blue-50 p-3 rounded-xl border border-blue-100 mb-4">
+                            <span class="text-sm font-bold text-blue-900">Aktifkan Kunci Lokasi (Geofencing)</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="setting-lokasi-aktif" class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            </label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mb-4">
+                            <div><label class="block text-xs font-bold text-gray-600 mb-1">Latitude</label><input type="text" id="setting-lokasi-lat" class="w-full border border-gray-300 p-2 rounded-lg text-sm bg-gray-50" readonly></div>
+                            <div><label class="block text-xs font-bold text-gray-600 mb-1">Longitude</label><input type="text" id="setting-lokasi-lng" class="w-full border border-gray-300 p-2 rounded-lg text-sm bg-gray-50" readonly></div>
+                            <div class="col-span-2"><label class="block text-xs font-bold text-gray-600 mb-1">Batas Radius Absensi (Meter)</label><input type="number" id="setting-lokasi-radius" class="w-full border border-gray-300 p-2 rounded-lg text-sm" value="100" onchange="window.updateMapCircle()"></div>
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <button type="button" onclick="window.getLocationBrowser()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 rounded-xl text-xs border border-gray-300 transition-colors"><i class="fa-solid fa-location-crosshairs"></i> Gunakan Lokasi Saat Ini</button>
+                        </div>
+                        <div id="map-setting" class="w-full h-48 bg-gray-200 rounded-xl mb-4 border border-gray-300 relative z-0"></div>
+                        <button onclick="window.simpanPengaturanLokasi(event)" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition-colors">Simpan Lokasi</button>
+                    </div>
+                    
+                    <!-- Tab Logo -->
+                    <div id="setting-tab-tampilan" class="hidden space-y-4">
+                        <h4 class="font-bold text-gray-800 border-b pb-2 mb-4">Logo Instansi</h4>
+                        <div class="flex items-center gap-4">
+                            <div class="w-24 h-24 bg-gray-100 rounded-2xl flex items-center justify-center border-2 border-dashed border-gray-300 overflow-hidden relative">
+                                <i id="icon-logo-setting" class="fa-solid fa-image text-3xl text-gray-300"></i>
+                                <img id="img-logo-setting" src="" class="w-full h-full object-contain hidden absolute inset-0">
+                            </div>
+                            <div class="flex-1">
+                                <input type="file" id="input-logo-setting" accept="image/png, image/jpeg" class="w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" onchange="window.handleLogoUpload(event)">
+                                <p class="text-[10px] text-gray-400 mt-2">Format: PNG/JPG (Transparan disarankan). Maksimal 1MB.</p>
+                                <button onclick="window.hapusLogoSetting()" class="text-[10px] text-red-500 mt-2 font-bold hover:underline"><i class="fa-solid fa-trash"></i> Hapus Logo Saat Ini</button>
+                            </div>
+                        </div>
+                        <button onclick="window.simpanLogoSistem()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition-colors mt-4">Terapkan Logo</button>
+                    </div>
+
+                    <!-- Tab Kalender -->
+                    <div id="setting-tab-kalender" class="hidden space-y-4">
+                        <h4 class="font-bold text-gray-800 border-b pb-2 mb-4">Sistem Penanggalan Hijriyah</h4>
+                        <div class="space-y-3">
+                            <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="kalender_mode" value="kemenag" class="mt-1 accent-blue-600" onchange="window.toggleKalenderMode()">
+                                <div><div class="font-bold text-sm text-gray-800">Kalender Kemenag RI</div><div class="text-[10px] text-gray-500">Berdasarkan ketetapan resmi Kemenag per tahun.</div></div>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="kalender_mode" value="auto" class="mt-1 accent-blue-600" onchange="window.toggleKalenderMode()">
+                                <div><div class="font-bold text-sm text-gray-800">Sistem Perhitungan Otomatis</div><div class="text-[10px] text-gray-500">Mengkalkulasi berdasarkan konversi sistem komputer.</div></div>
+                            </label>
+                            <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="kalender_mode" value="manual" class="mt-1 accent-blue-600" onchange="window.toggleKalenderMode()">
+                                <div><div class="font-bold text-sm text-gray-800">Konfigurasi Manual (Rukyatul Hilal)</div><div class="text-[10px] text-gray-500">Atur jumlah hari (29/30) per bulan sendiri.</div></div>
+                            </label>
+                        </div>
+                        
+                        <div id="kalender-kemenag-settings" class="hidden mt-4 p-4 bg-blue-50 border border-blue-100 rounded-xl">
+                            <p class="text-xs text-blue-800 font-medium mb-3">Sistem menggunakan database standar pemerintah.</p>
+                            <button onclick="window.simpanKalenderKemenag()" class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-bold">Simpan</button>
+                        </div>
+
+                        <div id="kalender-auto-settings" class="hidden mt-4 p-4 bg-gray-50 border border-gray-200 rounded-xl">
+                            <label class="block text-xs font-bold text-gray-700 mb-1">Koreksi Hari (Offset)</label>
+                            <input type="number" id="setting-hijri-offset" class="w-full border border-gray-300 p-2 rounded-lg text-sm mb-3" value="0">
+                            <p class="text-[10px] text-gray-500 mb-3">Isi 1 untuk maju sehari, -1 mundur sehari, 0 normal.</p>
+                            <button onclick="window.simpanKalenderAuto()" class="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-bold">Simpan</button>
+                        </div>
+
+                        <div id="kalender-manual-settings" class="hidden mt-4 p-4 bg-orange-50 border border-orange-100 rounded-xl">
+                            <div class="grid grid-cols-2 gap-2 mb-3">
+                                <div><label class="block text-[10px] font-bold text-gray-700 mb-1">Tahun Hijriyah</label><select id="manual-kal-tahun" onchange="window.loadManualKalenderTahun()" class="w-full border p-2 rounded-lg text-sm outline-none"><option value="1445">1445</option><option value="1446" selected>1446</option><option value="1447">1447</option><option value="1448">1448</option></select></div>
+                                <div><label class="block text-[10px] font-bold text-gray-700 mb-1">Mulai Tgl Masehi 1 Muharram</label><input type="date" id="manual-kal-start" class="w-full border p-2 rounded-lg text-sm outline-none text-gray-700"></div>
+                            </div>
+                            <div id="manual-kal-grid" class="grid grid-cols-3 gap-2 mb-3"></div>
+                            <button onclick="window.simpanKalenderManual()" class="w-full bg-orange-600 text-white py-2 rounded-lg text-sm font-bold">Simpan Data Manual</button>
+                        </div>
+                    </div>
+
+                    <!-- Tab Login Admin -->
+                    <div id="setting-tab-login" class="hidden space-y-4">
+                        <h4 class="font-bold text-gray-800 border-b pb-2 mb-4">Ganti Akun Admin</h4>
+                        <form onsubmit="window.simpanPengaturanLogin(event)">
+                            <div class="mb-3"><label class="block text-xs font-bold text-gray-600 mb-1">Username Admin</label><input type="text" id="setting-admin-user" class="w-full border border-gray-300 p-2.5 rounded-xl text-sm outline-none focus:border-blue-500 bg-white" required></div>
+                            <div class="mb-4"><label class="block text-xs font-bold text-gray-600 mb-1">Password Baru</label><input type="password" id="setting-admin-pass" class="w-full border border-gray-300 p-2.5 rounded-xl text-sm outline-none focus:border-blue-500 bg-white" placeholder="(Kosongkan jika tidak ingin ganti)"></div>
+                            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-sm transition-colors">Perbarui Akun Utama</button>
+                        </form>
+                    </div>
+
+                    <!-- Tab Operator -->
+                    <div id="setting-tab-operator" class="hidden space-y-4">
+                        <h4 class="font-bold text-gray-800 border-b pb-2 mb-4">Hak Akses Operator & Sekretaris</h4>
+                        <div class="flex gap-4 items-start flex-col xl:flex-row">
+                            <form onsubmit="window.simpanOperator(event)" class="w-full xl:w-1/2 bg-gray-50 border border-gray-200 p-4 rounded-xl">
+                                <h5 id="form-operator-title" class="font-bold text-xs text-blue-700 mb-3 uppercase border-b border-blue-100 pb-1">Tambah Operator Baru</h5>
+                                <input type="hidden" id="op-id">
+                                <div class="mb-3"><label class="block text-[11px] font-bold text-gray-600 mb-1">Username</label><input type="text" id="op-user" class="w-full border border-gray-300 p-2 rounded-lg text-xs outline-none" required></div>
+                                <div class="mb-3"><label class="block text-[11px] font-bold text-gray-600 mb-1">Password</label><input type="password" id="op-pass" class="w-full border border-gray-300 p-2 rounded-lg text-xs outline-none" placeholder="Isi untuk buat baru/ganti"></div>
+                                <label class="block text-[11px] font-bold text-gray-600 mb-2">Pilih Menu yang Bisa Diakses:</label>
+                                <div class="grid grid-cols-2 gap-2 mb-4 max-h-[150px] overflow-y-auto pr-1">
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-dashboard" class="w-3 h-3"> Dashboard</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-guru" class="w-3 h-3"> Data Guru</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-murid" class="w-3 h-3"> Data Murid</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-absen-murid" class="w-3 h-3"> Absen Murid</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-rekap-murid" class="w-3 h-3"> Rekap Murid</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-riwayat" class="w-3 h-3"> Riwayat Guru</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-absen" class="w-3 h-3"> Absen Guru</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-jadwal-guru" class="w-3 h-3"> Jadwal Guru</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-jadwal-kelas" class="w-3 h-3"> Jadwal Kelas</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-rekap" class="w-3 h-3"> Rekap Guru</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-honor" class="w-3 h-3"> Honor Guru</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-idcard" class="w-3 h-3"> Cetak ID</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-kalender" class="w-3 h-3"> Kalender</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-pengaturan" class="w-3 h-3"> Pengaturan</label>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button type="submit" class="flex-1 bg-blue-600 text-white font-bold py-2 rounded-lg text-xs shadow-sm">Simpan</button>
+                                    <button type="button" onclick="window.resetFormOperator()" class="bg-gray-200 text-gray-700 py-2 px-3 rounded-lg text-xs font-bold">Batal</button>
+                                </div>
+                            </form>
+                            <div class="w-full xl:w-1/2 border border-gray-200 rounded-xl overflow-hidden bg-white">
+                                <div class="bg-gray-100 p-2 border-b border-gray-200 font-bold text-xs text-gray-700 uppercase">Daftar Operator</div>
+                                <div id="list-operator" class="divide-y divide-gray-100 max-h-[350px] overflow-y-auto"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PORTAL OPERATOR -->
+    <div id="modal-portal-operator" class="fixed inset-0 bg-emerald-50/90 backdrop-blur-sm z-[100095] hidden items-center justify-center p-4">
+        <div class="bg-white rounded-[2rem] shadow-2xl p-8 max-w-2xl w-full text-center relative border border-emerald-100">
+            <button id="btn-close-portal-operator" onclick="document.getElementById('modal-portal-operator').classList.replace('flex','hidden')" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 w-10 h-10 rounded-full flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            <div class="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4 text-emerald-600 text-4xl shadow-sm"><i class="fa-solid fa-users-gear"></i></div>
+            <h2 id="op-welcome-text" class="text-2xl font-bold text-emerald-900 mb-2">Selamat Datang</h2>
+            <p class="text-sm text-gray-500 mb-8">Pilih menu akses cepat untuk mengelola data operasional Madrasah.</p>
+            <div id="op-grid-menu" class="grid grid-cols-2 sm:grid-cols-4 gap-4 justify-center max-h-[50vh] overflow-y-auto px-2 pb-4">
+                <!-- Menu operator dirender di sini -->
+            </div>
+            <div class="mt-6 pt-6 border-t border-emerald-50">
+                <button onclick="window.prosesLogout()" class="px-6 py-2.5 bg-red-50 text-red-600 hover:bg-red-100 font-bold rounded-xl text-sm transition-colors border border-red-100 shadow-sm"><i class="fa-solid fa-arrow-right-from-bracket mr-2"></i>Keluar</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scanner Camera -->
     <div id="scanner-modal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] hidden flex-col items-center justify-center p-4">
         <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-sm w-full relative">
             <div class="p-4 bg-gray-900 text-center text-white flex justify-between items-center"><h3 class="font-bold text-sm"><i class="fa-solid fa-camera mr-2"></i>Pindai QR / Barcode</h3><button onclick="window.closeScanner()" class="text-gray-400 hover:text-white bg-gray-800 w-8 h-8 rounded-full flex items-center justify-center transition-colors"><i class="fa-solid fa-xmark"></i></button></div>
             <div id="reader" class="w-full bg-black min-h-[250px] flex items-center justify-center text-white text-sm">Sedang memuat kamera...</div>
             <div class="p-4 bg-white text-center flex flex-col gap-3"><p class="text-xs text-gray-500 font-medium" id="scanner-hint">Arahkan kamera ke kode...</p></div>
+        </div>
+    </div>
+
+    <!-- MODAL LIST DATA DASHBOARD -->
+    <div id="modal-list-guru-dashboard" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100020] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-md w-full h-auto max-h-[85vh] flex flex-col relative">
+            <div id="header-list-guru" class="p-4 text-white flex justify-between items-center shrink-0 bg-gray-600">
+                <h3 class="font-bold flex items-center text-sm" id="title-list-guru"><i class="fa-solid fa-users mr-2"></i>Data</h3>
+                <button onclick="document.getElementById('modal-list-guru-dashboard').classList.replace('flex', 'hidden')" class="text-white/70 hover:text-white bg-black/20 w-8 h-8 flex justify-center items-center rounded-full transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-1 bg-gray-50">
+                <ul id="content-list-guru" class="space-y-2"></ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL TAMBAH/EDIT JADWAL GURU -->
+    <div id="modal-jadwal-guru" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100030] hidden items-center justify-center p-4 transition-opacity">
+        <div class="bg-white rounded-3xl shadow-2xl overflow-hidden max-w-2xl w-full max-h-[90vh] flex flex-col relative">
+            <div class="p-4 text-white flex justify-between items-center shrink-0 bg-purple-600">
+                <h3 class="font-bold flex items-center text-sm" id="form-jadwal-title"><i class="fa-solid fa-calendar-plus mr-2"></i>Form Jadwal</h3>
+                <button onclick="window.tutupModalJadwal()" class="text-white/70 hover:text-white bg-black/20 w-8 h-8 flex justify-center items-center rounded-full transition-colors"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="p-4 sm:p-6 overflow-y-auto flex-1 bg-gray-50">
+                <form onsubmit="window.simpanJadwalGuru(event)" class="space-y-5">
+                    <input type="hidden" id="jadwal-mode" value="add">
+                    <input type="hidden" id="jadwal-id" value="">
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Nama Guru</label>
+                            <select id="jadwal-guru-id" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 bg-white" required>
+                                <!-- Pilihan diisi otomatis lewat JS -->
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1.5">Hari Mengajar</label>
+                            <select id="jadwal-hari" class="w-full border border-gray-300 p-2.5 rounded-xl outline-none focus:ring-2 focus:ring-purple-500 bg-white" required>
+                                <option value="">-- Pilih Hari --</option>
+                                <option value="Sabtu">Sabtu</option>
+                                <option value="Ahad">Ahad</option>
+                                <option value="Senin">Senin</option>
+                                <option value="Selasa">Selasa</option>
+                                <option value="Rabu">Rabu</option>
+                                <option value="Kamis">Kamis</option>
+                                <option value="Jumat">Jumat</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Jam 1 -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative mt-3">
+                        <div class="absolute -top-3 left-4 bg-purple-100 text-purple-700 font-bold px-3 py-1 rounded-lg text-[10px] border border-purple-200">Sesi 1 (Jam Pertama)</div>
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Mulai</label><input type="time" id="jadwal-jam1-mulai" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm"></div>
+                            <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Selesai</label><input type="time" id="jadwal-jam1-selesai" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm"></div>
+                            <div class="col-span-2 grid grid-cols-2 gap-3 mt-1">
+                                <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Kelas</label><input type="text" id="jadwal-mapel-1" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm placeholder:text-gray-300" placeholder="Cth: Kelas 1 A"></div>
+                                <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Mata Pelajaran</label><input type="text" id="jadwal-pelajaran-1" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm placeholder:text-gray-300" placeholder="Opsional (Cth: Fiqih)"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jam 2 -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative mt-5">
+                        <div class="absolute -top-3 left-4 bg-emerald-100 text-emerald-700 font-bold px-3 py-1 rounded-lg text-[10px] border border-emerald-200">Sesi 2 (Jam Kedua)</div>
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Mulai</label><input type="time" id="jadwal-jam2-mulai" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm"></div>
+                            <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Selesai</label><input type="time" id="jadwal-jam2-selesai" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm"></div>
+                            <div class="col-span-2 grid grid-cols-2 gap-3 mt-1">
+                                <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Kelas</label><input type="text" id="jadwal-mapel-2" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm placeholder:text-gray-300" placeholder="Cth: Kelas 1 A"></div>
+                                <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Mata Pelajaran</label><input type="text" id="jadwal-pelajaran-2" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm placeholder:text-gray-300" placeholder="Opsional"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Jam 3 -->
+                    <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm relative mt-5">
+                        <div class="absolute -top-3 left-4 bg-orange-100 text-orange-700 font-bold px-3 py-1 rounded-lg text-[10px] border border-orange-200">Sesi 3 (Jam Ketiga)</div>
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Mulai</label><input type="time" id="jadwal-jam3-mulai" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm"></div>
+                            <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Selesai</label><input type="time" id="jadwal-jam3-selesai" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm"></div>
+                            <div class="col-span-2 grid grid-cols-2 gap-3 mt-1">
+                                <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Kelas</label><input type="text" id="jadwal-mapel-3" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm placeholder:text-gray-300" placeholder="Cth: Kelas 1 A"></div>
+                                <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Mata Pelajaran</label><input type="text" id="jadwal-pelajaran-3" class="w-full border border-gray-300 p-2 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm placeholder:text-gray-300" placeholder="Opsional"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" id="btn-submit-jadwal" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl shadow-md transition-colors"><i class="fa-solid fa-save"></i> Simpan Jadwal</button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
@@ -477,7 +834,7 @@
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="overflow-x-auto pb-4"><table class="w-full text-sm text-left"><thead class="bg-orange-50 text-xs text-orange-900 font-bold uppercase border-b border-orange-100"><tr><th class="px-4 py-3.5 w-16 text-center">No</th><th class="px-4 py-3.5 min-w-[250px]">Nama Murid</th><th class="px-4 py-3.5 text-center min-w-[300px]">Status Kehadiran</th></tr></thead><tbody id="table-absen-murid" class="divide-y divide-gray-100 bg-white"><tr><td colspan="3" class="text-center py-8 text-gray-500">Silakan pilih kelas terlebih dahulu.</td></tr></tbody></table></div>
+                        <div class="overflow-x-auto pb-4"><table class="w-full text-sm text-left"><thead class="bg-orange-50 text-xs text-orange-900 font-bold uppercase border-b border-orange-100 hidden sm:table-header-group"><tr><th class="px-4 py-3.5 w-16 text-center">No</th><th class="px-4 py-3.5 min-w-[250px]">Nama Murid</th><th class="px-4 py-3.5 text-center min-w-[300px]">Status Kehadiran</th></tr></thead><tbody id="table-absen-murid" class="divide-y divide-gray-100 bg-white"><tr><td colspan="3" class="text-center py-8 text-gray-500">Silakan pilih kelas terlebih dahulu.</td></tr></tbody></table></div>
                         <div class="p-4 border-t border-gray-100 bg-gray-50 flex justify-end gap-2"><button onclick="window.hapusAbsenMurid()" class="w-full sm:w-auto bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-4 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-sm transition-colors"><i class="fa-solid fa-trash-can"></i> Hapus Absen Kelas Ini</button><button onclick="window.simpanAbsenMurid()" class="w-full sm:w-auto bg-orange-600 hover:bg-orange-700 text-white px-6 py-2.5 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md transition-colors"><i class="fa-solid fa-save"></i> Simpan Absensi Murid</button></div>
                     </div>
                 </div>
@@ -750,13 +1107,25 @@
         window.getTodayInputFormat = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; };
         window.formatRp = (num) => 'Rp ' + parseInt(num).toLocaleString('id-ID');
         window.playBeep = () => { try { const audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} };
-        window.playHadirSound = () => { try { if('speechSynthesis' in window) { const utter = new SpeechSynthesisUtterance("Hadir"); utter.lang = 'id-ID'; window.speechSynthesis.speak(utter); } } catch(e) {} };
+        
+        // Membatalkan suara sebelumnya agar saat di-scan cepat, suara "Hadir" tidak ngelag/delay
+        window.playHadirSound = () => { try { if('speechSynthesis' in window) { window.speechSynthesis.cancel(); const utter = new SpeechSynthesisUtterance("Hadir"); utter.lang = 'id-ID'; utter.rate = 1.3; window.speechSynthesis.speak(utter); } } catch(e) {} };
         window.getDistanceFromLatLonInM = (lat1, lon1, lat2, lon2) => { const R = 6371e3; const p1 = lat1 * Math.PI/180; const p2 = lat2 * Math.PI/180; const dp = (lat2-lat1) * Math.PI/180; const dl = (lon2-lon1) * Math.PI/180; const a = Math.sin(dp/2) * Math.sin(dp/2) + Math.cos(p1) * Math.cos(p2) * Math.sin(dl/2) * Math.sin(dl/2); return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))); };
         window.formatHijriyah = (dateString) => { try { const d = new Date(dateString); return new Intl.DateTimeFormat('id-ID-u-ca-islamic', {day:'numeric', month:'long', year:'numeric'}).format(d); } catch(e) { return dateString; } };
         window.isJamPiket = (jamStr, jamNum) => { if(!jamStr) return false; const m = jamStr.match(new RegExp(`Jam ${jamNum}:[\\s\\S]*?(?:<hr|$)`, 'i')); return m ? /Piket/i.test(m[0]) : false; };
         
         // Fungsi Enkripsi Password (SHA-256)
         window.hashText = async (text) => { const msgBuffer = new TextEncoder().encode(text); const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer); return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join(''); };
+
+        // Fungsi Toast (Notif Mengambang) untuk scan berurutan
+        window.showToast = (title, message, type='success') => {
+            const tc = document.getElementById('toast-container'); if(!tc)return;
+            const t = document.createElement('div');
+            t.className = `bg-white border-l-4 ${type==='success'?'border-green-500':'border-red-500'} shadow-lg rounded-lg p-3 flex flex-col gap-1 w-64 transform transition-all duration-300 translate-x-0 opacity-100`;
+            t.innerHTML = `<span class="font-bold text-sm text-gray-800">${title}</span><span class="text-xs text-gray-600 leading-tight">${message}</span>`;
+            tc.prepend(t);
+            setTimeout(() => { t.classList.add('opacity-0', 'translate-x-full'); setTimeout(() => t.remove(), 300); }, 2000);
+        };
 
         window.showAlert = (title, message, type='info', callback=null) => { document.getElementById('alert-title').innerText = title; document.getElementById('alert-message').innerText = message; const icon = document.getElementById('alert-icon'); if(type === 'error') icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>'; else if(type === 'success') icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>'; else icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>'; document.getElementById('alert-modal').classList.replace('hidden', 'flex'); document.getElementById('alert-close-btn').onclick = () => { document.getElementById('alert-modal').classList.replace('flex', 'hidden'); if(callback) setTimeout(callback, 300); }; };
         window.showConfirm = (title, message, callback) => { document.getElementById('confirm-title').innerText = title; document.getElementById('confirm-message').innerText = message; document.getElementById('confirm-modal').classList.replace('hidden', 'flex'); document.getElementById('confirm-yes-btn').onclick = () => { document.getElementById('confirm-modal').classList.replace('flex', 'hidden'); if(callback) callback(); }; };
@@ -781,7 +1150,7 @@
                     if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2 text-yellow-400"></i>Tersimpan Lokal (Cloud Gagal)';
                 }
                 if (syncBadge) setTimeout(() => syncBadge.classList.add('opacity-0'), 2500);
-            }, 100);
+            }, 1000); // <-- Diperpanjang jadi 1 detik agar tidak terjadi bentrok data upload saat banyak scan cepat
         };
 
         window.initCloudDatabase = async () => {
@@ -1182,8 +1551,17 @@
             c.innerHTML=muridKelas.map((m,i)=>{
                 const pr=rh.data.find(dx=>String(dx.id_siswa)===String(m.id));
                 const st=pr?pr.status:'';
-                const b=st==='Hadir'?'<span class="ml-2 bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold">HADIR</span>':st==='Izin'?'<span class="ml-2 bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold">IZIN</span>':st==='Sakit'?'<span class="ml-2 bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-[10px] font-bold">SAKIT</span>':st==='Alpa'?'<span class="ml-2 bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold">ALPA</span>':'';
-                return`<tr class="absen-murid-row border-b border-gray-100 hover:bg-orange-50/20" data-id="${m.id}"><td class="px-4 py-3 text-center align-middle">${i+1}</td><td class="px-4 py-3 align-middle"><span class="font-bold text-gray-800">${m.nama}</span><br><span class="text-xs text-gray-500">NIS: ${m.nis||'-'}</span></td><td class="px-4 py-3 align-middle"><div class="flex flex-wrap gap-2 justify-center sm:justify-start items-center">${b}<label class="cursor-pointer text-[11px] flex items-center bg-gray-50 px-2 py-1.5 rounded border border-gray-200 hover:bg-gray-100 ml-2"><input type="radio" name="absen_murid_${m.id}" value="Hadir" class="mr-1 accent-green-600" ${st==='Hadir'?'checked':''}> Hadir</label><label class="cursor-pointer text-[11px] flex items-center bg-gray-50 px-2 py-1.5 rounded border border-gray-200 hover:bg-gray-100"><input type="radio" name="absen_murid_${m.id}" value="Izin" class="mr-1 accent-blue-600" ${st==='Izin'?'checked':''}> Izin</label><label class="cursor-pointer text-[11px] flex items-center bg-gray-50 px-2 py-1.5 rounded border border-gray-200 hover:bg-gray-100"><input type="radio" name="absen_murid_${m.id}" value="Sakit" class="mr-1 accent-orange-600" ${st==='Sakit'?'checked':''}> Sakit</label><label class="cursor-pointer text-[11px] flex items-center bg-gray-50 px-2 py-1.5 rounded border border-gray-200 hover:bg-gray-100"><input type="radio" name="absen_murid_${m.id}" value="Alpa" class="mr-1 accent-red-600" ${st==='Alpa'?'checked':''}> Alpa</label></div></td></tr>`;
+                const b=st==='Hadir'?'<span class="ml-2 sm:ml-0 bg-green-100 text-green-700 px-2 py-0.5 rounded text-[9px] font-bold">HADIR</span>':st==='Izin'?'<span class="ml-2 sm:ml-0 bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[9px] font-bold">IZIN</span>':st==='Sakit'?'<span class="ml-2 sm:ml-0 bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-[9px] font-bold">SAKIT</span>':st==='Alpa'?'<span class="ml-2 sm:ml-0 bg-red-100 text-red-700 px-2 py-0.5 rounded text-[9px] font-bold">ALPA</span>':'';
+                return`<tr class="absen-murid-row border-b border-gray-100 hover:bg-orange-50/20 flex flex-col sm:table-row p-3 sm:p-0" data-id="${m.id}">
+                    <td class="hidden sm:table-cell px-4 py-3 text-center align-middle">${i+1}</td>
+                    <td class="px-1 sm:px-4 py-1 sm:py-3 align-middle flex justify-between items-center sm:table-cell"><div><span class="font-bold text-gray-800 text-sm sm:text-base"><span class="sm:hidden">${i+1}. </span>${m.nama}</span><br class="hidden sm:block"><span class="text-[10px] text-gray-500">NIS: ${m.nis||'-'}</span></div><div class="sm:hidden">${b}</div></td>
+                    <td class="px-1 sm:px-4 py-2 sm:py-3 align-middle"><div class="flex gap-1.5 justify-between sm:justify-start items-center w-full mt-1 sm:mt-0">
+                            <span class="hidden sm:inline-block mr-2">${b}</span>
+                            <label class="cursor-pointer text-[10px] sm:text-[11px] flex-1 sm:flex-none flex justify-center items-center bg-gray-50 px-1 py-2 sm:py-1.5 rounded-lg border border-gray-200 hover:bg-gray-100"><input type="radio" name="absen_murid_${m.id}" value="Hadir" class="mr-1 sm:mr-1.5 accent-green-600 w-3.5 h-3.5 sm:w-3 sm:h-3" ${st==='Hadir'?'checked':''}> Hadir</label>
+                            <label class="cursor-pointer text-[10px] sm:text-[11px] flex-1 sm:flex-none flex justify-center items-center bg-gray-50 px-1 py-2 sm:py-1.5 rounded-lg border border-gray-200 hover:bg-gray-100"><input type="radio" name="absen_murid_${m.id}" value="Izin" class="mr-1 sm:mr-1.5 accent-blue-600 w-3.5 h-3.5 sm:w-3 sm:h-3" ${st==='Izin'?'checked':''}> Izin</label>
+                            <label class="cursor-pointer text-[10px] sm:text-[11px] flex-1 sm:flex-none flex justify-center items-center bg-gray-50 px-1 py-2 sm:py-1.5 rounded-lg border border-gray-200 hover:bg-gray-100"><input type="radio" name="absen_murid_${m.id}" value="Sakit" class="mr-1 sm:mr-1.5 accent-orange-600 w-3.5 h-3.5 sm:w-3 sm:h-3" ${st==='Sakit'?'checked':''}> Sakit</label>
+                            <label class="cursor-pointer text-[10px] sm:text-[11px] flex-1 sm:flex-none flex justify-center items-center bg-gray-50 px-1 py-2 sm:py-1.5 rounded-lg border border-gray-200 hover:bg-gray-100"><input type="radio" name="absen_murid_${m.id}" value="Alpa" class="mr-1 sm:mr-1.5 accent-red-600 w-3.5 h-3.5 sm:w-3 sm:h-3" ${st==='Alpa'?'checked':''}> Alpa</label>
+                        </div></td></tr>`;
             }).join('');
         };
         window.simpanAbsenMurid = () => {
@@ -1868,10 +2246,10 @@
 
                     // 2. CEK DUPLIKAT: Tolak jika status untuk sesi tersebut sudah ada
                     if (sesiAktif && td && td[`status_${sesiAktif}`]) {
-                        if(!silent) return window.showAlert('Sudah Tercatat', `Guru: ${g.nama}\nSudah absen dengan status ${td[`status_${sesiAktif}`].toUpperCase()} untuk Sesi Ke-${sesiAktif} hari ini.`, 'info');
+                        if(!silent) { window.showToast('Sudah Tercatat', `Guru: ${g.nama} sudah absen Sesi Ke-${sesiAktif}`, 'error'); return; }
                         return;
                     } else if (!sesiAktif && td && td['status_1']) {
-                        if(!silent) return window.showAlert('Sudah Tercatat', `Guru: ${g.nama}\nSudah absen dengan status ${td['status_1'].toUpperCase()} untuk hari ini.`, 'info');
+                        if(!silent) { window.showToast('Sudah Tercatat', `Guru: ${g.nama} sudah absen hari ini`, 'error'); return; }
                         return;
                     }
                     
@@ -1882,9 +2260,10 @@
                     else { td['status_1']=fs; td['info_1']=finalInfoWaktu; if(cw.hasJam2){td['status_2']=fs;td['info_2']=finalInfoWaktu;} if(cw.hasJam3){td['status_3']=fs;td['info_3']=finalInfoWaktu;} }
                     
                     window.saveState(); window.renderAbsenGuru(); window.updateDashboardStats(); if(fs==='Hadir')window.playHadirSound(); else window.playBeep();
-                    if(!silent)return window.showAlert('Absen Berhasil', `Guru: ${g.nama}\nTercatat ${fs.toUpperCase()}${sesiAktif ? ' (Sesi Ke-' + sesiAktif + ')' : ''}.${finalInfoWaktu&&finalInfoWaktu.includes('Terlambat')?'\nCatatan: '+finalInfoWaktu:''}${infoJarak}`, 'success'); return cw;
+                    if(!silent) { window.showToast('Berhasil', `${g.nama} - ${fs.toUpperCase()}`, 'success'); return cw; }
+                    return cw;
                 }
-                if(!silent)return window.showAlert('Gagal', `Barcode tidak terdaftar.`, 'error');
+                if(!silent) { window.showToast('Gagal', 'Barcode tidak terdaftar', 'error'); return; }
             }
         };
 
@@ -2657,6 +3036,33 @@
             }
 
             modal.classList.replace('hidden', 'flex');
+        };
+
+        window.renderOpGridRiwayat = () => {
+            const c = document.getElementById('op-grid-menu'); if(!c) return;
+            const ak = window.currentUser?.akses || {};
+            const menus = [
+                { id: 'dashboard', icon: 'fa-chart-pie', text: 'Beranda', color: 'blue', tab: 'dashboard', btn: 'nav-btn-dashboard' },
+                { id: 'kalender', icon: 'fa-calendar-moon', text: 'Kalender', color: 'emerald', tab: 'kalender', btn: 'nav-btn-kalender' },
+                { id: 'guru', icon: 'fa-user-tie', text: 'Data Guru', color: 'purple', tab: 'guru', btn: 'nav-btn-guru' },
+                { id: 'riwayat', icon: 'fa-clock-rotate-left', text: 'Riwayat Guru', color: 'purple', tab: 'riwayat-guru', btn: 'nav-btn-riwayat-guru' },
+                { id: 'absen', icon: 'fa-calendar-check', text: 'Absen Guru', color: 'purple', tab: 'absen-guru', btn: 'nav-btn-absen-guru' },
+                { id: 'jadwal_guru', icon: 'fa-calendar-days', text: 'Jadwal Guru', color: 'purple', tab: 'jadwal-guru', btn: 'nav-btn-jadwal-guru' },
+                { id: 'jadwal_kelas', icon: 'fa-layer-group', text: 'Jadwal Kelas', color: 'emerald', tab: 'jadwal-kelas', btn: 'nav-btn-jadwal-kelas' },
+                { id: 'rekap', icon: 'fa-list-check', text: 'Rekap Guru', color: 'purple', tab: 'rekap-absen-guru', btn: 'nav-btn-rekap-absen-guru' },
+                { id: 'honor', icon: 'fa-file-invoice-dollar', text: 'Honor Guru', color: 'purple', tab: 'honor-guru', btn: 'nav-btn-honor-guru' },
+                { id: 'idcard', icon: 'fa-id-badge', text: 'Cetak ID', color: 'purple', tab: 'idcard', btn: 'nav-btn-idcard' },
+                { id: 'murid', icon: 'fa-users', text: 'Data Murid', color: 'orange', tab: 'murid', btn: 'nav-btn-murid' },
+                { id: 'absen_murid', icon: 'fa-user-check', text: 'Absen Murid', color: 'orange', tab: 'absen-murid', btn: 'nav-btn-absen-murid' },
+                { id: 'rekap_murid', icon: 'fa-list-check', text: 'Rekap Murid', color: 'orange', tab: 'rekap-murid', btn: 'nav-btn-rekap-murid' },
+                { id: 'pengaturan', icon: 'fa-gear', text: 'Pengaturan', color: 'gray', click: "window.bukaModalPengaturan('lokasi'); document.getElementById('modal-portal-operator').classList.replace('flex','hidden');" }
+            ];
+            
+            c.innerHTML = menus.filter(m => ak[m.id]).map(m => {
+                const action = m.click ? m.click : `window.switchTab('${m.tab}', document.getElementById('${m.btn}')); document.getElementById('modal-portal-operator').classList.replace('flex','hidden');`;
+                return `<div onclick="${action}" class="bg-${m.color}-50 border border-${m.color}-100 hover:bg-${m.color}-100 p-4 rounded-xl cursor-pointer transition-colors flex flex-col items-center justify-center gap-2 group"><i class="fa-solid ${m.icon} text-2xl text-${m.color}-600 group-hover:scale-110 transition-transform"></i><span class="text-xs font-bold text-${m.color}-900">${m.text}</span></div>`;
+            }).join('');
+            if(c.innerHTML === '') c.innerHTML = '<div class="col-span-full text-gray-500 text-sm">Tidak ada akses menu.</div>';
         };
 
     </script>
