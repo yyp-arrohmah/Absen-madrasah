@@ -321,9 +321,10 @@
                         <div class="flex justify-between"><span class="text-gray-600">H. Piket (<span id="slip-honor-piket"></span>)</span><span id="slip-honor-tarif-piket" class="text-right"></span></div>
                         <div class="flex justify-between"><span class="text-gray-600">Transport</span><span id="slip-honor-transport" class="text-right"></span></div>
                         <div class="flex justify-between"><span class="text-gray-600">Tunjangan</span><span id="slip-honor-tunjangan" class="text-right"></span></div>
+                        <div class="flex justify-between text-red-600 font-bold border-t border-gray-100 pt-1 mt-1"><span class="text-gray-600 font-normal">Pot. Tabungan</span><span id="slip-honor-potongan" class="text-right">-Rp 0</span></div>
                     </div>
                     <div class="border-t-2 border-gray-800 pt-2 flex justify-between font-bold text-sm mt-1">
-                        <span>TOTAL</span><span id="slip-honor-total"></span>
+                        <span>TOTAL BERSIH</span><span id="slip-honor-total"></span>
                     </div>
                     <div class="mt-6 text-center text-[9px] text-gray-500" id="slip-honor-tgl-cetak"></div>
                 </div>
@@ -462,6 +463,7 @@
                                     <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-jadwal-kelas" class="w-3 h-3"> Jadwal Kelas</label>
                                     <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-rekap" class="w-3 h-3"> Rekap Guru</label>
                                     <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-honor" class="w-3 h-3"> Honor Guru</label>
+                                    <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-tabungan" class="w-3 h-3"> Tabungan Guru</label>
                                     <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-idcard" class="w-3 h-3"> Cetak ID</label>
                                     <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-kalender" class="w-3 h-3"> Kalender</label>
                                     <label class="flex items-center text-[10px] gap-1 bg-white p-1.5 rounded border border-gray-200 cursor-pointer"><input type="checkbox" id="akses-pengaturan" class="w-3 h-3"> Pengaturan</label>
@@ -621,8 +623,8 @@
     <div id="login-screen" class="fixed inset-0 bg-emerald-50/70 backdrop-blur-sm z-[8000] flex flex-col items-center justify-center p-4 transition-opacity duration-300">
         <div class="bg-white rounded-[2rem] shadow-[0_20px_60px_-15px_rgba(16,185,129,0.2)] overflow-hidden w-full max-w-[320px] flex flex-col border border-emerald-100">
             <div class="bg-white p-6 pb-2 text-center relative overflow-hidden">
-                <div id="login-logo-wrapper" class="relative z-10 w-24 h-24 bg-emerald-50 rounded-2xl mx-auto flex items-center justify-center text-emerald-600 text-5xl mb-3 shadow-sm border border-emerald-100 p-2">
-                    <img id="login-logo-img" src="" class="max-w-full max-h-full object-contain hidden drop-shadow-sm">
+                <div id="login-logo-wrapper" class="relative z-10 w-32 h-32 bg-emerald-50 rounded-3xl mx-auto flex items-center justify-center text-emerald-600 text-6xl mb-4 shadow-md border border-emerald-100 p-2 transition-colors">
+                    <img id="login-logo-img" src="" class="w-full h-full object-contain hidden drop-shadow-md opacity-80 scale-110">
                     <i id="login-logo-icon" class="fa-solid fa-graduation-cap"></i>
                 </div>
                 <h2 class="relative z-10 text-xl font-bold text-emerald-900 tracking-wide">ABSENSI GURU<br>MADRASAH ARROHMAH</h2>
@@ -659,11 +661,11 @@
         <aside id="sidebar" class="bg-white w-64 h-full border-r border-gray-200 flex flex-col fixed lg:relative z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div id="sidebar-logo-wrapper" class="w-14 h-14 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold p-1.5 shadow-sm text-2xl">
-                        <img id="sidebar-logo-img" src="" class="w-full h-full object-contain hidden drop-shadow-sm">
+                    <div id="sidebar-logo-wrapper" class="w-20 h-20 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold p-2 shadow-md text-4xl transition-colors">
+                        <img id="sidebar-logo-img" src="" class="w-full h-full object-contain hidden drop-shadow-md opacity-80 scale-110">
                         <i id="sidebar-logo-icon" class="fa-solid fa-graduation-cap"></i>
                     </div>
-                    <span class="font-bold text-lg text-gray-800 leading-tight">Sistem<br><span class="text-blue-600 text-sm">Madrasah</span></span>
+                    <span class="font-bold text-xl text-gray-800 leading-tight">Sistem<br><span class="text-blue-600 text-base">Madrasah</span></span>
                 </div>
                 <button class="lg:hidden text-gray-500 text-xl" onclick="window.toggleSidebar()"><i class="fa-solid fa-xmark"></i></button>
             </div>
@@ -684,6 +686,7 @@
                                 <button id="nav-btn-jadwal-kelas" onclick="window.switchTab('jadwal-kelas', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-2 rounded-xl text-left text-sm font-medium text-gray-500 hover:bg-emerald-50 transition-colors"><i class="fa-solid fa-layer-group w-5"></i> Jadwal Kelas</button>
                                 <button id="nav-btn-rekap-absen-guru" onclick="window.switchTab('rekap-absen-guru', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-2 rounded-xl text-left text-sm font-medium text-gray-500 hover:bg-purple-50 transition-colors"><i class="fa-solid fa-list-check w-5"></i> Rekap Absen</button>
                                 <button id="nav-btn-honor-guru" onclick="window.switchTab('honor-guru', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-2 rounded-xl text-left text-sm font-medium text-gray-500 hover:bg-purple-50 transition-colors"><i class="fa-solid fa-file-invoice-dollar w-5"></i> Honor Guru</button>
+                                <button id="nav-btn-tabungan" onclick="window.switchTab('tabungan', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-2 rounded-xl text-left text-sm font-medium text-gray-500 hover:bg-purple-50 transition-colors"><i class="fa-solid fa-piggy-bank w-5"></i> Tabungan Guru</button>
                                 <button id="nav-btn-idcard" onclick="window.switchTab('idcard', this)" class="nav-btn w-full flex items-center gap-3 px-4 py-2 rounded-xl text-left text-sm font-medium text-gray-500 hover:bg-purple-50 transition-colors"><i class="fa-solid fa-id-badge w-5"></i> Cetak ID Card</button>
                             </div>
                         </div>
@@ -1025,12 +1028,59 @@
                                         <th class="px-4 py-3.5 text-right">H. Piket</th>
                                         <th class="px-4 py-3.5 text-right">Transport</th>
                                         <th class="px-4 py-3.5 text-right">Tunjangan</th>
-                                        <th class="px-4 py-3.5 text-right">Total</th>
+                                        <th class="px-4 py-3.5 text-right text-red-600">Pot. Tabungan</th>
+                                        <th class="px-4 py-3.5 text-right">Total Bersih</th>
                                     </tr>
                                 </thead>
                                 <tbody id="table-honor-guru" class="divide-y divide-gray-100 bg-white"></tbody>
                                 <tfoot id="tfoot-honor-guru" class="bg-purple-50 border-t-2 border-purple-200 font-bold hidden"></tfoot>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB TABUNGAN GURU -->
+                <div id="tab-tabungan" class="tab-content max-w-6xl mx-auto scroll-mt-6">
+                    <div class="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
+                        <div><h2 class="text-2xl font-bold text-gray-800">Tabungan Guru</h2><p class="text-gray-500 text-sm">Kelola simpanan guru, setoran tunai, dan potongan honor otomatis.</p></div>
+                        <div class="bg-white p-3 rounded-xl border border-purple-200 shadow-sm text-center min-w-[200px]">
+                            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Total Kas Tabungan</p>
+                            <h3 class="text-xl font-bold text-purple-700" id="total-kas-tabungan">Rp 0</h3>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1">
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                                <h3 class="font-bold mb-4 text-purple-700"><i class="fa-solid fa-money-bill-transfer mr-2"></i>Form Transaksi</h3>
+                                <form onsubmit="window.simpanTabungan(event)" class="space-y-4">
+                                    <input type="hidden" id="tabungan-id" value="">
+                                    <div><label class="block text-sm font-medium mb-1">Nama Guru</label><select id="tabungan-guru-id" class="w-full border border-gray-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer bg-white" required onchange="window.cekSaldoTabungan()"><option value="">-- Pilih Guru --</option></select><p id="info-saldo-guru" class="text-[10px] text-gray-500 mt-1 font-bold"></p></div>
+                                    <div><label class="block text-sm font-medium mb-1">Tanggal Transaksi</label><input type="date" id="tabungan-tgl" class="w-full border border-gray-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-purple-500" required></div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Jenis</label><select id="tabungan-jenis" class="w-full border border-gray-300 p-2 rounded-lg text-sm outline-none bg-white" required onchange="window.toggleMetodeTabungan()"><option value="Setor">Setor (+)</option><option value="Tarik">Tarik (-)</option></select></div>
+                                        <div><label class="block text-[11px] font-bold text-gray-500 mb-1">Metode</label><select id="tabungan-metode" class="w-full border border-gray-300 p-2 rounded-lg text-sm outline-none bg-white" required><option value="Tunai">Tunai</option><option value="Potong Honor">Potong Honor</option></select></div>
+                                    </div>
+                                    <div><label class="block text-sm font-medium mb-1">Nominal (Rp)</label><input type="number" id="tabungan-nominal" class="w-full border border-gray-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 font-bold text-lg text-purple-700" required placeholder="0"></div>
+                                    <div><label class="block text-sm font-medium mb-1">Keterangan</label><input type="text" id="tabungan-ket" class="w-full border border-gray-300 p-2.5 rounded-lg outline-none focus:ring-2 focus:ring-purple-500 text-sm" placeholder="Opsional (Bulan potongan / alasan tarik)"></div>
+                                    <button type="submit" class="w-full bg-purple-600 text-white rounded-xl p-3 font-bold hover:bg-purple-700 shadow-md flex items-center justify-center gap-2 transition-colors mt-2"><i class="fa-solid fa-floppy-disk"></i> Simpan Transaksi</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-2">
+                            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                                <div class="p-4 border-b border-gray-100 bg-gray-50 flex flex-col sm:flex-row justify-between items-center gap-3">
+                                    <span class="font-bold text-sm text-gray-700"><i class="fa-solid fa-list-ul text-purple-500 mr-2"></i>Riwayat Transaksi</span>
+                                    <select id="filter-guru-tabungan" class="border border-gray-300 rounded-lg px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-purple-500 w-full sm:w-auto bg-white" onchange="window.renderTabungan()"><option value="">Semua Guru</option></select>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm text-left">
+                                        <thead class="bg-purple-50 text-xs text-purple-900 font-bold uppercase border-b border-purple-100">
+                                            <tr><th class="px-4 py-3 text-center">Tgl</th><th class="px-4 py-3">Guru & Ket</th><th class="px-4 py-3 text-center">Metode</th><th class="px-4 py-3 text-right">Setor (+)</th><th class="px-4 py-3 text-right">Tarik (-)</th><th class="px-4 py-3 text-center">Aksi</th></tr>
+                                        </thead>
+                                        <tbody id="table-tabungan" class="divide-y divide-gray-100 bg-white"></tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1071,7 +1121,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getDatabase, ref, set, get, child } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
+        import { getDatabase, ref, set, get, child, onValue } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-database.js";
 
         // 1. Kofigurasi Firebase
         const firebaseConfig = {
@@ -1089,7 +1139,7 @@
 
         // 2. State Aplikasi Global
         window.appState = {
-            guru: [], siswa: [], mapel: [], absensi_guru: [], absensi_siswa: [], jadwal_guru: [],
+            guru: [], siswa: [], mapel: [], absensi_guru: [], absensi_siswa: [], jadwal_guru: [], tabungan_guru: [],
             pengaturan: { 
                 admin_user: "admin", admin_pass: "12345",
                 operators: [],
@@ -1153,40 +1203,67 @@
             }, 1000); // <-- Diperpanjang jadi 1 detik agar tidak terjadi bentrok data upload saat banyak scan cepat
         };
 
+        let isFirstLoad = true;
         window.initCloudDatabase = async () => {
             const loader = document.getElementById('startup-loader');
             const localData = localStorage.getItem('CloudMadrasahData');
             
             // 1. Muat data lokal secara instan agar UI langsung responsif
-            if(localData) { 
+            if(localData && isFirstLoad) { 
                 try { 
                     const p = JSON.parse(localData); window.appState = {...window.appState, ...p}; 
                     if(p.pengaturan) window.appState.pengaturan = {...window.appState.pengaturan, ...p.pengaturan}; 
                 } catch(e){} 
             }
 
-            // 2. Ambil sync terbaru dari Firebase
+            // 2. Pasang Listener Real-time Firebase (onValue)
             try {
+                const dbRef = ref(db, 'MadrasahData');
+                onValue(dbRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        const cloudData = snapshot.val();
+                        window.appState = { ...window.appState, ...cloudData };
+                        if (cloudData.pengaturan) { window.appState.pengaturan = { ...window.appState.pengaturan, ...cloudData.pengaturan }; }
+                        try { localStorage.setItem('CloudMadrasahData', JSON.stringify(window.appState)); } catch(err){}
+                        
+                        // Jika sistem sedang berjalan (user login), perbarui dashboard secara otomatis
+                        if (window.currentUser) {
+                            if (typeof window.updateDashboardStats === 'function') window.updateDashboardStats();
+                            // Tabel absen celah aman tidak diperbarui otomatis agar tidak mereset 
+                            // pilihan manual admin (radio button) yang belum sempat diklik simpan
+                        }
+                    }
+                    
+                    if (isFirstLoad) {
+                        if (loader) loader.classList.replace('flex', 'hidden');
+                        if (typeof window.initHijriFilter === 'function') window.initHijriFilter();
+                        if (typeof window.updateAllViews === 'function') window.updateAllViews();
+                        isFirstLoad = false;
+                    }
+                });
+            } catch (error) { 
+                console.warn("Gagal terhubung realtime ke Firebase, gunakan lokal:", error); 
+                if (loader) loader.classList.replace('flex', 'hidden');
+                if (typeof window.initHijriFilter === 'function' && isFirstLoad) window.initHijriFilter();
+                if (typeof window.updateAllViews === 'function' && isFirstLoad) window.updateAllViews();
+                isFirstLoad = false;
+            }
+        };
+
+        window.perbaruiDataDashboard = async () => {
+            const icon = document.getElementById('icon-refresh-dash');
+            if(icon) icon.classList.add('fa-spin'); 
+            try {
+                // Saat tombol refresh ditekan, paksa sinkronisasi ulang
                 const snapshot = await get(child(ref(db), 'MadrasahData'));
                 if (snapshot.exists()) {
                     const cloudData = snapshot.val();
                     window.appState = { ...window.appState, ...cloudData };
                     if (cloudData.pengaturan) { window.appState.pengaturan = { ...window.appState.pengaturan, ...cloudData.pengaturan }; }
                     try { localStorage.setItem('CloudMadrasahData', JSON.stringify(window.appState)); } catch(err){}
+                    window.updateAllViews();
                 }
-            } catch (error) { console.warn("Gagal memuat dari Firebase, menggunakan data lokal:", error); }
-
-            if (loader) loader.classList.replace('flex', 'hidden');
-            if (typeof window.initHijriFilter === 'function') window.initHijriFilter();
-            if (typeof window.updateAllViews === 'function') window.updateAllViews();
-        };
-
-        window.perbaruiDataDashboard = async () => {
-            const icon = document.getElementById('icon-refresh-dash');
-            if(icon) icon.classList.add('fa-spin'); // Menambahkan animasi berputar
-            try {
-                await window.initCloudDatabase();
-                window.showAlert('Berhasil', 'Data dashboard berhasil diperbarui dari sistem Cloud.', 'success');
+                window.showToast('Berhasil', 'Data dashboard tersinkronisasi.', 'success');
             } catch (e) {
                 window.showAlert('Gagal', 'Terjadi kesalahan saat memperbarui data. Cek koneksi internet.', 'error');
             } finally {
@@ -1341,12 +1418,13 @@
             const h_jadwal_kelas = ad || ak.jadwal_kelas;
             const h_rekap = ad || ak.rekap;
             const h_honor = ad || ak.honor;
+            const h_tabungan = ad || ak.tabungan;
             const h_idcard = ad || ak.idcard;
             const h_kalender = ad || ak.kalender;
             const h_pengaturan = ad || ak.pengaturan;
             
             // Menyembunyikan parent menu (dropdown) jika semua sub-menunya disembunyikan
-            const anyKhidmah = h_guru || h_riwayat || h_absen || h_jadwal_guru || h_jadwal_kelas || h_rekap || h_honor || h_idcard;
+            const anyKhidmah = h_guru || h_riwayat || h_absen || h_jadwal_guru || h_jadwal_kelas || h_rekap || h_honor || h_tabungan || h_idcard;
             const anyKesiswaan = h_murid || h_absen_murid || h_rekap_murid;
             const anySekretaris = h_kalender || anyKhidmah || anyKesiswaan;
 
@@ -1364,6 +1442,7 @@
             t('nav-btn-jadwal-kelas', !ig && h_jadwal_kelas);
             t('nav-btn-rekap-absen-guru', !ig && h_rekap);
             t('nav-btn-honor-guru', !ig && h_honor);
+            t('nav-btn-tabungan', !ig && h_tabungan);
             t('nav-btn-idcard', !ig && h_idcard);
             t('nav-btn-kalender', !ig && h_kalender);
             t('nav-btn-pengaturan', !ig && h_pengaturan);
@@ -1386,6 +1465,7 @@
                     else if (h_jadwal_kelas) { fT = 'jadwal-kelas'; fB = 'nav-btn-jadwal-kelas'; }
                     else if (h_rekap) { fT = 'rekap-absen-guru'; fB = 'nav-btn-rekap-absen-guru'; }
                     else if (h_honor) { fT = 'honor-guru'; fB = 'nav-btn-honor-guru'; }
+                    else if (h_tabungan) { fT = 'tabungan'; fB = 'nav-btn-tabungan'; }
                     else if (h_idcard) { fT = 'idcard'; fB = 'nav-btn-idcard'; }
                 }
                 window.switchTab(fT, document.getElementById(fB));
@@ -1460,9 +1540,6 @@
                     if (!scheduledIds.has(String(absen.id_guru))) {
                         let stat = absen[`status_${sesi}`];
                         if (stat==='Hadir') h++; 
-                        else if (stat==='Izin') iz++;
-                        else if (stat==='Sakit') sk++;
-                        else if (stat==='Cuti') ct++;
                     }
                 });
 
@@ -1500,8 +1577,9 @@
             const st=window.appState, isa=window.currentUser&&window.currentUser.role==='admin'; window.updateDashboardStats(); window.applyLogoToUI();
             const eg=document.getElementById('table-guru'); if(eg&&st.guru) { const ad=isa||(window.currentUser&&window.currentUser.akses&&window.currentUser.akses.guru); eg.innerHTML=st.guru.map(g=>`<tr class="hover:bg-gray-50 border-b border-gray-100"><td class="px-6 py-4 font-medium text-gray-900 text-xs">${g.nip}</td><td class="px-6 py-4 flex items-center gap-3"><img src="${g.foto||'https://ui-avatars.com/api/?name=Guru&background=cbd5e1'}" class="w-10 h-10 rounded-full object-cover border border-purple-200"><div><span class="font-bold text-sm block">${g.nama}</span><span class="text-xs text-gray-500 font-normal">${g.jabatan||'-'} | ${g.hp||'-'} ${g.jarak?` | Jarak: ${g.jarak} km`:''} ${g.tunjangan?` | Tunjangan: ${window.formatRp(g.tunjangan)}`:''}</span></div></td><td class="px-6 py-4 text-right"><button onclick="window.editGuru('${g.id}')" class="text-blue-500 bg-blue-50 p-2 rounded-lg hover:bg-blue-100"><i class="fa-solid fa-pen"></i></button>${ad?`<button onclick="window.hapusGuru('${g.id}')" class="text-red-500 bg-red-50 p-2 rounded-lg ml-1 hover:bg-red-100"><i class="fa-solid fa-trash"></i></button>`:''}</td></tr>`).join(''); }
             const sg=document.getElementById('select-guru-idcard'); if(sg){let o=`<option value="">-- Pilih Nama Guru --</option>`;if(st.guru)st.guru.forEach(g=>o+=`<option value="${g.id}">${g.nama} - ${g.jabatan}</option>`);sg.innerHTML=o;}
+            const stG=document.getElementById('tabungan-guru-id'), sfG=document.getElementById('filter-guru-tabungan'); if(stG&&sfG){let os=`<option value="">-- Pilih Guru --</option>`, of=`<option value="">Semua Guru</option>`;if(st.guru)st.guru.forEach(g=>{os+=`<option value="${g.id}">${g.nama}</option>`;of+=`<option value="${g.id}">${g.nama}</option>`;});stG.innerHTML=os;sfG.innerHTML=of;}
             const er=document.getElementById('filter-riwayat-guru'); if(er){const cv=er.value;let o=`<option value="">-- Pilih Guru --</option>`;if(st.guru)st.guru.forEach(g=>o+=`<option value="${g.id}">${g.nama}</option>`);er.innerHTML=o;if(window.currentUser&&window.currentUser.role==='guru'){er.value=window.currentUser.id_guru;er.disabled=true;}else{er.value=cv;er.disabled=false;}}
-            ['renderAbsenGuru','renderJadwalGuru','renderJadwalKelas','renderRekapAbsenGuru','renderHonorGuru','renderGridRiwayat', 'renderMurid', 'renderAbsenMurid', 'renderRekapMurid'].forEach(f=>{if(typeof window[f]==='function')window[f]();});
+            ['renderAbsenGuru','renderJadwalGuru','renderJadwalKelas','renderRekapAbsenGuru','renderHonorGuru','renderTabungan','renderGridRiwayat', 'renderMurid', 'renderAbsenMurid', 'renderRekapMurid'].forEach(f=>{if(typeof window[f]==='function')window[f]();});
         };
 
         window.resetFormGuru = () => { document.getElementById('guru-mode').value='add'; document.getElementById('guru-id').value=''; document.getElementById('guru-nip').value=''; document.getElementById('guru-nama').value=''; document.getElementById('guru-jabatan').value=''; document.getElementById('guru-hp').value=''; document.getElementById('guru-jarak').value=''; document.getElementById('guru-tunjangan').value=''; window.tempFotoGuru=''; document.getElementById('preview-foto-container').classList.add('hidden'); document.getElementById('preview-foto-img').src=''; document.getElementById('btn-hapus-foto-guru').classList.add('hidden'); document.getElementById('btn-submit-guru').innerText='Simpan Data Guru'; document.getElementById('btn-cancel-guru').classList.add('hidden'); };
@@ -2015,7 +2093,7 @@
                                     if(stat==='Hadir') gr.hadir++; else if(stat==='Izin') gr.izin++; else if(stat==='Sakit') gr.sakit++; else if(stat==='Cuti') gr.cuti++; else gr.alpa++;
                                 } else {
                                     // Hitung juga guru pengganti / diluar jadwal jika mereka hadir
-                                    if(stat==='Hadir') gr.hadir++; else if(stat==='Izin') gr.izin++; else if(stat==='Sakit') gr.sakit++; else if(stat==='Cuti') gr.cuti++;
+                                    if(stat==='Hadir') gr.hadir++;
                                 }
                             } else {
                                 // Hanya berikan Alpa jika dia terjadwal namun tidak ada data absen sama sekali
@@ -2298,11 +2376,38 @@
             const jToday = (window.appState.jadwal_guru||[]).find(j => j.hari === currDay && String(j.id_guru) === String(g.id)); let isPast = false;
             if (jToday) { let maxEnd = null; const checkMaxEnd = (rgx) => { const match = jToday.jam.match(rgx); if (match) { const [h,m] = match[1].split(':').map(Number); const et = new Date(); et.setHours(h,m,0,0); if(!maxEnd || et>maxEnd) maxEnd=et; } }; checkMaxEnd(/Jam 1:\s*\d{2}:\d{2}\s*-\s*(\d{2}:\d{2})/); checkMaxEnd(/Jam 2:\s*\d{2}:\d{2}\s*-\s*(\d{2}:\d{2})/); checkMaxEnd(/Jam 3:\s*\d{2}:\d{2}\s*-\s*(\d{2}:\d{2})/); if (maxEnd && baseDate > maxEnd) isPast = true; } else { if (baseDate.getHours() >= 14) isPast = true; }
             if (isPast) { baseDate.setDate(baseDate.getDate() + 1); setTimeout(() => window.showAlert('Info', 'Karena jadwal mengajar hari ini telah usai, pengajuan otomatis dicatat mulai besok.', 'info'), 300); }
+            
+            let sesiTercatat = [];
             for(let i=0; i<hr; i++) {
                 const targetD = new Date(baseDate); targetD.setDate(baseDate.getDate() + i); const tgl = `${targetD.getFullYear()}-${String(targetD.getMonth()+1).padStart(2,'0')}-${String(targetD.getDate()).padStart(2,'0')}`;
+                
+                const dName = ['Ahad','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][targetD.getDay()];
+                const jData = (window.appState.jadwal_guru||[]).find(j => j.hari === dName && String(j.id_guru) === String(g.id));
+                const ah = (window.appState.agenda||[]).filter(a => a.tgl === tgl);
+                const ar = ah.find(a => a.tipe === 'Rapat' || a.ket.toLowerCase().includes('rapat'));
+                const apRapot = ah.find(a => a.ket.toLowerCase().includes('pembagian rapot') || a.ket.toLowerCase().includes('pembagian rapor'));
+                const il = ah.find(a => a.tipe === 'Libur');
+
+                if (il && !ar && !apRapot) continue;
+
                 if(!window.appState.absensi_guru) window.appState.absensi_guru = []; let r = window.appState.absensi_guru.find(a => a.tanggal === tgl); if (!r) { r = {tanggal: tgl, data: []}; window.appState.absensi_guru.push(r); }
                 let td = r.data.find(d => String(d.id_guru) === String(g.id)); if (!td) { td = {id_guru: parseInt(g.id)}; r.data.push(td); }
-                let info = (i===0) ? al : `Lanjutan ${st} (${i+1} dari ${hr} hr) - ${al}`; selSesi.forEach(sn => { td[`status_${sn}`] = st; td[`info_${sn}`] = info; });
+                let info = (i===0) ? al : `Lanjutan ${st} (${i+1} dari ${hr} hr) - ${al}`; 
+                
+                selSesi.forEach(sn => { 
+                    let isSched = false;
+                    if (apRapot && (sn === 1 || sn === 2)) isSched = true;
+                    else if (ar) {
+                        if (jData && jData.jam.includes(`Jam ${sn}`)) isSched = true;
+                        else if (!jData && sn === 1) isSched = true; 
+                    } else if (jData && jData.jam.includes(`Jam ${sn}`)) {
+                        isSched = true;
+                    }
+                    if (isSched) {
+                        td[`status_${sn}`] = st; td[`info_${sn}`] = info; 
+                        if (i === 0 && !sesiTercatat.includes(sn)) sesiTercatat.push(sn);
+                    }
+                });
             }
             window.saveState(); window.renderAbsenGuru(); window.updateDashboardStats();
             const strTglMulai = `${baseDate.getFullYear()}-${String(baseDate.getMonth()+1).padStart(2,'0')}-${String(baseDate.getDate()).padStart(2,'0')}`, namaHariArr = ['Ahad', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
@@ -2441,6 +2546,75 @@
                     }
                 }
             });
+        };
+
+        // LOGO SETTINGS
+        window.tempLogoUpload = undefined;
+        
+        window.applyLogoToUI = () => {
+            const logo = window.appState?.pengaturan?.logo || '';
+            const apply = (imgId, iconId, wrapperId, bgClass) => {
+                const img = document.getElementById(imgId);
+                const icon = document.getElementById(iconId);
+                const wrapper = document.getElementById(wrapperId);
+                if (img && icon) {
+                    if (logo) {
+                        img.src = logo;
+                        img.classList.remove('hidden');
+                        icon.classList.add('hidden');
+                        if (wrapper && bgClass) wrapper.classList.remove(bgClass, 'shadow-md', 'border', 'border-emerald-100');
+                    } else {
+                        img.src = '';
+                        img.classList.add('hidden');
+                        icon.classList.remove('hidden');
+                        if (wrapper && bgClass) wrapper.classList.add(bgClass, 'shadow-md');
+                        if (wrapper && wrapperId === 'login-logo-wrapper') wrapper.classList.add('border', 'border-emerald-100');
+                    }
+                }
+            };
+            apply('sidebar-logo-img', 'sidebar-logo-icon', 'sidebar-logo-wrapper', 'bg-blue-600');
+            apply('login-logo-img', 'login-logo-icon', 'login-logo-wrapper', 'bg-emerald-50');
+            apply('img-logo-setting', 'icon-logo-setting', null, null);
+        };
+
+        window.handleLogoUpload = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            if (file.size > 1024 * 1024) return window.showAlert('Gagal', 'Ukuran file maksimal 1MB.', 'error');
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                window.tempLogoUpload = event.target.result;
+                const img = document.getElementById('img-logo-setting');
+                const icon = document.getElementById('icon-logo-setting');
+                if (img && icon) {
+                    img.src = window.tempLogoUpload;
+                    img.classList.remove('hidden');
+                    icon.classList.add('hidden');
+                }
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.hapusLogoSetting = () => {
+            window.tempLogoUpload = '';
+            document.getElementById('input-logo-setting').value = '';
+            const img = document.getElementById('img-logo-setting');
+            const icon = document.getElementById('icon-logo-setting');
+            if (img && icon) {
+                img.src = '';
+                img.classList.add('hidden');
+                icon.classList.remove('hidden');
+            }
+        };
+
+        window.simpanLogoSistem = () => {
+            if (!window.appState.pengaturan) window.appState.pengaturan = {};
+            if (window.tempLogoUpload !== undefined) {
+                window.appState.pengaturan.logo = window.tempLogoUpload;
+            }
+            window.saveState();
+            window.applyLogoToUI();
+            window.showAlert('Berhasil', 'Logo instansi berhasil disimpan.', 'success');
         };
 
         // MAPS
@@ -2588,6 +2762,7 @@
                 jadwal_kelas: document.getElementById('akses-jadwal-kelas').checked,
                 rekap: document.getElementById('akses-rekap').checked,
                 honor: document.getElementById('akses-honor').checked,
+                tabungan: document.getElementById('akses-tabungan').checked,
                 idcard: document.getElementById('akses-idcard').checked,
                 kalender: document.getElementById('akses-kalender').checked,
                 pengaturan: document.getElementById('akses-pengaturan').checked
@@ -2640,6 +2815,7 @@
             document.getElementById('akses-jadwal-kelas').checked = ak.jadwal_kelas || false;
             document.getElementById('akses-rekap').checked = ak.rekap || false;
             document.getElementById('akses-honor').checked = ak.honor || false;
+            document.getElementById('akses-tabungan').checked = ak.tabungan || false;
             document.getElementById('akses-idcard').checked = ak.idcard || false;
             document.getElementById('akses-kalender').checked = ak.kalender || false;
             document.getElementById('akses-pengaturan').checked = ak.pengaturan || false;
@@ -2652,7 +2828,7 @@
             document.getElementById('op-user').value = '';
             document.getElementById('op-pass').value = '';
             
-            ['dashboard', 'guru', 'murid', 'absen-murid', 'rekap-murid', 'riwayat', 'absen', 'jadwal-guru', 'jadwal-kelas', 'rekap', 'honor', 'idcard', 'kalender', 'pengaturan'].forEach(id => {
+            ['dashboard', 'guru', 'murid', 'absen-murid', 'rekap-murid', 'riwayat', 'absen', 'jadwal-guru', 'jadwal-kelas', 'rekap', 'honor', 'tabungan', 'idcard', 'kalender', 'pengaturan'].forEach(id => {
                 const el = document.getElementById(`akses-${id}`); if (el) el.checked = false;
             });
             
@@ -2695,6 +2871,7 @@
             const rd = window.appState.guru.map(g=>({id:g.id,nama:g.nama,jabatan:g.jabatan,jarak:g.jarak||0,tunjangan:g.tunjangan||0,hadir:0,piket:0}));
             const dt = window.getDatesInHijriMonth(parseInt(sy.value),parseInt(sm.value));
             const t = new Date(); t.setHours(0,0,0,0);
+            const tsList = dt.map(d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
             
             dt.forEach(d => {
                 const nhr = ['Ahad','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][d.getDay()];
@@ -2746,7 +2923,7 @@
             let grandTotalSemua = 0;
 
             if (rd.length === 0) {
-                c.innerHTML = '<tr><td colspan="11" class="text-center py-8">Belum ada data guru.</td></tr>';
+                c.innerHTML = '<tr><td colspan="12" class="text-center py-8">Belum ada data guru.</td></tr>';
                 if(tf) { tf.innerHTML = ''; tf.classList.add('hidden'); }
             } else {
                 c.innerHTML = rd.map((g,i) => {
@@ -2755,30 +2932,39 @@
                     const totalKehadiran = g.hadir + g.piket;
                     const validTransport = g.jarak < 2 ? 0 : tarifTransport; // Jika jarak < 2km, transport 0
                     const totalTransport = totalKehadiran * validTransport;
-                    const grandTotal = totalHonor + totalPiket + totalTransport + g.tunjangan;
                     
+                    // Hitung Potongan Tabungan pada bulan ini
+                    let totalPotonganTabungan = 0;
+                    (window.appState.tabungan_guru || []).forEach(tb => {
+                        if (String(tb.id_guru) === String(g.id) && tb.metode === 'Potong Honor' && tb.jenis === 'Setor' && tsList.includes(tb.tgl)) {
+                            totalPotonganTabungan += parseInt(tb.nominal);
+                        }
+                    });
+
+                    const grandTotal = totalHonor + totalPiket + totalTransport + g.tunjangan - totalPotonganTabungan;
                     grandTotalSemua += grandTotal;
                     
                     const safeNama = g.nama.replace(/'/g, "\\'").replace(/"/g, "&quot;");
                     const safeJabatan = (g.jabatan||'-').replace(/'/g, "\\'").replace(/"/g, "&quot;");
                     
-                    return `<tr class="border-b border-gray-100 hover:bg-purple-50/50 cursor-pointer transition-colors" onclick="window.bukaSlipHonor('${g.id}','${safeNama}','${safeJabatan}',${g.hadir},${g.piket},${tarifHonor},${tarifPiket},${validTransport},${g.tunjangan},${grandTotal})" title="Klik baris ini untuk mencetak Slip Honor">
+                    return `<tr class="border-b border-gray-100 hover:bg-purple-50/50 cursor-pointer transition-colors" onclick="window.bukaSlipHonor('${g.id}','${safeNama}','${safeJabatan}',${g.hadir},${g.piket},${tarifHonor},${tarifPiket},${validTransport},${g.tunjangan},${totalPotonganTabungan},${grandTotal})" title="Klik baris ini untuk mencetak Slip Honor">
                         <td class="px-4 py-3 text-center">${i+1}</td>
                         <td class="px-4 py-3 font-bold">${g.nama}</td>
                         <td class="px-4 py-3 text-xs text-gray-500">${g.jabatan||'-'}</td>
                         <td class="px-4 py-3 text-center text-blue-600 font-bold bg-blue-50/30">${g.jarak} km</td>
                         <td class="px-4 py-3 text-center text-green-700 font-bold bg-green-50/30">${g.hadir}</td>
                         <td class="px-4 py-3 text-center text-orange-600 font-bold bg-orange-50/30">${g.piket}</td>
-                        <td class="px-4 py-3 text-right text-green-700">${window.formatRp(totalHonor)}</td>
-                        <td class="px-4 py-3 text-right text-orange-700">${window.formatRp(totalPiket)}</td>
+                        <td class="px-4 py-3 text-right text-green-00">${window.formatRp(totalHonor)}</td>
+                        <td class="px-4 py-3 text-right text-orange-800">${window.formatRp(totalPiket)}</td>
                         <td class="px-4 py-3 text-right text-blue-700">${validTransport === 0 ? '<span class="text-[10px] text-red-500 block leading-tight">- Jarak &lt; 2km -</span>Rp 0' : window.formatRp(totalTransport)}</td>
                         <td class="px-4 py-3 text-right text-purple-700 font-bold">${window.formatRp(g.tunjangan)}</td>
+                        <td class="px-4 py-3 text-right text-red-600 font-bold">${totalPotonganTabungan > 0 ? '-' + window.formatRp(totalPotonganTabungan) : '-'}</td>
                         <td class="px-4 py-3 text-right font-bold text-gray-900">${window.formatRp(grandTotal)}</td>
                     </tr>`;
                 }).join('');
                 
                 if(tf) {
-                    tf.innerHTML = `<tr><td colspan="10" class="px-4 py-4 text-right uppercase tracking-wider text-purple-900 text-xs">Total Keseluruhan Pengeluaran Honor</td><td class="px-4 py-4 text-right text-base text-purple-700 whitespace-nowrap">${window.formatRp(grandTotalSemua)}</td></tr>`;
+                    tf.innerHTML = `<tr><td colspan="11" class="px-4 py-4 text-right uppercase tracking-wider text-purple-900 text-xs">Total Keseluruhan Pengeluaran Honor</td><td class="px-4 py-4 text-right text-base text-purple-700 whitespace-nowrap">${window.formatRp(grandTotalSemua)}</td></tr>`;
                     tf.classList.remove('hidden');
                 }
             }
@@ -2797,7 +2983,7 @@
             window.showAlert('Berhasil', 'Tarif honor, piket, dan transport berhasil disimpan.', 'success');
         };
 
-        window.bukaSlipHonor = (id, nm, jb, h, p, tHonor, tPiket, tTransport, tTunjangan, tot) => {
+        window.bukaSlipHonor = (id, nm, jb, h, p, tHonor, tPiket, tTransport, tTunjangan, potTabungan, tot) => {
             const mNames = ["Muharram", "Safar", "Rabi'ul Awal", "Rabi'ul Akhir", "Jumadil Awal", "Jumadil Akhir", "Rajab", "Sya'ban", "Ramadhan", "Syawal", "Dzulqa'dah", "Dzulhijjah"];
             const sm = parseInt(document.getElementById('filter-bulan-hijri-honor').value);
             const sy = document.getElementById('filter-tahun-hijri-honor').value;
@@ -2815,6 +3001,11 @@
             const totalKehadiran = h + p;
             document.getElementById('slip-honor-transport').innerText = window.formatRp(tTransport * totalKehadiran);
             document.getElementById('slip-honor-tunjangan').innerText = window.formatRp(tTunjangan);
+            
+            const potEl = document.getElementById('slip-honor-potongan');
+            if (potTabungan > 0) { potEl.innerText = '-' + window.formatRp(potTabungan); potEl.parentElement.classList.remove('hidden'); }
+            else { potEl.parentElement.classList.add('hidden'); }
+
             document.getElementById('slip-honor-total').innerText = window.formatRp(tot);
             
             const now = new Date();
@@ -2848,71 +3039,131 @@
             });
         };
 
-        // LOGO SISTEM
-        window.handleLogoUpload = (e) => {
-            const file = e.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    document.getElementById('img-logo-setting').src = ev.target.result;
-                    document.getElementById('img-logo-setting').classList.remove('hidden');
-                    document.getElementById('icon-logo-setting').classList.add('hidden');
-                };
-                reader.readAsDataURL(file);
+        // LOGIKA TABUNGAN GURU
+        window.toggleMetodeTabungan = () => {
+            const j = document.getElementById('tabungan-jenis').value;
+            const m = document.getElementById('tabungan-metode');
+            if(j === 'Tarik') {
+                m.value = 'Tunai';
+                m.querySelector('option[value="Potong Honor"]').disabled = true;
+            } else {
+                m.querySelector('option[value="Potong Honor"]').disabled = false;
             }
         };
 
-        window.hapusLogoSetting = () => {
-            document.getElementById('input-logo-setting').value = '';
-            document.getElementById('img-logo-setting').src = '';
-            document.getElementById('img-logo-setting').classList.add('hidden');
-            document.getElementById('icon-logo-setting').classList.remove('hidden');
-        };
-
-        window.simpanLogoSistem = () => {
-            const src = document.getElementById('img-logo-setting').src;
-            if(!window.appState.pengaturan) window.appState.pengaturan = {};
-            if(src && !src.includes('hidden')) window.appState.pengaturan.logo = src;
-            else window.appState.pengaturan.logo = '';
-            window.saveState();
-            window.applyLogoToUI();
-            window.showAlert('Berhasil', 'Logo berhasil diperbarui', 'success');
-        };
-
-        window.applyLogoToUI = () => {
-            const logo = window.appState.pengaturan?.logo;
-            const applyTo = (wrapperId, imgId, iconId) => {
-                const wrapper = document.getElementById(wrapperId), img = document.getElementById(imgId), icon = document.getElementById(iconId);
-                if(wrapper && img && icon) {
-                    if(logo) {
-                        img.src = logo;
-                        img.classList.remove('hidden');
-                        icon.classList.add('hidden');
-                        wrapper.classList.remove('bg-blue-600', 'bg-emerald-50'); // Clean defaults
-                        wrapper.classList.add('bg-transparent', 'border-0', 'shadow-none');
-                    } else {
-                        img.classList.add('hidden');
-                        icon.classList.remove('hidden');
-                        wrapper.classList.remove('bg-transparent', 'border-0', 'shadow-none');
-                    }
+        window.hitungSaldoTabungan = (guruId) => {
+            if(!window.appState.tabungan_guru) return 0;
+            let saldo = 0;
+            window.appState.tabungan_guru.forEach(t => {
+                if(String(t.id_guru) === String(guruId)) {
+                    if(t.jenis === 'Setor') saldo += parseInt(t.nominal);
+                    else if(t.jenis === 'Tarik') saldo -= parseInt(t.nominal);
                 }
-            };
-            applyTo('sidebar-logo-wrapper', 'sidebar-logo-img', 'sidebar-logo-icon');
-            applyTo('login-logo-wrapper', 'login-logo-img', 'login-logo-icon');
+            });
+            return saldo;
+        };
+
+        window.cekSaldoTabungan = () => {
+            const g = document.getElementById('tabungan-guru-id').value;
+            const info = document.getElementById('info-saldo-guru');
+            if(!g) { info.innerText = ''; return; }
+            const saldo = window.hitungSaldoTabungan(g);
+            info.innerHTML = `Saldo saat ini: <span class="${saldo < 0 ? 'text-red-500' : 'text-green-600'}">${window.formatRp(saldo)}</span>`;
+        };
+
+        window.renderTabungan = () => {
+            const c = document.getElementById('table-tabungan'); if(!c) return;
+            const fg = document.getElementById('filter-guru-tabungan')?.value;
             
-            // Setting UI specific
-            const setImg = document.getElementById('img-logo-setting');
-            const setIcon = document.getElementById('icon-logo-setting');
-            if(setImg && setIcon) {
-                if(logo) {
-                    setImg.src = logo;
-                    setImg.classList.remove('hidden');
-                    setIcon.classList.add('hidden');
-                } else {
-                    setImg.classList.add('hidden');
-                    setIcon.classList.remove('hidden');
-                }
+            if(!window.appState.tabungan_guru) window.appState.tabungan_guru = [];
+            let data = [...window.appState.tabungan_guru];
+            if(fg) data = data.filter(t => String(t.id_guru) === String(fg));
+            data.sort((a,b) => new Date(b.tgl) - new Date(a.tgl)); // Sort by date desc
+
+            let totalKas = 0;
+            window.appState.tabungan_guru.forEach(t => {
+                if(t.jenis === 'Setor') totalKas += parseInt(t.nominal);
+                else if(t.jenis === 'Tarik') totalKas -= parseInt(t.nominal);
+            });
+            const tkEl = document.getElementById('total-kas-tabungan');
+            if(tkEl) tkEl.innerText = window.formatRp(totalKas);
+
+            if(data.length === 0) {
+                c.innerHTML = '<tr><td colspan="6" class="text-center py-8 text-gray-500">Belum ada riwayat transaksi.</td></tr>';
+                return;
             }
+
+            c.innerHTML = data.map(t => {
+                const g = (window.appState.guru||[]).find(x => String(x.id) === String(t.id_guru));
+                const n = g ? g.nama : 'Guru Dihapus';
+                const p = t.tgl.split('-');
+                const tglFmt = `${p[2]}/${p[1]}/${p[0]}`;
+                const mBadge = t.metode === 'Potong Honor' ? '<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap">Potong Honor</span>' : '<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold whitespace-nowrap">Tunai</span>';
+                
+                return `<tr class="border-b border-gray-100 hover:bg-gray-50">
+                    <td class="px-4 py-3 text-center text-xs text-gray-500 whitespace-nowrap">${tglFmt}</td>
+                    <td class="px-4 py-3">
+                        <span class="font-bold text-gray-800 text-sm block">${n}</span>
+                        <span class="text-[10px] text-gray-500">${t.ket || '-'}</span>
+                    </td>
+                    <td class="px-4 py-3 text-center">${mBadge}</td>
+                    <td class="px-4 py-3 text-right font-bold text-green-600">${t.jenis === 'Setor' ? '+'+window.formatRp(t.nominal) : '-'}</td>
+                    <td class="px-4 py-3 text-right font-bold text-red-600">${t.jenis === 'Tarik' ? '-'+window.formatRp(t.nominal) : '-'}</td>
+                    <td class="px-4 py-3 text-center">
+                        <button onclick="window.hapusTabungan('${t.id}')" class="text-red-500 bg-red-50 w-7 h-7 rounded hover:bg-red-100 flex items-center justify-center mx-auto" title="Hapus Transaksi"><i class="fa-solid fa-trash text-xs"></i></button>
+                    </td>
+                </tr>`;
+            }).join('');
+        };
+
+        window.simpanTabungan = (e) => {
+            e.preventDefault();
+            const g = document.getElementById('tabungan-guru-id').value;
+            const tgl = document.getElementById('tabungan-tgl').value;
+            const jenis = document.getElementById('tabungan-jenis').value;
+            const metode = document.getElementById('tabungan-metode').value;
+            const nom = parseInt(document.getElementById('tabungan-nominal').value);
+            const ket = document.getElementById('tabungan-ket').value.trim();
+
+            if(!g || !tgl || isNaN(nom) || nom <= 0) return window.showAlert('Gagal', 'Lengkapi form dengan benar.', 'error');
+            
+            if (jenis === 'Tarik') {
+                const saldo = window.hitungSaldoTabungan(g);
+                if (nom > saldo) return window.showAlert('Saldo Kurang', `Saldo saat ini (${window.formatRp(saldo)}) tidak cukup untuk penarikan sebesar ${window.formatRp(nom)}.`, 'error');
+            }
+
+            if(!window.appState.tabungan_guru) window.appState.tabungan_guru = [];
+            window.appState.tabungan_guru.push({
+                id: Date.now().toString(),
+                id_guru: g,
+                tgl: tgl,
+                jenis: jenis,
+                metode: metode,
+                nominal: nom,
+                ket: ket
+            });
+            
+            window.saveState();
+            document.getElementById('tabungan-nominal').value = '';
+            document.getElementById('tabungan-ket').value = '';
+            
+            // Set ke hari ini otomatis setelah sukses
+            document.getElementById('tabungan-tgl').value = window.getTodayInputFormat();
+            
+            window.cekSaldoTabungan();
+            window.renderTabungan();
+            window.renderHonorGuru(); // Update honor incase potong honor affects current month view
+            window.showToast('Berhasil', 'Transaksi tabungan disimpan.', 'success');
+        };
+
+        window.hapusTabungan = (id) => {
+            window.showConfirm("Hapus Transaksi", "Yakin hapus data transaksi ini? (Saldo akan disesuaikan)", () => {
+                window.appState.tabungan_guru = (window.appState.tabungan_guru || []).filter(t => String(t.id) !== String(id));
+                window.saveState();
+                window.cekSaldoTabungan();
+                window.renderTabungan();
+                window.renderHonorGuru();
+            });
         };
 
         // FUNGSI MENAMPILKAN DETAIL LIST GURU DI DASHBOARD
@@ -2957,7 +3208,7 @@
                 dataAbsen.forEach(absen => {
                     if (!scheduledIds.has(String(absen.id_guru))) {
                         let stat = absen[`status_${sesi}`];
-                        if (stat === targetStatus && stat !== 'Alpa') { // Ignore Alpa for unscheduled
+                        if (stat === targetStatus && stat === 'Hadir') { // Hanya peduli kalau Hadir
                             const g = (st.guru||[]).find(x => String(x.id) === String(absen.id_guru));
                             if(g) resultList.push(g.nama + ' <span class="text-[10px] bg-gray-200 text-gray-600 px-1.5 py-0.5 rounded ml-1">Diluar Jadwal</span>');
                         }
@@ -3051,6 +3302,7 @@
                 { id: 'jadwal_kelas', icon: 'fa-layer-group', text: 'Jadwal Kelas', color: 'emerald', tab: 'jadwal-kelas', btn: 'nav-btn-jadwal-kelas' },
                 { id: 'rekap', icon: 'fa-list-check', text: 'Rekap Guru', color: 'purple', tab: 'rekap-absen-guru', btn: 'nav-btn-rekap-absen-guru' },
                 { id: 'honor', icon: 'fa-file-invoice-dollar', text: 'Honor Guru', color: 'purple', tab: 'honor-guru', btn: 'nav-btn-honor-guru' },
+                { id: 'tabungan', icon: 'fa-piggy-bank', text: 'Tabungan', color: 'purple', tab: 'tabungan', btn: 'nav-btn-tabungan' },
                 { id: 'idcard', icon: 'fa-id-badge', text: 'Cetak ID', color: 'purple', tab: 'idcard', btn: 'nav-btn-idcard' },
                 { id: 'murid', icon: 'fa-users', text: 'Data Murid', color: 'orange', tab: 'murid', btn: 'nav-btn-murid' },
                 { id: 'absen_murid', icon: 'fa-user-check', text: 'Absen Murid', color: 'orange', tab: 'absen-murid', btn: 'nav-btn-absen-murid' },
