@@ -702,83 +702,54 @@
                 </div>
             </aside>
 
-        <main class="flex-1 bg-gray-50/50 relative overflow-y-auto w-full h-full p-4 lg:p-8">
-            <header class="flex justify-between items-center mb-6 lg:mb-8 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+        <main class="flex-1 bg-gray-50/50 relative overflow-y-auto overflow-x-hidden w-full h-full p-3 lg:p-4 flex flex-col">
+            <header class="flex justify-between items-center mb-3 lg:mb-4 shrink-0 bg-[#AEC09A] p-3 sm:p-4 rounded-2xl shadow-sm border border-[#9cb086]">
                 <div class="flex items-center gap-3">
-                    <button class="lg:hidden text-gray-600 bg-gray-100 w-10 h-10 rounded-xl flex items-center justify-center hover:bg-gray-200" onclick="window.toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+                    <button id="btn-hamburger" class="lg:hidden text-gray-800 bg-white/60 w-10 h-10 rounded-xl flex items-center justify-center hover:bg-white/80 transition-colors" onclick="window.toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
                     <div>
-                        <h1 class="text-lg lg:text-xl font-bold text-gray-800">Sistem Informasi Madrasah</h1>
-                        <div class="flex items-center gap-2"><p class="text-[11px] font-bold text-gray-500 hidden sm:block" id="current-username">Panel Admin</p><span class="hidden sm:block text-gray-300">|</span><p class="text-xs font-bold text-emerald-600 hidden sm:block" id="current-hijri-date-dashboard">Memuat Tanggal...</p></div>
+                        <h1 class="text-lg lg:text-xl font-bold text-gray-900">Sistem Informasi Madrasah</h1>
+                        <div class="flex items-center gap-2"><p class="text-[11px] font-bold text-gray-700 hidden sm:block" id="current-username">Panel Admin</p><span class="hidden sm:block text-gray-600">|</span><p class="text-xs font-bold text-gray-800 hidden sm:block" id="current-hijri-date-dashboard">Memuat Tanggal...</p></div>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button id="nav-btn-pengaturan" onclick="window.bukaModalPengaturan('lokasi')" class="w-10 h-10 rounded-xl bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors shadow-sm"><i class="fa-solid fa-gear"></i></button>
-                    <div class="h-10 px-4 bg-red-50 text-red-600 rounded-xl flex items-center gap-2 cursor-pointer hover:bg-red-100 transition-colors shadow-sm font-bold text-sm" onclick="window.prosesLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="hidden sm:inline">Keluar</span></div>
+                    <button id="nav-btn-pengaturan" onclick="window.bukaModalPengaturan('lokasi')" class="w-10 h-10 rounded-xl bg-white/60 text-gray-800 flex items-center justify-center hover:bg-white/80 transition-colors shadow-sm"><i class="fa-solid fa-gear"></i></button>
+                    <div class="h-10 px-4 bg-red-500 text-white rounded-xl flex items-center gap-2 cursor-pointer hover:bg-red-600 transition-colors shadow-sm font-bold text-sm" onclick="window.prosesLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> <span class="hidden sm:inline">Keluar</span></div>
                 </div>
             </header>
 
-            <div class="w-full">
+            <div class="w-full flex-1 flex flex-col min-h-0">
                 <!-- DASHBOARD -->
-                <div id="tab-dashboard" class="tab-content active max-w-6xl mx-auto scroll-mt-6">
-                    <div id="dash-title-container" class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                        <div>
-                            <h2 class="text-2xl font-bold text-gray-800">Ringkasan Kehadiran</h2>
-                            <p class="text-gray-500 text-sm">Statistik kehadiran harian. (Klik kotak untuk melihat daftar nama)</p>
+                <div id="tab-dashboard" class="tab-content active scroll-mt-6 -mx-3 lg:-mx-4 -mb-3 lg:-mb-4 px-3 lg:px-4 pb-3 pt-3 bg-[#AEC09A] flex-1 flex flex-col min-h-0">
+                    <div class="w-full h-full mx-auto flex flex-col max-w-none">
+                        
+                        <div id="dash-title-container" class="mb-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 bg-[#F8FBF3] p-3 rounded-2xl shadow-sm border border-[#E0E8D3] shrink-0">
+                            <div>
+                                <h2 class="text-xl font-bold text-gray-800">Dashboard Kehadiran</h2>
+                                <p class="text-gray-500 text-xs">Statistik kehadiran harian (Model 2 Sesi).</p>
+                            </div>
+                            <button onclick="window.perbaruiDataDashboard()" class="w-full sm:w-auto bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
+                                <i class="fa-solid fa-rotate-right" id="icon-refresh-dash"></i> Perbarui Data
+                            </button>
                         </div>
-                        <button onclick="window.perbaruiDataDashboard()" class="w-full sm:w-auto bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 px-4 py-2.5 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
-                            <i class="fa-solid fa-rotate-right" id="icon-refresh-dash"></i> Perbarui Data
-                        </button>
-                    </div>
 
-                    <!-- SESI 1 -->
-                    <div class="mb-6">
-                        <h3 class="font-bold text-gray-700 mb-3 flex items-center gap-2 border-b border-gray-200 pb-2"><span class="bg-blue-100 text-blue-600 w-8 h-8 rounded-lg flex items-center justify-center"><i class="fa-solid fa-1"></i></span> Sesi 1 (Jam Pertama)</h3>
-                        <div class="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
-                            <div onclick="window.showDetailDash(1, 'Jadwal')" class="cursor-pointer hover:bg-gray-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-users"></i></div><div><h3 class="text-base sm:text-lg font-bold text-gray-800" id="dash-guru-1">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Jadwal</p></div></div>
-                            <div onclick="window.showDetailDash(1, 'Hadir')" class="cursor-pointer hover:bg-emerald-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-user-check"></i></div><div><h3 class="text-base sm:text-lg font-bold text-emerald-600" id="dash-hadir-1">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Hadir</p></div></div>
-                            <div onclick="window.showDetailDash(1, 'Izin')" class="cursor-pointer hover:bg-blue-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-envelope-open-text"></i></div><div><h3 class="text-base sm:text-lg font-bold text-blue-600" id="dash-izin-1">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Izin</p></div></div>
-                            <div onclick="window.showDetailDash(1, 'Sakit')" class="cursor-pointer hover:bg-orange-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-notes-medical"></i></div><div><h3 class="text-base sm:text-lg font-bold text-orange-600" id="dash-sakit-1">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Sakit</p></div></div>
-                            <div onclick="window.showDetailDash(1, 'Cuti')" class="cursor-pointer hover:bg-indigo-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-briefcase"></i></div><div><h3 class="text-base sm:text-lg font-bold text-indigo-600" id="dash-cuti-1">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Cuti</p></div></div>
-                            <div onclick="window.showDetailDash(1, 'Alpa')" class="cursor-pointer hover:bg-red-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-user-xmark"></i></div><div><h3 class="text-base sm:text-lg font-bold text-red-600" id="dash-alpa-1">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Alpa</p></div></div>
-                        </div>
-                    </div>
+                        <div class="flex-1 flex flex-col gap-3 min-h-0">
+                            <!-- ABSENSI GURU -->
+                            <div class="bg-[#F8FBF3] rounded-[2rem] p-4 lg:px-8 shadow-sm flex flex-col h-[42%] border border-[#E0E8D3] relative shrink-0 min-h-0">
+                                <h2 class="text-lg sm:text-xl font-black text-black absolute top-4 left-6 uppercase tracking-wider z-10">ABSENSI GURU</h2>
+                                <div id="dash-guru-graph" class="flex gap-1 sm:gap-6 items-end flex-1 w-full justify-center border-b border-gray-200 pb-1 pt-8 mt-2">
+                                    <!-- Bars rendered via JS -->
+                                </div>
+                            </div>
 
-                    <!-- SESI 2 -->
-                    <div class="mb-6">
-                        <h3 class="font-bold text-gray-700 mb-3 flex items-center gap-2 border-b border-gray-200 pb-2"><span class="bg-emerald-100 text-emerald-600 w-8 h-8 rounded-lg flex items-center justify-center"><i class="fa-solid fa-2"></i></span> Sesi 2 (Jam Kedua)</h3>
-                        <div class="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
-                            <div onclick="window.showDetailDash(2, 'Jadwal')" class="cursor-pointer hover:bg-gray-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-users"></i></div><div><h3 class="text-base sm:text-lg font-bold text-gray-800" id="dash-guru-2">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Jadwal</p></div></div>
-                            <div onclick="window.showDetailDash(2, 'Hadir')" class="cursor-pointer hover:bg-emerald-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-user-check"></i></div><div><h3 class="text-base sm:text-lg font-bold text-emerald-600" id="dash-hadir-2">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Hadir</p></div></div>
-                            <div onclick="window.showDetailDash(2, 'Izin')" class="cursor-pointer hover:bg-blue-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-envelope-open-text"></i></div><div><h3 class="text-base sm:text-lg font-bold text-blue-600" id="dash-izin-2">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Izin</p></div></div>
-                            <div onclick="window.showDetailDash(2, 'Sakit')" class="cursor-pointer hover:bg-orange-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-notes-medical"></i></div><div><h3 class="text-base sm:text-lg font-bold text-orange-600" id="dash-sakit-2">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Sakit</p></div></div>
-                            <div onclick="window.showDetailDash(2, 'Cuti')" class="cursor-pointer hover:bg-indigo-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-briefcase"></i></div><div><h3 class="text-base sm:text-lg font-bold text-indigo-600" id="dash-cuti-2">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Cuti</p></div></div>
-                            <div onclick="window.showDetailDash(2, 'Alpa')" class="cursor-pointer hover:bg-red-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-user-xmark"></i></div><div><h3 class="text-base sm:text-lg font-bold text-red-600" id="dash-alpa-2">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Alpa</p></div></div>
+                            <!-- ABSENSI MURID -->
+                            <div class="bg-[#F8FBF3] rounded-[2rem] p-4 lg:p-6 shadow-sm border border-[#E0E8D3] flex flex-col flex-1 min-h-0">
+                                <h2 class="text-lg sm:text-xl font-black text-black mb-2 uppercase tracking-wider shrink-0">ABSENSI MURID</h2>
+                                <div id="dash-class-grid" class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-7 gap-3 flex-1 overflow-y-auto content-start pr-1 pb-2">
+                                    <!-- Cards rendered via JS -->
+                                </div>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- SESI 3 -->
-                    <div class="mb-6">
-                        <h3 class="font-bold text-gray-700 mb-3 flex items-center gap-2 border-b border-gray-200 pb-2"><span class="bg-orange-100 text-orange-600 w-8 h-8 rounded-lg flex items-center justify-center"><i class="fa-solid fa-3"></i></span> Sesi 3 (Jam Ketiga)</h3>
-                        <div class="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
-                            <div onclick="window.showDetailDash(3, 'Jadwal')" class="cursor-pointer hover:bg-gray-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-users"></i></div><div><h3 class="text-base sm:text-lg font-bold text-gray-800" id="dash-guru-3">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Jadwal</p></div></div>
-                            <div onclick="window.showDetailDash(3, 'Hadir')" class="cursor-pointer hover:bg-emerald-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-user-check"></i></div><div><h3 class="text-base sm:text-lg font-bold text-emerald-600" id="dash-hadir-3">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Hadir</p></div></div>
-                            <div onclick="window.showDetailDash(3, 'Izin')" class="cursor-pointer hover:bg-blue-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-envelope-open-text"></i></div><div><h3 class="text-base sm:text-lg font-bold text-blue-600" id="dash-izin-3">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Izin</p></div></div>
-                            <div onclick="window.showDetailDash(3, 'Sakit')" class="cursor-pointer hover:bg-orange-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-notes-medical"></i></div><div><h3 class="text-base sm:text-lg font-bold text-orange-600" id="dash-sakit-3">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Sakit</p></div></div>
-                            <div onclick="window.showDetailDash(3, 'Cuti')" class="cursor-pointer hover:bg-indigo-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-briefcase"></i></div><div><h3 class="text-base sm:text-lg font-bold text-indigo-600" id="dash-cuti-3">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Cuti</p></div></div>
-                            <div onclick="window.showDetailDash(3, 'Alpa')" class="cursor-pointer hover:bg-red-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-user-xmark"></i></div><div><h3 class="text-base sm:text-lg font-bold text-red-600" id="dash-alpa-3">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Alpa</p></div></div>
-                        </div>
-                    </div>
-
-                    <!-- KEHADIRAN MURID -->
-                    <div class="mb-6 mt-8">
-                        <h3 class="font-bold text-gray-700 mb-3 flex items-center gap-2 border-b border-gray-200 pb-2"><span class="bg-orange-100 text-orange-600 w-8 h-8 rounded-lg flex items-center justify-center"><i class="fa-solid fa-users"></i></span> Kehadiran Siswa (Hari Ini)</h3>
-                        <div class="grid grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
-                            <div onclick="window.showDetailDashMurid('Total')" class="cursor-pointer hover:bg-gray-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-graduation-cap"></i></div><div><h3 class="text-base sm:text-lg font-bold text-gray-800" id="dash-murid-total">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Total Siswa</p></div></div>
-                            <div onclick="window.showDetailDashMurid('Hadir')" class="cursor-pointer hover:bg-emerald-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-user-check"></i></div><div><h3 class="text-base sm:text-lg font-bold text-emerald-600" id="dash-murid-hadir">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Hadir</p></div></div>
-                            <div onclick="window.showDetailDashMurid('Izin')" class="cursor-pointer hover:bg-blue-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-envelope-open-text"></i></div><div><h3 class="text-base sm:text-lg font-bold text-blue-600" id="dash-murid-izin">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Izin</p></div></div>
-                            <div onclick="window.showDetailDashMurid('Sakit')" class="cursor-pointer hover:bg-orange-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-notes-medical"></i></div><div><h3 class="text-base sm:text-lg font-bold text-orange-600" id="dash-murid-sakit">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Sakit</p></div></div>
-                            <div onclick="window.showDetailDashMurid('Alpa')" class="cursor-pointer hover:bg-red-50 transition-colors bg-white p-2 sm:p-3 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center gap-1"><div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-xs sm:text-sm"><i class="fa-solid fa-user-xmark"></i></div><div><h3 class="text-base sm:text-lg font-bold text-red-600" id="dash-murid-alpa">0</h3><p class="text-gray-500 text-[8px] sm:text-[9px] font-bold uppercase tracking-wider">Alpa</p></div></div>
-                        </div>
                     </div>
                 </div>
 
@@ -1423,6 +1394,20 @@
             const h_kalender = ad || ak.kalender;
             const h_pengaturan = ad || ak.pengaturan;
             
+            // Reset Sidebar & Hamburger
+            const sidebarEl = document.getElementById('sidebar');
+            const hamburgerBtn = document.getElementById('btn-hamburger');
+            if(sidebarEl) sidebarEl.style.display = '';
+            if(hamburgerBtn) hamburgerBtn.style.display = '';
+
+            const hasOtherAccess = h_guru || h_murid || h_absen_murid || h_rekap_murid || h_riwayat || h_absen || h_jadwal_guru || h_jadwal_kelas || h_rekap || h_honor || h_tabungan || h_idcard || h_kalender || h_pengaturan;
+
+            // Hapus sidebar jika hanya ada akses dashboard (khusus operator layar pantau)
+            if (window.currentUser.role === 'operator' && h_dashboard && !hasOtherAccess) {
+                if(sidebarEl) sidebarEl.style.display = 'none';
+                if(hamburgerBtn) hamburgerBtn.style.display = 'none';
+            }
+
             // Menyembunyikan parent menu (dropdown) jika semua sub-menunya disembunyikan
             const anyKhidmah = h_guru || h_riwayat || h_absen || h_jadwal_guru || h_jadwal_kelas || h_rekap || h_honor || h_tabungan || h_idcard;
             const anyKesiswaan = h_murid || h_absen_murid || h_rekap_murid;
@@ -1471,7 +1456,17 @@
                 window.switchTab(fT, document.getElementById(fB));
                 const ds = document.getElementById('dash-stats-container'); if(ds) ds.classList.remove('hidden'); const dt = document.getElementById('dash-title-container'); if(dt) dt.classList.remove('hidden');
                 const pOp = document.getElementById('modal-portal-operator'); 
-                if(pOp) { document.getElementById('op-welcome-text').innerText = `Selamat Datang, ${window.currentUser.user}`; pOp.classList.replace('hidden', 'flex'); if (anyKhidmah || h_pengaturan) document.getElementById('btn-close-portal-operator').classList.remove('hidden'); else document.getElementById('btn-close-portal-operator').classList.add('hidden'); window.renderOpGridRiwayat(); }
+                if(pOp) { 
+                    if (h_dashboard && !hasOtherAccess) {
+                        // Jangan tampilkan portal jika hanya punya akses ke Dashboard
+                        pOp.classList.replace('flex', 'hidden');
+                    } else {
+                        document.getElementById('op-welcome-text').innerText = `Selamat Datang, ${window.currentUser.user}`; 
+                        pOp.classList.replace('hidden', 'flex'); 
+                        if (anyKhidmah || h_pengaturan) document.getElementById('btn-close-portal-operator').classList.remove('hidden'); else document.getElementById('btn-close-portal-operator').classList.add('hidden'); 
+                        window.renderOpGridRiwayat(); 
+                    }
+                }
             } else { 
                 const ds = document.getElementById('dash-stats-container'); if(ds) ds.classList.remove('hidden'); const dt = document.getElementById('dash-title-container'); if(dt) dt.classList.remove('hidden'); window.switchTab('dashboard',document.getElementById('nav-btn-dashboard')); 
             }
@@ -1511,67 +1506,135 @@
             const apRapot = agenda.some(a=>a.ket.toLowerCase().includes('pembagian rapot') || a.ket.toLowerCase().includes('pembagian rapor'));
             const isLibur = agenda.some(a=>a.tipe==='Libur');
 
+            // Object untuk menampung statistik per sesi
+            let statsSesi = {
+                1: { target: 0, h: 0, iz: 0, sk: 0, ct: 0, al: 0 },
+                2: { target: 0, h: 0, iz: 0, sk: 0, ct: 0, al: 0 },
+                3: { target: 0, h: 0, iz: 0, sk: 0, ct: 0, al: 0 }
+            };
+
             // Hitung untuk masing-masing Sesi 1, 2, dan 3
             [1, 2, 3].forEach(sesi => {
-                let h=0, iz=0, sk=0, ct=0, al=0;
                 let scheduledIds = window.getScheduledIds(st, nh, sesi, apRapot, isRapat, isLibur);
+                statsSesi[sesi].target = scheduledIds.size;
 
-                // Update Total Jadwal per sesi
-                const tGuru = scheduledIds.size;
-                const elGuru = document.getElementById(`dash-guru-${sesi}`); if(elGuru) elGuru.innerText = tGuru;
-
-                // Cek guru yang seharusnya masuk (Terjadwal)
                 scheduledIds.forEach(id => {
                     const absen = dataAbsen.find(x => String(x.id_guru) === id);
                     if (absen && absen[`status_${sesi}`]) {
                         let stat = absen[`status_${sesi}`];
-                        if (stat === 'Hadir') h++;
-                        else if (stat === 'Izin') iz++;
-                        else if (stat === 'Sakit') sk++;
-                        else if (stat === 'Cuti') ct++;
-                        else al++;
+                        if (stat === 'Hadir') statsSesi[sesi].h++;
+                        else if (stat === 'Izin') statsSesi[sesi].iz++;
+                        else if (stat === 'Sakit') statsSesi[sesi].sk++;
+                        else if (stat === 'Cuti') statsSesi[sesi].ct++;
+                        else statsSesi[sesi].al++;
                     } else {
-                        al++; // Jika tidak ada data dan tidak absen atau status kosong
+                        statsSesi[sesi].al++;
                     }
                 });
 
-                // Tambahan guru yang tidak terjadwal di sesi ini, tapi mengajukan absen/cuti
                 dataAbsen.forEach(absen => {
                     if (!scheduledIds.has(String(absen.id_guru))) {
-                        let stat = absen[`status_${sesi}`];
-                        if (stat==='Hadir') h++; 
+                        if (absen[`status_${sesi}`] === 'Hadir') statsSesi[sesi].h++; 
                     }
                 });
-
-                // Terapkan ke Dashboard
-                const elHadir = document.getElementById(`dash-hadir-${sesi}`); if(elHadir) elHadir.innerText=h;
-                const elIzin = document.getElementById(`dash-izin-${sesi}`); if(elIzin) elIzin.innerText=iz;
-                const elSakit = document.getElementById(`dash-sakit-${sesi}`); if(elSakit) elSakit.innerText=sk;
-                const elCuti = document.getElementById(`dash-cuti-${sesi}`); if(elCuti) elCuti.innerText=ct;
-                const elAlpa = document.getElementById(`dash-alpa-${sesi}`); if(elAlpa) elAlpa.innerText=al;
             });
+
+            // Terapkan ke Grafik Absensi Guru (Model 2 Sesi)
+            const gGraph = document.getElementById('dash-guru-graph');
+            if (gGraph) {
+                const s1 = statsSesi[1]; 
+                const s2 = statsSesi[2];
+                // Cari nilai tertinggi untuk skala grafik
+                const maxG = Math.max(s1.target, s2.target, s1.h, s2.h, s1.iz, s2.iz, s1.sk, s2.sk, s1.al, s2.al, 1);
+                
+                const groups = [
+                    { label: 'Guru', dbLabel: 'Jadwal', v1: s1.target, v2: s2.target, color: 'bg-[#C7A500]' },
+                    { label: 'Hadir', dbLabel: 'Hadir', v1: s1.h, v2: s2.h, color: 'bg-[#73B819]' },
+                    { label: 'Izin', dbLabel: 'Izin', v1: s1.iz, v2: s2.iz, color: 'bg-[#4383FF]' },
+                    { label: 'Sakit', dbLabel: 'Sakit', v1: s1.sk, v2: s2.sk, color: 'bg-[#F6B76F]' },
+                    { label: 'Alpa', dbLabel: 'Alpa', v1: s1.al, v2: s2.al, color: 'bg-[#F73838]' }
+                ];
+
+                gGraph.innerHTML = groups.map(g => `
+                    <div class="flex flex-col items-center h-full flex-1 max-w-[140px]">
+                        <div class="flex-1 w-full flex items-end justify-center gap-1 sm:gap-2 relative">
+                            <div class="w-1/2 max-w-[45px] h-full flex flex-col justify-end items-center group cursor-pointer" onclick="window.showDetailDash(1, '${g.dbLabel}')" title="Klik lihat Sesi 1">
+                                <span class="text-xs sm:text-sm font-bold text-gray-800 mb-1">${g.v1}</span>
+                                <div class="${g.color} w-full rounded-t-sm sm:rounded-t-md transition-all duration-1000 shadow-sm group-hover:brightness-110" style="height: ${Math.round((g.v1/maxG)*100)}%; min-height: 6px;"></div>
+                                <span class="text-[9px] text-gray-400 font-bold mt-1">S1</span>
+                            </div>
+                            <div class="w-1/2 max-w-[45px] h-full flex flex-col justify-end items-center group cursor-pointer" onclick="window.showDetailDash(2, '${g.dbLabel}')" title="Klik lihat Sesi 2">
+                                <span class="text-xs sm:text-sm font-bold text-gray-800 mb-1">${g.v2}</span>
+                                <div class="${g.color} w-full rounded-t-sm sm:rounded-t-md transition-all duration-1000 shadow-sm group-hover:brightness-110" style="height: ${Math.round((g.v2/maxG)*100)}%; min-height: 6px;"></div>
+                                <span class="text-[9px] text-gray-400 font-bold mt-1">S2</span>
+                            </div>
+                        </div>
+                        <span class="text-[10px] sm:text-sm font-bold text-gray-800 mt-2 h-5 uppercase tracking-wider">${g.label}</span>
+                    </div>
+                `).join('');
+            }
 
             // Hitung untuk Murid
             const rMurid = (st.absensi_siswa||[]).find(a=>a.tanggal===ts);
             const dataAbsenMurid = rMurid ? rMurid.data : [];
-            let hM=0, izM=0, skM=0, alM=0;
-            const tMurid = (st.siswa||[]).length;
-            
+            let classStats = {};
+
             (st.siswa||[]).forEach(m => {
+                const kls = m.kelas || 'Tanpa Kelas';
+                if (!classStats[kls]) classStats[kls] = { total: 0, hadir: 0, izin: 0, sakit: 0, alpa: 0 };
+                classStats[kls].total++;
+
                 const absen = dataAbsenMurid.find(x => String(x.id_siswa) === String(m.id));
                 if (absen) {
-                    if(absen.status === 'Hadir') hM++;
-                    else if(absen.status === 'Izin') izM++;
-                    else if(absen.status === 'Sakit') skM++;
-                    else if(absen.status === 'Alpa') alM++;
+                    const s = absen.status;
+                    if (s === 'Hadir') classStats[kls].hadir++;
+                    else if (s === 'Izin') classStats[kls].izin++;
+                    else if (s === 'Sakit') classStats[kls].sakit++;
+                    else if (s === 'Alpa') classStats[kls].alpa++;
                 }
             });
-            
-            const elMuridTot = document.getElementById('dash-murid-total'); if(elMuridTot) elMuridTot.innerText = tMurid;
-            const elMuridHadir = document.getElementById('dash-murid-hadir'); if(elMuridHadir) elMuridHadir.innerText = hM;
-            const elMuridIzin = document.getElementById('dash-murid-izin'); if(elMuridIzin) elMuridIzin.innerText = izM;
-            const elMuridSakit = document.getElementById('dash-murid-sakit'); if(elMuridSakit) elMuridSakit.innerText = skM;
-            const elMuridAlpa = document.getElementById('dash-murid-alpa'); if(elMuridAlpa) elMuridAlpa.innerText = alM;
+
+            const cGrid = document.getElementById('dash-class-grid');
+            if (cGrid) {
+                const klsKeys = Object.keys(classStats).sort((a,b) => a.localeCompare(b, undefined, {numeric: true, sensitivity: 'base'}));
+                if(klsKeys.length === 0) cGrid.innerHTML = '<div class="col-span-full text-center text-gray-400 py-8 font-medium">Belum ada data murid</div>';
+                else {
+                    cGrid.innerHTML = klsKeys.map(kls => {
+                        const data = classStats[kls];
+                        const max = Math.max(data.total, 1);
+                        const bars = [
+                            { label: 'murid', val: data.total, color: 'bg-[#C7A500]' },
+                            { label: 'Hadir', val: data.hadir, color: 'bg-[#73B819]' },
+                            { label: 'Izin', val: data.izin, color: 'bg-[#4383FF]' },
+                            { label: 'Sakit', val: data.sakit, color: 'bg-[#F6B76F]' },
+                            { label: 'Alpa', val: data.alpa, color: 'bg-[#F73838]' }
+                        ].map(b => `
+                            <div class="flex flex-col items-center h-full w-full gap-px z-10" title="${b.label}: ${b.val}">
+                                <div class="w-full flex-1 flex flex-col justify-end items-center">
+                                    <span class="text-[7.5px] font-bold text-gray-800 mb-px">${b.val}</span>
+                                    <div class="w-[85%] ${b.color} rounded-t-[2px] transition-all duration-1000" style="height: ${Math.round((b.val/max)*100)}%;"></div>
+                                </div>
+                                <span class="text-[7px] sm:text-[8px] font-bold text-black mt-0.5 h-3 truncate w-full text-center">${b.label}</span>
+                            </div>
+                        `).join('');
+
+                        return `
+                            <div class="bg-[#F8E5FE] rounded-2xl p-2 sm:p-3 flex flex-col relative shadow-[inset_0_2px_4px_rgba(255,255,255,0.6)] border border-[#EAC2F4]">
+                                <div class="bg-white rounded-full px-2 py-1 text-[9px] font-bold text-center mx-auto mb-2 w-[90%] shadow-sm text-gray-800 truncate z-10">${kls}</div>
+                                <div class="relative flex items-end justify-between w-full h-16 sm:h-20 lg:h-24 gap-[1px]">
+                                    <div class="absolute inset-0 flex flex-col justify-between pb-3 sm:pb-4 z-0 pointer-events-none opacity-60">
+                                        <div class="w-full border-b border-[#D8C7DE]"></div>
+                                        <div class="w-full border-b border-[#D8C7DE]"></div>
+                                        <div class="w-full border-b border-[#D8C7DE]"></div>
+                                        <div class="w-full border-b border-[#D8C7DE]"></div>
+                                    </div>
+                                    ${bars}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
         };
         window.updateAllViews = () => {
             const st=window.appState, isa=window.currentUser&&window.currentUser.role==='admin'; window.updateDashboardStats(); window.applyLogoToUI();
