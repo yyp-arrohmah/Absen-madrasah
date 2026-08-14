@@ -664,7 +664,8 @@
     <!-- MAIN APP -->
     <div id="main-app" class="hidden flex h-screen overflow-hidden">
         <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden" onclick="window.toggleSidebar()"></div>
-        <aside id="sidebar" class="bg-white w-64 h-full border-r border-gray-200 flex flex-col fixed lg:relative z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+        <!-- Menambahkan lg:-ml-64 agar disembunyikan secara default pada layar besar -->
+        <aside id="sidebar" class="bg-white w-64 shrink-0 h-full border-r border-gray-200 flex flex-col fixed lg:relative z-50 transform -translate-x-full lg:translate-x-0 lg:-ml-64 transition-all duration-300">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center">
                 <div class="flex items-center gap-3">
                     <div id="sidebar-logo-wrapper" class="w-20 h-20 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold p-2 shadow-md text-4xl transition-colors">
@@ -712,7 +713,7 @@
         <main class="flex-1 bg-gray-50/50 relative overflow-y-auto overflow-x-hidden w-full h-full p-3 lg:p-4 flex flex-col">
             <header class="flex justify-between items-center mb-3 lg:mb-4 shrink-0 bg-[#AEC09A] p-3 sm:p-4 rounded-2xl shadow-sm border border-[#9cb086]">
                 <div class="flex items-center gap-3">
-                    <button id="btn-hamburger" class="lg:hidden text-gray-800 bg-white/60 w-10 h-10 rounded-xl flex items-center justify-center hover:bg-white/80 transition-colors" onclick="window.toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+                    <button id="btn-hamburger" class="text-gray-800 bg-white/60 w-10 h-10 rounded-xl flex items-center justify-center hover:bg-white/80 transition-colors shadow-sm" onclick="window.toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
                     <div>
                         <h1 class="text-lg lg:text-xl font-bold text-gray-900">Sistem Informasi Madrasah</h1>
                         <div class="flex items-center gap-2"><p class="text-[11px] font-bold text-gray-700 hidden sm:block" id="current-username">Panel Admin</p><span class="hidden sm:block text-gray-600">|</span><p class="text-xs font-bold text-gray-800 hidden sm:block" id="current-hijri-date-dashboard">Memuat Tanggal...</p></div>
@@ -734,9 +735,6 @@
                                 <h2 class="text-xl font-bold text-gray-800">Dashboard Kehadiran</h2>
                                 <p class="text-gray-500 text-xs">Statistik kehadiran harian (Model 2 Sesi).</p>
                             </div>
-                            <button onclick="window.perbaruiDataDashboard()" class="w-full sm:w-auto bg-blue-50 text-blue-600 border border-blue-200 hover:bg-blue-100 px-4 py-2 rounded-xl text-sm font-bold flex items-center justify-center gap-2 transition-colors shadow-sm">
-                                <i class="fa-solid fa-rotate-right" id="icon-refresh-dash"></i> Perbarui Data
-                            </button>
                         </div>
 
                         <div class="flex-1 flex flex-col gap-3 min-h-0">
@@ -969,19 +967,19 @@
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left border-collapse">
+                        <div class="w-full overflow-hidden">
+                            <!-- Menambahkan table-fixed dan menghapus min-w untuk proporsi layar penuh -->
+                            <table class="w-full text-sm text-left border-collapse table-fixed">
                                 <thead class="bg-purple-50 text-xs text-purple-900 font-bold uppercase border-b border-purple-100">
                                     <tr>
-                                        <!-- Menambahkan z-30 agar header tidak tertimpa kolom lengket z-20 -->
-                                        <th class="px-4 py-3.5 min-w-[150px] sticky left-0 bg-purple-50 z-30 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Nama Guru</th>
-                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Sabtu</th>
-                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Ahad</th>
-                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Senin</th>
-                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Selasa</th>
-                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Rabu</th>
-                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100">Kamis</th>
-                                        <th class="px-3 py-3.5 text-center min-w-[140px] border-l border-purple-100 text-red-600">Jumat</th>
+                                        <th class="p-2 sm:p-3 w-[16%] sticky left-0 bg-purple-50 z-30 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Nama Guru</th>
+                                        <th class="p-2 sm:p-3 text-center w-[12%] border-l border-purple-100">Sabtu</th>
+                                        <th class="p-2 sm:p-3 text-center w-[12%] border-l border-purple-100">Ahad</th>
+                                        <th class="p-2 sm:p-3 text-center w-[12%] border-l border-purple-100">Senin</th>
+                                        <th class="p-2 sm:p-3 text-center w-[12%] border-l border-purple-100">Selasa</th>
+                                        <th class="p-2 sm:p-3 text-center w-[12%] border-l border-purple-100">Rabu</th>
+                                        <th class="p-2 sm:p-3 text-center w-[12%] border-l border-purple-100">Kamis</th>
+                                        <th class="p-2 sm:p-3 text-center w-[12%] border-l border-purple-100 text-red-600">Jumat</th>
                                     </tr>
                                 </thead>
                                 <tbody id="table-jadwal-guru" class="divide-y divide-gray-100 bg-white relative z-0"></tbody>
@@ -1000,18 +998,18 @@
                         </div>
                     </div>
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden" id="cetak-area-jadwal-kelas">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left border-collapse">
+                        <div class="w-full overflow-hidden">
+                            <!-- Menambahkan table-fixed dan menghapus min-w untuk proporsi layar penuh -->
+                            <table class="w-full text-sm text-left border-collapse table-fixed">
                                 <thead class="bg-emerald-50 text-xs text-emerald-900 font-bold uppercase border-b border-emerald-100">
                                     <tr>
-                                        <!-- Menambahkan z-30 agar header kelas tidak tertimpa kolom lengket z-20 -->
-                                        <th class="px-4 py-4 min-w-[130px] sticky left-0 bg-emerald-50 z-30 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Kelas</th>
-                                        <th class="px-3 py-4 text-center min-w-[160px] border-l border-emerald-100">Sabtu</th>
-                                        <th class="px-3 py-4 text-center min-w-[160px] border-l border-emerald-100">Ahad</th>
-                                        <th class="px-3 py-4 text-center min-w-[160px] border-l border-emerald-100">Senin</th>
-                                        <th class="px-3 py-4 text-center min-w-[160px] border-l border-emerald-100">Selasa</th>
-                                        <th class="px-3 py-4 text-center min-w-[160px] border-l border-emerald-100">Rabu</th>
-                                        <th class="px-3 py-4 text-center min-w-[160px] border-l border-emerald-100">Kamis</th>
+                                        <th class="p-2 sm:p-4 w-[16%] sticky left-0 bg-emerald-50 z-30 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)]">Kelas</th>
+                                        <th class="p-2 sm:p-4 text-center w-[14%] border-l border-emerald-100">Sabtu</th>
+                                        <th class="p-2 sm:p-4 text-center w-[14%] border-l border-emerald-100">Ahad</th>
+                                        <th class="p-2 sm:p-4 text-center w-[14%] border-l border-emerald-100">Senin</th>
+                                        <th class="p-2 sm:p-4 text-center w-[14%] border-l border-emerald-100">Selasa</th>
+                                        <th class="p-2 sm:p-4 text-center w-[14%] border-l border-emerald-100">Rabu</th>
+                                        <th class="p-2 sm:p-4 text-center w-[14%] border-l border-emerald-100">Kamis</th>
                                     </tr>
                                 </thead>
                                 <tbody id="table-jadwal-kelas" class="divide-y divide-gray-100 bg-white relative z-0"></tbody>
@@ -1243,8 +1241,34 @@
         window.showAlert = (title, message, type='info', callback=null) => { document.getElementById('alert-title').innerText = title; document.getElementById('alert-message').innerText = message; const icon = document.getElementById('alert-icon'); if(type === 'error') icon.innerHTML = '<i class="fa-solid fa-circle-xmark text-red-500"></i>'; else if(type === 'success') icon.innerHTML = '<i class="fa-solid fa-circle-check text-green-500"></i>'; else icon.innerHTML = '<i class="fa-solid fa-circle-info text-blue-500"></i>'; document.getElementById('alert-modal').classList.replace('hidden', 'flex'); document.getElementById('alert-close-btn').onclick = () => { document.getElementById('alert-modal').classList.replace('flex', 'hidden'); if(callback) setTimeout(callback, 300); }; };
         window.showConfirm = (title, message, callback) => { document.getElementById('confirm-title').innerText = title; document.getElementById('confirm-message').innerText = message; document.getElementById('confirm-modal').classList.replace('hidden', 'flex'); document.getElementById('confirm-yes-btn').onclick = () => { document.getElementById('confirm-modal').classList.replace('flex', 'hidden'); if(callback) callback(); }; };
         window.closeConfirm = () => { document.getElementById('confirm-modal').classList.replace('flex', 'hidden'); };
-        window.switchTab = (tabId, btn) => { document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active')); const tgt=document.getElementById('tab-'+tabId); if(tgt)tgt.classList.add('active'); document.querySelectorAll('.nav-btn').forEach(el=>{el.classList.remove('bg-blue-50','text-blue-700','active','bg-purple-50','text-purple-700','bg-orange-50','text-orange-700','bg-emerald-50','text-emerald-700');el.classList.add('text-gray-500');}); if(btn){ let bg='bg-blue-50',tc='text-blue-700'; if(btn.id.includes('guru')||btn.id==='nav-btn-idcard'){bg='bg-purple-50';tc='text-purple-700';} else if(btn.id.includes('murid')){bg='bg-orange-50';tc='text-orange-700';} else if(btn.id.includes('kalender')||btn.id.includes('jadwal-kelas')||btn.id==='nav-btn-surat'){bg='bg-emerald-50';tc='text-emerald-700';} btn.classList.add(bg,tc,'active'); btn.classList.remove('text-gray-500'); if(window.innerWidth<1024)window.toggleSidebar(); } window.updateAllViews(); };
-        window.toggleSidebar = () => { const sb=document.getElementById('sidebar'),ov=document.getElementById('sidebar-overlay'); if(sb.classList.contains('-translate-x-full')){sb.classList.remove('-translate-x-full');ov.classList.remove('hidden');}else{sb.classList.add('-translate-x-full');ov.classList.add('hidden');} };
+        
+        // Memodifikasi switchTab agar sidebar otomatis tertutup setelah memilih menu
+        window.switchTab = (tabId, btn) => { document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active')); const tgt=document.getElementById('tab-'+tabId); if(tgt)tgt.classList.add('active'); document.querySelectorAll('.nav-btn').forEach(el=>{el.classList.remove('bg-blue-50','text-blue-700','active','bg-purple-50','text-purple-700','bg-orange-50','text-orange-700','bg-emerald-50','text-emerald-700');el.classList.add('text-gray-500');}); if(btn){ let bg='bg-blue-50',tc='text-blue-700'; if(btn.id.includes('guru')||btn.id==='nav-btn-idcard'){bg='bg-purple-50';tc='text-purple-700';} else if(btn.id.includes('murid')){bg='bg-orange-50';tc='text-orange-700';} else if(btn.id.includes('kalender')||btn.id.includes('jadwal-kelas')||btn.id==='nav-btn-surat'){bg='bg-emerald-50';tc='text-emerald-700';} btn.classList.add(bg,tc,'active'); btn.classList.remove('text-gray-500'); const sb=document.getElementById('sidebar'); const ov=document.getElementById('sidebar-overlay'); if(window.innerWidth>=1024) sb.classList.add('lg:-ml-64'); else { sb.classList.add('-translate-x-full'); ov.classList.add('hidden'); } } window.updateAllViews(); };
+        
+        window.toggleSidebar = () => { 
+            const sb = document.getElementById('sidebar');
+            const ov = document.getElementById('sidebar-overlay'); 
+            
+            // Logika untuk layar lebar (Desktop/Laptop)
+            if (window.innerWidth >= 1024) {
+                if (sb.classList.contains('lg:-ml-64')) {
+                    sb.classList.remove('lg:-ml-64');
+                } else {
+                    sb.classList.add('lg:-ml-64'); // Geser keluar layar dengan margin negatif
+                }
+            } 
+            // Logika untuk layar kecil (HP/Tablet)
+            else {
+                if(sb.classList.contains('-translate-x-full')){
+                    sb.classList.remove('-translate-x-full');
+                    ov.classList.remove('hidden');
+                } else {
+                    sb.classList.add('-translate-x-full');
+                    ov.classList.add('hidden');
+                } 
+            }
+        };
+        
         window.toggleSubmenu = (sId, iId) => { const s=document.getElementById(sId),i=document.getElementById(iId); if(s.classList.contains('hidden')){s.classList.replace('hidden','flex');i.classList.add('rotate-180');}else{s.classList.replace('flex','hidden');i.classList.remove('rotate-180');} };
         window.bukaModalPengaturan = (tab) => { window.switchSettingTab(tab||'lokasi'); document.getElementById('modal-pengaturan').classList.replace('hidden','flex'); };
 
@@ -1893,12 +1917,12 @@
             gl.forEach(g=>{ 
                 const sc=(window.appState.jadwal_guru||[]).filter(j=>String(j.id_guru)===String(g.id)); 
                 if(sc.length===0&&!fg.value)return; aj=true; 
-                // Menambahkan z-20 agar cell lengket menutupi elemen lain di bawahnya saat scroll horizontal
-                h+=`<tr class="border-b border-gray-100 hover:bg-purple-50/20"><td class="px-4 py-3 font-bold text-sm text-gray-800 sticky left-0 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] min-w-[150px] z-20">${g.nama}</td>`; 
+                // Menghapus min-w-[150px] agar bisa mengecil sesuai layar
+                h+=`<tr class="border-b border-gray-100 hover:bg-purple-50/20"><td class="p-2 sm:px-4 sm:py-3 font-bold text-[11px] sm:text-sm text-gray-800 sticky left-0 bg-white shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] z-20 break-words">${g.nama}</td>`; 
                 hl.forEach(d=>{ 
                     const j=sc.find(x=>x.hari===d); 
-                    if(j)h+=`<td class="px-2 py-2 align-top border-l border-gray-100 bg-purple-50/30"><div class="bg-white border border-purple-200 rounded-lg p-2 relative group shadow-sm w-full h-full min-h-[60px] flex flex-col justify-center overflow-hidden"><div class="text-[10px] text-gray-700 text-center leading-relaxed font-medium">${j.jam}</div><div class="absolute inset-0 bg-black/5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 backdrop-blur-[1px]"><button onclick="window.editJadwalGuru('${j.id}')" class="text-white bg-blue-500 hover:bg-blue-600 w-7 h-7 rounded-full shadow flex items-center justify-center transition-transform hover:scale-110"><i class="fa-solid fa-pen text-[10px]"></i></button><button onclick="window.hapusJadwalGuru('${j.id}')" class="text-white bg-red-500 hover:bg-red-600 w-7 h-7 rounded-full shadow flex items-center justify-center transition-transform hover:scale-110"><i class="fa-solid fa-trash text-[10px]"></i></button></div></div></td>`; 
-                    else h+=`<td class="px-2 py-2 align-top border-l border-gray-100"><div onclick="window.bukaModalJadwal('${g.id}','${d}')" class="h-full min-h-[60px] border-2 border-dashed border-gray-200 rounded-lg flex items-center justify-center text-gray-300 hover:bg-purple-50 hover:border-purple-400 hover:text-purple-600 cursor-pointer transition-colors w-full group/add"><i class="fa-solid fa-plus text-lg group-hover/add:scale-110 transition-transform"></i></div></td>`; 
+                    if(j)h+=`<td class="p-1 sm:px-2 sm:py-2 align-top border-l border-gray-100 bg-purple-50/30"><div class="bg-white border border-purple-200 rounded p-1 sm:p-2 relative group shadow-sm w-full h-full min-h-[50px] sm:min-h-[60px] flex flex-col justify-center overflow-hidden break-words"><div class="text-[9px] sm:text-[10px] text-gray-700 text-center leading-tight sm:leading-relaxed font-medium">${j.jam}</div><div class="absolute inset-0 bg-black/5 rounded opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1 sm:gap-2 backdrop-blur-[1px]"><button onclick="window.editJadwalGuru('${j.id}')" class="text-white bg-blue-500 hover:bg-blue-600 w-6 h-6 sm:w-7 sm:h-7 rounded-full shadow flex items-center justify-center transition-transform hover:scale-110"><i class="fa-solid fa-pen text-[9px] sm:text-[10px]"></i></button><button onclick="window.hapusJadwalGuru('${j.id}')" class="text-white bg-red-500 hover:bg-red-600 w-6 h-6 sm:w-7 sm:h-7 rounded-full shadow flex items-center justify-center transition-transform hover:scale-110"><i class="fa-solid fa-trash text-[9px] sm:text-[10px]"></i></button></div></div></td>`; 
+                    else h+=`<td class="p-1 sm:px-2 sm:py-2 align-top border-l border-gray-100"><div onclick="window.bukaModalJadwal('${g.id}','${d}')" class="h-full min-h-[50px] sm:min-h-[60px] border-2 border-dashed border-gray-200 rounded flex items-center justify-center text-gray-300 hover:bg-purple-50 hover:border-purple-400 hover:text-purple-600 cursor-pointer transition-colors w-full group/add"><i class="fa-solid fa-plus text-sm sm:text-lg group-hover/add:scale-110 transition-transform"></i></div></td>`; 
                 }); 
                 h+=`</tr>`; 
             }); 
@@ -1980,9 +2004,9 @@
                     
                     let entryText = '';
                     if (ext.pelajaran) {
-                        entryText = `<div class="flex flex-col pt-1"><span class="text-xs font-bold text-gray-800 leading-tight line-clamp-2">${ext.pelajaran}</span><span class="text-[10px] font-semibold text-emerald-600 mt-1 truncate" title="${namaGuru}">${namaGuru}</span></div>`;
+                        entryText = `<div class="flex flex-col pt-1"><span class="text-[10px] sm:text-xs font-bold text-gray-800 leading-tight line-clamp-2">${ext.pelajaran}</span><span class="text-[9px] sm:text-[10px] font-semibold text-emerald-600 mt-0.5 sm:mt-1 truncate" title="${namaGuru}">${namaGuru}</span></div>`;
                     } else {
-                        entryText = `<div class="flex flex-col pt-1"><span class="text-[11px] font-bold text-gray-800 leading-tight line-clamp-2" title="${namaGuru}">${namaGuru}</span></div>`;
+                        entryText = `<div class="flex flex-col pt-1"><span class="text-[10px] sm:text-[11px] font-bold text-gray-800 leading-tight line-clamp-2" title="${namaGuru}">${namaGuru}</span></div>`;
                     }
                     classData[ext.kelas][j.hari][jamStr].push(entryText);
                 };
@@ -1996,30 +2020,30 @@
             if (sc.length === 0) { c.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-gray-500 font-medium">Belum ada data jadwal kelas terdaftar.</td></tr>`; return; }
             
             c.innerHTML = sc.map(cls => {
-                // Menambahkan z-20 agar cell lengket menutupi elemen lain di bawahnya saat scroll horizontal
+                // Menghapus min-w-[130px] dan min-w-[160px]
                 let h = `<tr class="border-b border-gray-100 hover:bg-emerald-50/40 transition-colors group">
-                            <td class="px-4 py-4 font-extrabold text-sm text-emerald-900 sticky left-0 bg-white group-hover:bg-emerald-50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] min-w-[130px] z-20 align-top transition-colors border-r border-gray-100">${cls}</td>`;
+                            <td class="p-2 sm:px-4 sm:py-4 font-extrabold text-[11px] sm:text-sm text-emerald-900 sticky left-0 bg-white group-hover:bg-emerald-50 shadow-[2px_0_5px_-2px_rgba(0,0,0,0.08)] z-20 align-top transition-colors border-r border-gray-100 break-words">${cls}</td>`;
                 
                 days.forEach(d => {
                     const dd = classData[cls]?.[d];
                     if (dd) {
-                        h += `<td class="px-2 py-3 align-top border-l border-gray-100 min-w-[160px]"><div class="flex flex-col gap-2 w-full h-full">`;
+                        h += `<td class="p-1 sm:px-2 sm:py-3 align-top border-l border-gray-100"><div class="flex flex-col gap-1 sm:gap-2 w-full h-full">`;
                         
                         ['Jam 1', 'Jam 2', 'Jam 3'].forEach((jam, idx) => {
                             if(dd[jam]) {
                                 const bgColors = ['bg-blue-50/60 border-blue-200', 'bg-emerald-50/60 border-emerald-200', 'bg-orange-50/60 border-orange-200'];
                                 const labelColors = ['bg-blue-200 text-blue-800', 'bg-emerald-200 text-emerald-800', 'bg-orange-200 text-orange-800'];
                                 
-                                h += `<div class="relative ${bgColors[idx]} border rounded-xl p-3 pt-4 shadow-sm text-left">
-                                        <span class="absolute top-0 right-0 ${labelColors[idx]} text-[9px] font-extrabold px-2 py-0.5 rounded-bl-xl rounded-tr-xl">${jam.toUpperCase()}</span>
-                                        ${dd[jam].join('<div class="my-2 border-t border-dashed border-gray-300/60 w-full"></div>')}
+                                h += `<div class="relative ${bgColors[idx]} border rounded-lg sm:rounded-xl p-1.5 sm:p-3 pt-3 sm:pt-4 shadow-sm text-left break-words">
+                                        <span class="absolute top-0 right-0 ${labelColors[idx]} text-[7px] sm:text-[9px] font-extrabold px-1.5 py-[1px] sm:px-2 sm:py-0.5 rounded-bl-lg sm:rounded-bl-xl rounded-tr-lg sm:rounded-tr-xl">${jam.toUpperCase()}</span>
+                                        ${dd[jam].join('<div class="my-1 sm:my-2 border-t border-dashed border-gray-300/60 w-full"></div>')}
                                       </div>`;
                             }
                         });
                         
                         h += `</div></td>`;
                     } else { 
-                        h += `<td class="px-2 py-3 align-middle border-l border-gray-100 bg-gray-50/50 min-w-[160px]"><div class="flex items-center justify-center h-full text-gray-300 text-xl font-light">-</div></td>`; 
+                        h += `<td class="p-1 sm:px-2 sm:py-3 align-middle border-l border-gray-100 bg-gray-50/50"><div class="flex items-center justify-center h-full text-gray-300 text-lg sm:text-xl font-light">-</div></td>`; 
                     }
                 });
                 return h + `</tr>`;
