@@ -138,7 +138,11 @@
                     </div>
                 </div>
 
-                <div id="grid-btn-riwayat" class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-6">
+                <div id="grid-btn-riwayat" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mt-6">
+                    <button onclick="window.kembaliKeBeranda()" class="bg-white border border-gray-200 hover:bg-gray-50 hover:border-gray-300 text-gray-700 p-4 sm:p-5 rounded-2xl shadow-sm transition-all flex flex-col items-center justify-center gap-2 sm:gap-3 group">
+                        <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gray-100 flex items-center justify-center text-xl sm:text-2xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-house"></i></div>
+                        <span class="font-bold text-xs sm:text-sm text-center leading-tight">Beranda</span>
+                    </button>
                     <button onclick="window.bukaPopupPortal('harian')" class="bg-white border border-purple-200 hover:bg-purple-50 hover:border-purple-300 text-purple-700 p-4 sm:p-5 rounded-2xl shadow-sm transition-all flex flex-col items-center justify-center gap-2 sm:gap-3 group">
                         <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-purple-100 flex items-center justify-center text-xl sm:text-2xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-list-check"></i></div>
                         <span class="font-bold text-xs sm:text-sm text-center leading-tight">Riwayat Harian</span>
@@ -1257,6 +1261,10 @@
         let syncTimeout = null;
         let activeScannerMode = '';
         let html5QrCode = null;
+        
+        // VARIABEL BARU UNTUK MENCEGAH RACE CONDITION
+        window.localDataIsDirty = false;
+        let saveRequestId = 0;
 
         // 3. Modals & Utilities Global
         window.getToday = () => { const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; };
@@ -1318,22 +1326,89 @@
         window.bukaModalPengaturan = (tab) => { window.switchSettingTab(tab||'lokasi'); document.getElementById('modal-pengaturan').classList.replace('hidden','flex'); };
 
         // 4. Sinkronisasi Data Firebase
-        window.saveState = async () => {
-            try { localStorage.setItem('CloudMadrasahData', JSON.stringify(window.appState)); } catch(e) { if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') setTimeout(() => window.showAlert('Penyimpanan Penuh', 'Penyimpanan lokal penuh. Mohon perkecil ukuran foto guru.', 'error'), 500); }
+        // ===============================================================
+        // SISTEM SINKRONISASI LATAR BELAKANG (AUTO-SYNC & OFFLINE SUPPORT)
+        // ===============================================================
+        window.isOnline = navigator.onLine;
+        window.pendingSync = false;
+
+        window.updateNetworkStatus = () => {
+            window.isOnline = navigator.onLine;
             const syncBadge = document.getElementById('cloud-sync-status');
-            if (syncBadge) { syncBadge.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>Menyimpan ke Firebase...'; syncBadge.classList.remove('opacity-0'); }
+            if (!window.isOnline) {
+                window.showToast('Koneksi Terputus', 'Beralih ke mode offline. Data disimpan sementara secara lokal.', 'error');
+                if (syncBadge) {
+                    syncBadge.innerHTML = '<i class="fa-solid fa-wifi text-red-500 mr-2 relative"><span class="absolute border-t-2 border-red-500 w-5 top-2 -left-0.5 rotate-45"></span></i>Mode Offline (Lokal)';
+                    syncBadge.classList.remove('opacity-0');
+                }
+            } else {
+                window.showToast('Online Kembali', 'Koneksi stabil. Menghubungkan ke server...', 'success');
+                if (window.pendingSync) {
+                    window.saveState(true); // Memaksa sync data yang tertunda saat offline
+                } else {
+                    if (syncBadge) {
+                        syncBadge.innerHTML = '<i class="fa-solid fa-wifi mr-2 text-green-400"></i>Koneksi Stabil';
+                        syncBadge.classList.remove('opacity-0');
+                        setTimeout(() => syncBadge.classList.add('opacity-0'), 2500);
+                    }
+                }
+            }
+        };
+
+        window.addEventListener('online', window.updateNetworkStatus);
+        window.addEventListener('offline', window.updateNetworkStatus);
+
+        window.saveState = async (force = false) => {
+            window.localDataIsDirty = true;
+            const currentReqId = ++saveRequestId;
+
+            try { localStorage.setItem('CloudMadrasahData', JSON.stringify(window.appState)); } 
+            catch(e) { if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') setTimeout(() => window.showAlert('Penyimpanan Penuh', 'Penyimpanan lokal penuh. Mohon perkecil ukuran foto.', 'error'), 500); }
+            
+            const syncBadge = document.getElementById('cloud-sync-status');
+            
+            // Logika Offline: Cegah request Firebase jika terputus
+            if (!navigator.onLine && !force) {
+                window.pendingSync = true;
+                if (syncBadge) { 
+                    syncBadge.innerHTML = '<i class="fa-solid fa-hdd mr-2 text-yellow-400"></i>Tersimpan di Perangkat (Menunggu Online)'; 
+                    syncBadge.classList.remove('opacity-0'); 
+                    setTimeout(() => syncBadge.classList.add('opacity-0'), 3000); 
+                }
+                return;
+            }
+
+            if (syncBadge) { 
+                syncBadge.innerHTML = '<i class="fa-solid fa-arrows-rotate fa-spin mr-2 text-blue-400"></i>Menyinkronkan ke Cloud...'; 
+                syncBadge.classList.remove('opacity-0'); 
+            }
 
             if (syncTimeout) clearTimeout(syncTimeout);
             syncTimeout = setTimeout(async () => {
                 try {
                     await set(ref(db, 'MadrasahData/'), window.appState);
-                    if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-check mr-2 text-green-400"></i>Tersimpan di Firebase!';
+                    window.pendingSync = false;
+                    if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-2 text-green-400"></i>Data Tersinkronisasi!';
                 } catch(e) {
-                    if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2 text-yellow-400"></i>Tersimpan Lokal (Cloud Gagal)';
+                    window.pendingSync = true;
+                    if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2 text-red-400"></i>Gagal Sync (Akan diulang otomatis)';
                 }
                 if (syncBadge) setTimeout(() => syncBadge.classList.add('opacity-0'), 2500);
-            }, 1000); // <-- Diperpanjang jadi 1 detik agar tidak terjadi bentrok data upload saat banyak scan cepat
+                
+                // Lepaskan flag dirty HANYA jika tidak ada request save baru yang masuk
+                if (currentReqId === saveRequestId) {
+                    setTimeout(() => { window.localDataIsDirty = false; }, 500); // Jeda agar gema (echo) dari onValue server terlewati
+                }
+            }, 1000); 
         };
+
+        // Auto-sync Interval (Setiap 3 menit sistem mengecek data yang belum ter-upload)
+        setInterval(() => {
+            if (navigator.onLine && window.pendingSync) {
+                console.log("Auto-Sync: Melakukan sinkronisasi data tertunda di latar belakang...");
+                window.saveState(true);
+            }
+        }, 3 * 60 * 1000);
 
         let isFirstLoad = true;
         window.initCloudDatabase = async () => {
@@ -1352,8 +1427,34 @@
             try {
                 const dbRef = ref(db, 'MadrasahData');
                 onValue(dbRef, (snapshot) => {
+                    // PENCEGAHAN OVERWRITE: Abaikan pembaruan server jika sedang ada proses simpan antre
+                    if (window.localDataIsDirty) {
+                        console.log("Mengabaikan pembaruan server sementara karena ada data lokal yang belum tersimpan.");
+                        return;
+                    }
+
                     if (snapshot.exists()) {
                         const cloudData = snapshot.val();
+                        
+                        // PERBAIKAN BUG FIREBASE: Konversi Object ke Array
+                        // Firebase otomatis mengubah array jadi objek jika indeksnya bolong (karena ada data yang dihapus).
+                        ['guru', 'siswa', 'absensi_guru', 'absensi_siswa', 'jadwal_guru', 'tabungan_guru', 'log_login', 'agenda'].forEach(key => {
+                            if (cloudData[key] && typeof cloudData[key] === 'object' && !Array.isArray(cloudData[key])) {
+                                cloudData[key] = Object.values(cloudData[key]);
+                            }
+                        });
+                        
+                        if (cloudData.absensi_guru) {
+                            cloudData.absensi_guru.forEach(absen => {
+                                if (absen.data && typeof absen.data === 'object' && !Array.isArray(absen.data)) absen.data = Object.values(absen.data);
+                            });
+                        }
+                        if (cloudData.absensi_siswa) {
+                            cloudData.absensi_siswa.forEach(absen => {
+                                if (absen.data && typeof absen.data === 'object' && !Array.isArray(absen.data)) absen.data = Object.values(absen.data);
+                            });
+                        }
+
                         window.appState = { ...window.appState, ...cloudData };
                         if (cloudData.pengaturan) { window.appState.pengaturan = { ...window.appState.pengaturan, ...cloudData.pengaturan }; }
                         try { localStorage.setItem('CloudMadrasahData', JSON.stringify(window.appState)); } catch(err){}
@@ -1361,8 +1462,6 @@
                         // Jika sistem sedang berjalan (user login), perbarui dashboard secara otomatis
                         if (window.currentUser) {
                             if (typeof window.updateDashboardStats === 'function') window.updateDashboardStats();
-                            // Tabel absen celah aman tidak diperbarui otomatis agar tidak mereset 
-                            // pilihan manual admin (radio button) yang belum sempat diklik simpan
                         }
                     }
                     
@@ -1384,6 +1483,16 @@
 
         
         window.perbaruiDataDashboard = async () => {
+            if (!navigator.onLine) {
+                window.showToast('Offline', 'Anda sedang offline. Tidak dapat memuat data terbaru.', 'error');
+                return;
+            }
+            if (window.pendingSync) {
+                window.showToast('Peringatan', 'Sistem sedang mengunggah data tertunda. Silakan tunggu sebentar.', 'error');
+                window.saveState(true);
+                return;
+            }
+            
             const icon = document.getElementById('icon-refresh-dash');
             if(icon) icon.classList.add('fa-spin'); 
             try {
@@ -1391,6 +1500,16 @@
                 const snapshot = await get(child(ref(db), 'MadrasahData'));
                 if (snapshot.exists()) {
                     const cloudData = snapshot.val();
+                    
+                    // PERBAIKAN BUG FIREBASE PADA REFRESH MANUAL
+                    ['guru', 'siswa', 'absensi_guru', 'absensi_siswa', 'jadwal_guru', 'tabungan_guru', 'log_login', 'agenda'].forEach(key => {
+                        if (cloudData[key] && typeof cloudData[key] === 'object' && !Array.isArray(cloudData[key])) {
+                            cloudData[key] = Object.values(cloudData[key]);
+                        }
+                    });
+                    if (cloudData.absensi_guru) cloudData.absensi_guru.forEach(a => { if (a.data && typeof a.data === 'object' && !Array.isArray(a.data)) a.data = Object.values(a.data); });
+                    if (cloudData.absensi_siswa) cloudData.absensi_siswa.forEach(a => { if (a.data && typeof a.data === 'object' && !Array.isArray(a.data)) a.data = Object.values(a.data); });
+
                     window.appState = { ...window.appState, ...cloudData };
                     if (cloudData.pengaturan) { window.appState.pengaturan = { ...window.appState.pengaturan, ...cloudData.pengaturan }; }
                     try { localStorage.setItem('CloudMadrasahData', JSON.stringify(window.appState)); } catch(err){}
@@ -2650,11 +2769,11 @@
             if (btnRekapKelas && gridBtn) {
                 if (isWaliKelas) {
                     btnRekapKelas.classList.remove('hidden');
-                    gridBtn.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mt-6';
+                    gridBtn.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 mt-6';
                     window.tempWaliKelasTarget = g.jabatan;
                 } else {
                     btnRekapKelas.classList.add('hidden');
-                    gridBtn.className = 'grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mt-6';
+                    gridBtn.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 sm:gap-4 mt-6';
                     window.tempWaliKelasTarget = null;
                 }
             }
@@ -2774,6 +2893,16 @@
         };
         window.tutupPopupPortal = () => document.getElementById('modal-popup-portal').classList.replace('flex', 'hidden');
         window.tutupPortalKeAbsenMurid = () => { document.getElementById('modal-riwayat-guru').classList.replace('flex', 'hidden'); window.switchTab('absen-murid', document.getElementById('nav-btn-absen-murid')); };
+        
+        window.kembaliKeBeranda = () => {
+            if (window.currentUser && window.currentUser.role === 'guru') {
+                window.showAlert('Info', 'Halaman ini adalah beranda utama Anda.', 'info');
+            } else {
+                document.getElementById('modal-riwayat-guru').classList.replace('flex', 'hidden');
+                const navDash = document.getElementById('nav-btn-dashboard');
+                if (navDash) window.switchTab('dashboard', navDash);
+            }
+        };
 
         window.renderRekapKelasku = () => {
             const c = document.getElementById('table-riwayat-rekap-kelas');
