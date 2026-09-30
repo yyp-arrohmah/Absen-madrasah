@@ -18,7 +18,7 @@
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
-        body { font-family: 'Nunito', sans-serif; }
+        body { font-family: 'Nunito', sans-serif; }Tolong tambahkan warna kolom di rekap absen guru pada kolom total sesi (I,S,A,H,TG)
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
         .tab-content { display: none !important; }
@@ -724,10 +724,6 @@
                             <div>
                                 <h2 class="text-xl font-bold text-gray-800">Dashboard Kehadiran</h2>
                                 <p class="text-gray-500 text-xs">Statistik kehadiran harian (Model 2 Sesi).</p>
-                                <!-- Tombol Aktifkan Notifikasi Browser -->
-        <button onclick="window.aktifkanNotifikasiBrowser()" class="mb-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded shadow text-sm font-semibold transition-colors flex items-center gap-2">
-            <i class="fa-solid fa-bell"></i> Aktifkan Notifikasi Browser
-        </button>
                             </div>
                             <!-- Elemen Jam Digital Ditambahkan di Sini -->
                             <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-200 mt-2 sm:mt-0 w-full sm:w-auto justify-center sm:justify-start">
@@ -1330,7 +1326,7 @@
         // SISTEM SINKRONISASI LATAR BELAKANG (AUTO-SYNC & OFFLINE SUPPORT)
         // ===============================================================
         window.isOnline = navigator.onLine;
-        window.pendingSync = false;
+        window.pendingSync = localStorage.getItem('pendingSyncFlag') === 'true';
 
         window.updateNetworkStatus = () => {
             window.isOnline = navigator.onLine;
@@ -1358,6 +1354,22 @@
         window.addEventListener('online', window.updateNetworkStatus);
         window.addEventListener('offline', window.updateNetworkStatus);
 
+        // FITUR BARU: Deteksi saat tab kembali dibuka/aktif
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && navigator.onLine && window.pendingSync) {
+                console.log("Tab aktif: Memproses data tertunda...");
+                window.saveState(true);
+            }
+        });
+
+        // FITUR BARU: Mencegah tab ditutup jika masih ada data mengantri
+        window.addEventListener('beforeunload', (e) => {
+            if (window.pendingSync || window.localDataIsDirty) {
+                e.preventDefault();
+                e.returnValue = 'Masih ada data absensi yang sedang disimpan ke Cloud. Yakin ingin keluar?';
+            }
+        });
+
         window.saveState = async (force = false) => {
             window.localDataIsDirty = true;
             const currentReqId = ++saveRequestId;
@@ -1370,6 +1382,7 @@
             // Logika Offline: Cegah request Firebase jika terputus
             if (!navigator.onLine && !force) {
                 window.pendingSync = true;
+                localStorage.setItem('pendingSyncFlag', 'true');
                 if (syncBadge) { 
                     syncBadge.innerHTML = '<i class="fa-solid fa-hdd mr-2 text-yellow-400"></i>Tersimpan di Perangkat (Menunggu Online)'; 
                     syncBadge.classList.remove('opacity-0'); 
@@ -1388,9 +1401,11 @@
                 try {
                     await set(ref(db, 'MadrasahData/'), window.appState);
                     window.pendingSync = false;
+                    localStorage.removeItem('pendingSyncFlag');
                     if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-2 text-green-400"></i>Data Tersinkronisasi!';
                 } catch(e) {
                     window.pendingSync = true;
+                    localStorage.setItem('pendingSyncFlag', 'true');
                     if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2 text-red-400"></i>Gagal Sync (Akan diulang otomatis)';
                 }
                 if (syncBadge) setTimeout(() => syncBadge.classList.add('opacity-0'), 2500);
@@ -1399,27 +1414,34 @@
                 if (currentReqId === saveRequestId) {
                     setTimeout(() => { window.localDataIsDirty = false; }, 500); // Jeda agar gema (echo) dari onValue server terlewati
                 }
-            }, 1000); 
+            }, 500); // Kurangi jeda debounce untuk meminimalisir data hilang saat tab ditutup tiba-tiba
         };
 
-        // Auto-sync Interval (Setiap 3 menit sistem mengecek data yang belum ter-upload)
+        // Auto-sync Interval (Setiap 1 menit sistem mengecek data yang belum ter-upload)
         setInterval(() => {
             if (navigator.onLine && window.pendingSync) {
                 console.log("Auto-Sync: Melakukan sinkronisasi data tertunda di latar belakang...");
                 window.saveState(true);
             }
-        }, 3 * 60 * 1000);
+        }, 1 * 60 * 1000); // Dipercepat menjadi 1 Menit
 
         let isFirstLoad = true;
         window.initCloudDatabase = async () => {
             const loader = document.getElementById('startup-loader');
             const localData = localStorage.getItem('CloudMadrasahData');
+            const hasOfflineData = localStorage.getItem('pendingSyncFlag') === 'true';
             
             // 1. Muat data lokal secara instan agar UI langsung responsif
             if(localData && isFirstLoad) { 
                 try { 
                     const p = JSON.parse(localData); window.appState = {...window.appState, ...p}; 
                     if(p.pengaturan) window.appState.pengaturan = {...window.appState.pengaturan, ...p.pengaturan}; 
+                    
+                    // PENANGANAN KRUSIAL: Amankan data offline yang belum terupload
+                    if (hasOfflineData && navigator.onLine) {
+                        console.log("Ditemukan data offline. Memaksa upload sebelum sinkronisasi server...");
+                        window.saveState(true);
+                    }
                 } catch(e){} 
             }
 
@@ -1428,7 +1450,8 @@
                 const dbRef = ref(db, 'MadrasahData');
                 onValue(dbRef, (snapshot) => {
                     // PENCEGAHAN OVERWRITE: Abaikan pembaruan server jika sedang ada proses simpan antre
-                    if (window.localDataIsDirty) {
+                    // atau masih ada data offline yang menolak tertimpa
+                    if (window.localDataIsDirty || localStorage.getItem('pendingSyncFlag') === 'true') {
                         console.log("Mengabaikan pembaruan server sementara karena ada data lokal yang belum tersimpan.");
                         return;
                     }
@@ -1555,7 +1578,7 @@
                 "1445": { start: "2023-07-19", days: [30,29,30,29,30,29,30,29,30,29,30,29] },
                 "1446": { start: "2024-07-07", days: [30,29,30,29,30,29,30,29,30,29,30,29] },
                 "1447": { start: "2025-06-26", days: [30,29,30,29,30,29,30,29,30,29,30,29] },
-                "1448": { start: "2026-06-16", days: [30,29,29,29,30,29,30,29,30,29,30,29] },
+                "1448": { start: "2026-06-16", days: [30,29,29,30,30,29,30,29,30,29,30,29] },
                 "1449": { start: "2027-06-05", days: [30,29,30,29,30,29,30,29,30,29,30,29] },
                 "1450": { start: "2028-05-25", days: [30,29,30,29,30,29,30,29,30,29,30,29] }
             };
@@ -1790,7 +1813,7 @@
             window.currentUser=null; document.getElementById('login-pass').value=''; document.getElementById('main-app').classList.add('hidden'); document.getElementById('modal-riwayat-guru').classList.remove('flex'); document.getElementById('modal-riwayat-guru').classList.add('hidden'); document.getElementById('login-screen').classList.remove('hidden'); 
         });
 
-        window.getScheduledIds = (st, nh, sesi, apRapot, isRapat, isLibur) => {
+        window.getScheduledIds = (st, nh, sesi, apRapot, isRapat, isLibur, isAcara) => {
             let ids = new Set();
             (st.guru||[]).forEach(g => {
                 const j = (st.jadwal_guru||[]).find(jx => jx.hari === nh && String(jx.id_guru) === String(g.id));
@@ -1800,6 +1823,8 @@
                 } else if (isRapat) {
                     if (sesi === 1 && j && j.jam.includes('Jam 1') && !window.isJamPiket(j.jam, 1)) isTarget = true;
                     if (sesi === 2) isTarget = true; // Rapat ditugaskan di Sesi 2 untuk semua guru
+                } else if (isAcara) {
+                    isTarget = false; // Jika acara/ujian, tidak wajib (opsional)
                 } else if (!isLibur) {
                     if (j && j.jam.includes(`Jam ${sesi}`) && !window.isJamPiket(j.jam, sesi)) isTarget = true;
                 }
@@ -1822,6 +1847,7 @@
             const isRapat = agenda.some(a=>a.tipe==='Rapat'||a.ket.toLowerCase().includes('rapat'));
             const apRapot = agenda.some(a=>a.ket.toLowerCase().includes('pembagian rapot') || a.ket.toLowerCase().includes('pembagian rapor'));
             const isLibur = agenda.some(a=>a.tipe==='Libur');
+            const isAcara = agenda.some(a=>a.tipe==='Acara'||a.ket.toLowerCase().includes('acara')||a.ket.toLowerCase().includes('ujian')||a.ket.toLowerCase().includes('imda'));
 
             // Object untuk menampung statistik per sesi
             let statsSesi = {
@@ -1832,7 +1858,7 @@
 
             // Hitung untuk masing-masing Sesi 1, 2, dan 3
             [1, 2, 3].forEach(sesi => {
-                let scheduledIds = window.getScheduledIds(st, nh, sesi, apRapot, isRapat, isLibur);
+                let scheduledIds = window.getScheduledIds(st, nh, sesi, apRapot, isRapat, isLibur, isAcara);
                 statsSesi[sesi].target = scheduledIds.size;
 
                 scheduledIds.forEach(id => {
@@ -2355,18 +2381,18 @@
             const ar = ah.find(a => a.tipe === 'Rapat' || (a.ket || '').toLowerCase().includes('rapat'));
             const apRapot = ah.find(a => (a.ket || '').toLowerCase().includes('pembagian rapot') || (a.ket || '').toLowerCase().includes('pembagian rapor'));
             const il = ah.find(a => a.tipe === 'Libur');
-            const ac = ah.find(a => a.tipe === 'Acara' || (a.ket || '').toLowerCase().includes('acara')); 
+            const ac = ah.find(a => a.tipe === 'Acara' || (a.ket || '').toLowerCase().includes('acara') || (a.ket || '').toLowerCase().includes('ujian') || (a.ket || '').toLowerCase().includes('imda')); 
 
-            // 1. CEK ACARA MADRASAH (SEMUA GURU BISA ABSEN)
+            // 1. CEK ACARA MADRASAH / UJIAN (SEMUA GURU BISA ABSEN)
             if (ac) {
                 return {
                     allowed: true,
                     infoWaktu: `Hadir (${ac.ket})`,
-                    targetJam: 1, // Masuk ke Sesi 1 secara otomatis
-                    hasJam2: false, 
+                    targetJam: null, // Masuk ke sesi yang dipilih otomatis saat scan
+                    hasJam2: true, 
                     hasJam3: false,
-                    validSessions: [{ jamKe: 1, iw: `Hadir (${ac.ket})` }],
-                    scheduleList: [{ jamKe: 1, start: '00:00', end: '23:59' }] // Waktu scan bebas seharian
+                    validSessions: [{ jamKe: 1, iw: `Hadir (${ac.ket})` }, { jamKe: 2, iw: `Hadir (${ac.ket})` }],
+                    scheduleList: [{ jamKe: 1, start: '00:00', end: '23:59' }, { jamKe: 2, start: '00:00', end: '23:59' }] // Waktu scan bebas seharian untuk 2 sesi
                 };
             }
 
@@ -2485,12 +2511,13 @@
             const ar=ah.find(a=>a.tipe==='Rapat'||a.ket.toLowerCase().includes('rapat'));
             const apRapot=ah.find(a=>a.ket.toLowerCase().includes('pembagian rapot') || a.ket.toLowerCase().includes('pembagian rapor'));
             const il=ah.find(a=>a.tipe==='Libur');
+            const ac=ah.find(a=>a.tipe==='Acara'||(a.ket||'').toLowerCase().includes('acara')||(a.ket||'').toLowerCase().includes('ujian')||(a.ket||'').toLowerCase().includes('imda'));
             const jh=(window.appState.jadwal_guru||[]).filter(j=>j.hari===nh), ijt=new Set(jh.map(j=>String(j.id_guru)));
             
-            if(il && !ar && !apRapot) { c.innerHTML=`<tr><td colspan="3" class="px-4 py-12 text-center text-red-600 font-bold bg-red-50/50"><i class="fa-solid fa-calendar-xmark text-5xl mb-4 block opacity-80 text-red-300"></i>Hari ini Libur (${il.ket})<br><span class="text-sm font-normal text-red-500 mt-1 block">Semua sesi absensi ditiadakan.</span></td></tr>`; return; }
+            if(il && !ar && !apRapot && !ac) { c.innerHTML=`<tr><td colspan="3" class="px-4 py-12 text-center text-red-600 font-bold bg-red-50/50"><i class="fa-solid fa-calendar-xmark text-5xl mb-4 block opacity-80 text-red-300"></i>Hari ini Libur (${il.ket})<br><span class="text-sm font-normal text-red-500 mt-1 block">Semua sesi absensi ditiadakan.</span></td></tr>`; return; }
 
             let gt = [];
-            if (apRapot || ar) {
+            if (apRapot || ar || ac) {
                 gt = window.appState.guru;
             } else {
                 gt = window.appState.guru.filter(g=>ijt.has(String(g.id))||rh.data.some(dx=>String(dx.id_guru)===String(g.id)));
@@ -2536,6 +2563,11 @@
                         if (m) infoJam1 = m[0] + '<br>';
                     }
                     jadwalInfo = `${infoJam1}<span class="text-yellow-600 font-bold"><i class="fa-solid fa-users-viewfinder"></i> ${ar.ket.toUpperCase()} (15:00 - 17:00)</span>`;
+                } else if(ac) {
+                    h1 = true;
+                    h2 = true;
+                    h3 = false;
+                    jadwalInfo = `<span class="text-blue-600 font-bold"><i class="fa-solid fa-star"></i> ${ac.ket.toUpperCase()} (Bebas / 2 Sesi)</span>`;
                 }
 
                 // Terapkan info pengganti ke UI Absensi
@@ -2569,8 +2601,9 @@
             const il=ah.find(a=>a.tipe==='Libur');
             const ar=ah.find(a=>a.tipe==='Rapat'||a.ket.toLowerCase().includes('rapat'));
             const apRapot=ah.find(a=>a.ket.toLowerCase().includes('pembagian rapot') || a.ket.toLowerCase().includes('pembagian rapor'));
+            const ac=ah.find(a=>a.tipe==='Acara'||(a.ket||'').toLowerCase().includes('acara')||(a.ket||'').toLowerCase().includes('ujian')||(a.ket||'').toLowerCase().includes('imda'));
             
-            if(il && !ar && !apRapot) return window.showAlert('Gagal Menyimpan',`Hari ini Libur (${il.ket}).\nSistem menolak seluruh input absensi.`,'error');
+            if(il && !ar && !apRapot && !ac) return window.showAlert('Gagal Menyimpan',`Hari ini Libur (${il.ket}).\nSistem menolak seluruh input absensi.`,'error');
             
             if(!window.appState.absensi_guru)window.appState.absensi_guru=[]; let r=window.appState.absensi_guru.find(a=>a.tanggal===tgl); const da=[];
             document.querySelectorAll('.absen-guru-row').forEach(row=>{
@@ -2612,9 +2645,10 @@
                 const isRapat=ah.some(a=>a.tipe==='Rapat'||a.ket.toLowerCase().includes('rapat'));
                 const apRapot=ah.some(a=>a.ket.toLowerCase().includes('pembagian rapot') || a.ket.toLowerCase().includes('pembagian rapor'));
                 const isLibur=ah.some(a=>a.tipe==='Libur');
+                const isAcara=ah.some(a=>a.tipe==='Acara'||a.ket.toLowerCase().includes('acara')||a.ket.toLowerCase().includes('ujian')||a.ket.toLowerCase().includes('imda'));
 
                 // Set Default L (Libur) atau '.' untuk setiap sesi
-                if (isLibur && !isRapat && !apRapot) {
+                if (isLibur && !isRapat && !apRapot && !isAcara) {
                     (st.guru||[]).forEach(gr => {
                         teacherSessions[gr.id][1].detail[dayNum] = 'L';
                         teacherSessions[gr.id][2].detail[dayNum] = 'L';
@@ -2630,16 +2664,17 @@
 
                 // KALKULASI SETIAP SESI SECARA SPESIFIK
                 [1, 2, 3].forEach(sesi => {
-                    const scheduledIds = window.getScheduledIds(st, nh, sesi, apRapot, isRapat, isLibur);
+                    const scheduledIds = window.getScheduledIds(st, nh, sesi, apRapot, isRapat, isLibur, isAcara);
                     
                     (st.guru||[]).forEach(gr => {
                         const tsData = teacherSessions[gr.id][sesi];
                         const isScheduled = scheduledIds.has(String(gr.id));
-                        
-                        // TARGET MENGAJAR HANYA BERTAMBAH JIKA TIDAK LIBUR DAN BUKAN RAPOT
-                        if (isScheduled && !apRapot) tsData.target++; 
 
                         if (ip) {
+                            // TARGET MENGAJAR HANYA BERTAMBAH JIKA TIDAK LIBUR DAN BUKAN RAPOT
+                            // HANYA DIHITUNG UNTUK HARI YANG SUDAH TERLEWATI SAJA
+                            if (isScheduled && !apRapot) tsData.target++; 
+
                             const ex = da.find(x => String(x.id_guru) === String(gr.id));
                             let dayStatus = null;
 
@@ -2679,12 +2714,12 @@
                     hariHtml += `<th class="px-1 py-1 text-center border-r border-purple-200 text-[10px] min-w-[20px] max-w-[24px] bg-purple-50/50">${i}</th>`;
                 }
                 hariHtml += `
-                    <th class="px-1 py-1 text-center min-w-[24px] bg-blue-100 text-blue-800 text-[10px] border-r border-purple-100 border-l border-purple-200">I</th>
-                    <th class="px-1 py-1 text-center min-w-[24px] bg-orange-100 text-orange-800 text-[10px] border-r border-purple-100">S</th>
-                    <th class="px-1 py-1 text-center min-w-[24px] bg-indigo-100 text-indigo-800 text-[10px] border-r border-purple-100">C</th>
-                    <th class="px-1 py-1 text-center min-w-[24px] bg-red-100 text-red-800 text-[10px] border-r border-purple-100">A</th>
-                    <th class="px-1 py-1 text-center min-w-[24px] bg-green-100 text-green-800 text-[10px] border-r border-purple-100">H</th>
-                    <th class="px-1 py-1 text-center min-w-[32px] bg-gray-100 text-gray-800 border-l border-gray-300 text-[10px]">Tgt</th>
+                    <th class="px-1 py-1 text-center min-w-[24px] bg-gray-200 text-gray-900 text-[10px] border-r border-gray-300 border-l border-purple-200" title="Target Sesi">T</th>
+                    <th class="px-1 py-1 text-center min-w-[24px] bg-blue-200 text-blue-900 text-[10px] border-r border-blue-300" title="Izin">I</th>
+                    <th class="px-1 py-1 text-center min-w-[24px] bg-orange-200 text-orange-900 text-[10px] border-r border-orange-300" title="Sakit">S</th>
+                    <th class="px-1 py-1 text-center min-w-[24px] bg-indigo-200 text-indigo-900 text-[10px] border-r border-indigo-300" title="Cuti">C</th>
+                    <th class="px-1 py-1 text-center min-w-[24px] bg-red-200 text-red-900 text-[10px] border-r border-red-300" title="Alpa">A</th>
+                    <th class="px-1 py-1 text-center min-w-[24px] bg-green-200 text-green-900 text-[10px] border-r border-green-300" title="Hadir">H</th>
                 `;
                 headerHari.innerHTML = hariHtml;
             }
@@ -2735,12 +2770,12 @@
                     html += `
                         <td class="px-1 py-2 text-center font-bold text-purple-700 text-[10px] border-r border-gray-200 bg-purple-50/30 sticky left-[200px] shadow-[2px_0_5px_-2px_rgba(0,0,0,0.1)] z-10 align-middle">${sesi}</td>
                         ${detailHtml}
-                        <td class="px-1 py-2 text-center text-blue-700 font-bold text-[10px] sm:text-[11px] border-r border-gray-100 border-l border-purple-200">${tsData.izin}</td>
-                        <td class="px-1 py-2 text-center text-orange-700 font-bold text-[10px] sm:text-[11px] border-r border-gray-100">${tsData.sakit}</td>
-                        <td class="px-1 py-2 text-center text-indigo-700 font-bold text-[10px] sm:text-[11px] border-r border-gray-100">${tsData.cuti}</td>
-                        <td class="px-1 py-2 text-center text-red-700 font-bold text-[10px] sm:text-[11px] border-r border-gray-100">${tsData.alpa}</td>
-                        <td class="px-1 py-2 text-center text-green-700 font-bold bg-green-50/50 text-[10px] sm:text-[11px] border-r border-gray-100">${tsData.hadir}</td>
-                        <td class="px-1 py-2 text-center text-purple-700 font-bold bg-purple-50/50 text-[10px] sm:text-[11px] border-l border-gray-300">${tsData.target}</td>
+                        <td class="px-1 py-2 text-center text-gray-900 font-bold text-[10px] sm:text-[11px] border-r border-gray-300 border-l border-purple-200 bg-gray-200">${tsData.target}</td>
+                        <td class="px-1 py-2 text-center text-blue-900 font-bold text-[10px] sm:text-[11px] border-r border-blue-300 bg-blue-200">${tsData.izin}</td>
+                        <td class="px-1 py-2 text-center text-orange-900 font-bold text-[10px] sm:text-[11px] border-r border-orange-300 bg-orange-200">${tsData.sakit}</td>
+                        <td class="px-1 py-2 text-center text-indigo-900 font-bold text-[10px] sm:text-[11px] border-r border-indigo-300 bg-indigo-200">${tsData.cuti}</td>
+                        <td class="px-1 py-2 text-center text-red-900 font-bold text-[10px] sm:text-[11px] border-r border-red-300 bg-red-200">${tsData.alpa}</td>
+                        <td class="px-1 py-2 text-center text-green-900 font-bold text-[10px] sm:text-[11px] border-r border-gray-200 bg-green-200">${tsData.hadir}</td>
                     </tr>`;
                 });
             });
@@ -2784,7 +2819,7 @@
             document.getElementById('profil-riwayat-nama').innerText = g.nama||'-'; document.getElementById('profil-riwayat-jabatan').innerText = g.jabatan||'Guru'; document.getElementById('profil-riwayat-nip').innerText = g.nip||'-'; document.getElementById('profil-riwayat-hp').innerText = g.hp||'-';
             const t=new Date(), hc=window.getHijriComponents(t), nh=['Ahad','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][t.getDay()], ts=window.getTodayInputFormat();
             const jh=(window.appState.jadwal_guru||[]).find(j=>j.hari===nh&&String(j.id_guru)===String(guruId));
-            const ah=(window.appState.agenda||[]).filter(a=>a.tgl===ts), ar=ah.find(a=>a.tipe==='Rapat'||a.ket.toLowerCase().includes('rapat')), il=ah.find(a=>a.tipe==='Libur');
+            const ah=(window.appState.agenda||[]).filter(a=>a.tgl===ts), ar=ah.find(a=>a.tipe==='Rapat'||a.ket.toLowerCase().includes('rapat')), il=ah.find(a=>a.tipe==='Libur'), ac=ah.find(a=>a.tipe==='Acara'||(a.ket||'').toLowerCase().includes('acara')||(a.ket||'').toLowerCase().includes('ujian')||(a.ket||'').toLowerCase().includes('imda'));
             const ej=document.getElementById('profil-riwayat-jadwal-hari-ini'); 
             if(ej){
                 if(ar) {
@@ -2794,6 +2829,8 @@
                         if (m) infoJam1 = m[0].replace(/<(hr|br).*?>/g,' &bull; ') + '<br>';
                     }
                     ej.innerHTML=`${infoJam1}<span class="text-yellow-600 font-bold"><i class="fa-solid fa-users-viewfinder"></i> ${ar.ket.toUpperCase()} (15:00 - 17:00)</span>`;
+                } else if(ac) {
+                    ej.innerHTML=`<span class="text-blue-500 font-bold"><i class="fa-solid fa-star"></i> ${ac.ket.toUpperCase()}</span>`;
                 } else if(il) {
                     ej.innerHTML=`<span class="text-red-500"><i class="fa-solid fa-calendar-xmark"></i> LIBUR (${il.ket})</span>`; 
                 } else if(jh) {
@@ -2807,7 +2844,7 @@
             const ct=document.getElementById('table-riwayat-guru'); if(rw.length===0)ct.innerHTML='<tr><td colspan="7" class="text-center py-8 text-gray-500">Belum ada data absensi untuk guru ini.</td></tr>'; else ct.innerHTML=rw.map((r,i)=>{
                 const gb=(s)=>s==='Hadir'?`<span class="bg-green-100 text-green-700 px-2 py-0.5 rounded text-[10px] font-bold">HADIR</span>`:s==='Izin'?`<span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded text-[10px] font-bold">IZIN</span>`:s==='Sakit'?`<span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded text-[10px] font-bold">SAKIT</span>`:s==='Cuti'?`<span class="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded text-[10px] font-bold">CUTI</span>`:s==='-'?`<span class="text-gray-400 font-bold">-</span>`:`<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded text-[10px] font-bold">${s.toUpperCase()}</span>`; 
                 const p=r.t.split('-'),d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2])),nhr=['Ahad','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][d.getDay()]; let hs='';try{const hcd=window.getHijriComponents(d);hs=`${hcd.d} ${["Muharram", "Safar", "Rabi'ul Awal", "Rabi'ul Akhir", "Jumadil Awal", "Jumadil Akhir", "Rajab", "Sya'ban", "Ramadhan", "Syawal", "Dzulqa'dah", "Dzulhijjah"][hcd.m-1]} ${hcd.y} H`;}catch(e){} const tf=`<div class="font-bold text-purple-700 leading-tight mb-1">${hs}</div><div class="text-[11px] text-gray-500">${nhr}, ${p[2]}/${p[1]}/${p[0]}</div>`, it=[r.i1,r.i2,r.i3].filter(x=>x&&x.trim()!==''&&!x.includes('Tepat Waktu')).join(', ')||'-'; 
-                const j=(window.appState.jadwal_guru||[]).find(jx=>jx.hari===nhr&&String(jx.id_guru)===String(guruId)), a=(window.appState.agenda||[]).filter(ax=>ax.tgl===r.t), rp=a.find(ax=>ax.tipe==='Rapat'||ax.ket.toLowerCase().includes('rapat')), lb=a.find(ax=>ax.tipe==='Libur'); 
+                const j=(window.appState.jadwal_guru||[]).find(jx=>jx.hari===nhr&&String(jx.id_guru)===String(guruId)), a=(window.appState.agenda||[]).filter(ax=>ax.tgl===r.t), rp=a.find(ax=>ax.tipe==='Rapat'||ax.ket.toLowerCase().includes('rapat')), lb=a.find(ax=>ax.tipe==='Libur'), acx=a.find(ax=>ax.tipe==='Acara'||(ax.ket||'').toLowerCase().includes('acara')||(ax.ket||'').toLowerCase().includes('ujian')||(ax.ket||'').toLowerCase().includes('imda')); 
                 let dj=j?j.jam.replace(/<hr.*?>/g,'<br>'):'<span class="text-gray-400 italic">Kosong</span>'; 
                 if(rp){
                     let jam1Info = '';
@@ -2816,6 +2853,8 @@
                         if (m) jam1Info = `<div class="opacity-75 text-[10px] mb-1">${m[0].replace(/<(hr|br).*?>/g,' ')}</div>`;
                     }
                     dj=`${jam1Info}<div class="text-yellow-700 font-bold text-[10px] mb-1">RAPAT (${rp.ket})</div>`;
+                } else if(acx) {
+                    dj=`<div class="text-blue-600 font-bold text-[10px] mb-1">${acx.ket.toUpperCase()}</div>`;
                 } else if(lb) {
                     dj=`<div class="text-red-600 font-bold text-[10px] mb-1">LIBUR</div>`; 
                 } else if(j) {
@@ -3618,14 +3657,14 @@
                 let hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][tglDate.getDay()];
                 if (hari === 'Minggu') hari = 'Ahad'; 
 
-                // CEK AGENDA: Apakah ada agenda Libur atau Acara di tanggal ini?
-                const isLibur = (window.appState.agenda || []).some(a => 
+                // CEK AGENDA: Apakah ada agenda Libur atau Acara/Ujian di tanggal ini?
+                const isLiburAcara = (window.appState.agenda || []).some(a => 
                     a.tgl === tglStr && 
-                    (a.tipe === 'Libur' || a.tipe === 'Acara' || (a.ket || '').toLowerCase().includes('libur'))
+                    (a.tipe === 'Libur' || a.tipe === 'Acara' || (a.ket || '').toLowerCase().includes('libur') || (a.ket || '').toLowerCase().includes('acara') || (a.ket || '').toLowerCase().includes('ujian') || (a.ket || '').toLowerCase().includes('imda'))
                 );
 
                 // Jika BUKAN Libur/Acara, tambahkan sesi ke target mengajar
-                if(!isLibur) {
+                if(!isLiburAcara) {
                     const jadwal = (window.appState.jadwal_guru || []).filter(j => String(j.id_guru) === String(guruId) && j.hari === hari);
                     jadwal.forEach(j => {
                         if((j.jam||'').includes('Jam 1')) totalTarget++;
@@ -4161,8 +4200,9 @@
             const isRapat = agenda.some(a=>a.tipe==='Rapat'||a.ket.toLowerCase().includes('rapat'));
             const apRapot = agenda.some(a=>a.ket.toLowerCase().includes('pembagian rapot') || a.ket.toLowerCase().includes('pembagian rapor'));
             const isLibur = agenda.some(a=>a.tipe==='Libur');
+            const isAcara = agenda.some(a=>a.tipe==='Acara'||a.ket.toLowerCase().includes('acara')||a.ket.toLowerCase().includes('ujian'));
 
-            let scheduledIds = window.getScheduledIds(st, nh, sesi, apRapot, isRapat, isLibur);
+            let scheduledIds = window.getScheduledIds(st, nh, sesi, apRapot, isRapat, isLibur, isAcara);
             let resultList = [];
 
             if (targetStatus === 'Jadwal') {
@@ -4438,88 +4478,6 @@
                 pdf.save(`Surat_${hal.replace(/\s+/g,'_')}.pdf`);
             });
         };
-       // ===============================================================
-        // PASTE KODE JAVASCRIPT FITUR PENGINGAT DI SINI
-        // ===============================================================
-        window.notifiedReminders = {}; 
-
-        window.aktifkanNotifikasiBrowser = () => {
-            if (!("Notification" in window)) {
-                alert("Maaf, browser Anda tidak mendukung fitur notifikasi desktop.");
-                return;
-            }
-            if (Notification.permission === "granted") {
-                alert("Notifikasi browser sudah aktif!");
-            } else if (Notification.permission !== "denied") {
-                Notification.requestPermission().then(permission => {
-                    if (permission === "granted") {
-                        new Notification("Berhasil!", { 
-                            body: "Sistem absensi kini dapat mengirimkan pengingat ke layar Anda.",
-                            icon: "https://cdn-icons-png.flaticon.com/512/3063/3063822.png" 
-                        });
-                    }
-                });
-            } else {
-                alert("Anda telah memblokir notifikasi. Silakan izinkan melalui pengaturan gembok di URL bar browser Anda.");
-            }
-        };
-
-        window.kirimNotifikasiBrowser = (pesan) => {
-            if ("Notification" in window && Notification.permission === "granted") {
-                new Notification("Pengingat Absensi Madrasah", { 
-                    body: pesan,
-                    icon: "https://cdn-icons-png.flaticon.com/512/3063/3063822.png" 
-                });
-            }
-        };
-
-        window.cekPengingatAbsen = () => {
-            if (!window.appState || !window.appState.jadwal_guru) return;
-
-            const now = new Date();
-            const tglStr = window.getTodayInputFormat();
-            const hari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][now.getDay()];
-            const namaHari = hari === 'Minggu' ? 'Ahad' : hari;
-
-            let sessionTimes = new Set();
-            const jadwalHariIni = window.appState.jadwal_guru.filter(j => j.hari === namaHari);
-            
-            jadwalHariIni.forEach(j => {
-                const match1 = j.jam.match(/Jam 1:\s*(\d{2}:\d{2})/);
-                const match2 = j.jam.match(/Jam 2:\s*(\d{2}:\d{2})/);
-                const match3 = j.jam.match(/Jam 3:\s*(\d{2}:\d{2})/);
-                
-                if (match1) sessionTimes.add(match1[1]);
-                if (match2) sessionTimes.add(match2[1]);
-                if (match3) sessionTimes.add(match3[1]);
-            });
-
-            sessionTimes.forEach(timeStr => {
-                const [sh, sm] = timeStr.split(':').map(Number);
-                const startTime = new Date();
-                startTime.setHours(sh, sm, 0, 0);
-
-                const diffMinutes = Math.floor((startTime - now) / 60000);
-
-                if (diffMinutes <= 15 && diffMinutes > 0) {
-                    const notifKey = `${tglStr}-${timeStr}`;
-                    
-                    if (!window.notifiedReminders[notifKey]) {
-                        const pesanPengingat = `Sesi absen (${timeStr}) akan dimulai dalam ${diffMinutes} menit. Jangan sampai telat ya!`;
-
-                        if(window.showToast) window.showToast('Pengingat Absen', pesanPengingat, 'info');
-                        if(window.playBeep) window.playBeep();
-                        window.kirimNotifikasiBrowser(pesanPengingat);
-                        
-                        window.notifiedReminders[notifKey] = true;
-                    }
-                }
-            });
-        };
-
-        setInterval(window.cekPengingatAbsen, 60000);
-        setTimeout(window.cekPengingatAbsen, 5000);
-        // ===============================================================
 
     </script>
 </body>
