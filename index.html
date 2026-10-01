@@ -1378,12 +1378,15 @@
             try { localStorage.setItem('CloudMadrasahData', JSON.stringify(window.appState)); } 
             catch(e) { if (e.name === 'QuotaExceededError' || e.name === 'NS_ERROR_DOM_QUOTA_REACHED') setTimeout(() => window.showAlert('Penyimpanan Penuh', 'Penyimpanan lokal penuh. Mohon perkecil ukuran foto.', 'error'), 500); }
             
+            // PERBAIKAN KRUSIAL: Set flag tertunda SECARA INSTAN sebelum mencoba akses jaringan.
+            // Hal ini mencegah hilangnya data jika browser ditutup saat koneksi "menggantung" (false online).
+            window.pendingSync = true;
+            localStorage.setItem('pendingSyncFlag', 'true');
+
             const syncBadge = document.getElementById('cloud-sync-status');
             
             // Logika Offline: Cegah request Firebase jika terputus
             if (!navigator.onLine && !force) {
-                window.pendingSync = true;
-                localStorage.setItem('pendingSyncFlag', 'true');
                 if (syncBadge) { 
                     syncBadge.innerHTML = '<i class="fa-solid fa-hdd mr-2 text-yellow-400"></i>Tersimpan di Perangkat (Menunggu Online)'; 
                     syncBadge.classList.remove('opacity-0'); 
@@ -1401,6 +1404,8 @@
             syncTimeout = setTimeout(async () => {
                 try {
                     await set(ref(db, 'MadrasahData/'), window.appState);
+                    
+                    // Jika kode mencapai baris ini, berarti data BERHASIL masuk ke server
                     window.pendingSync = false;
                     localStorage.removeItem('pendingSyncFlag');
                     if (syncBadge) syncBadge.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-2 text-green-400"></i>Data Tersinkronisasi!';
@@ -1454,6 +1459,14 @@
                     // atau masih ada data offline yang menolak tertimpa
                     if (window.localDataIsDirty || localStorage.getItem('pendingSyncFlag') === 'true') {
                         console.log("Mengabaikan pembaruan server sementara karena ada data lokal yang belum tersimpan.");
+                        
+                        // PERBAIKAN: Jika ada data offline saat aplikasi dibuka, hilangkan loader dan biarkan UI menyala
+                        if (isFirstLoad) {
+                            if (loader) loader.classList.replace('flex', 'hidden');
+                            if (typeof window.initHijriFilter === 'function') window.initHijriFilter();
+                            if (typeof window.updateAllViews === 'function') window.updateAllViews();
+                            isFirstLoad = false;
+                        }
                         return;
                     }
 
@@ -1503,6 +1516,16 @@
                 if (typeof window.updateAllViews === 'function' && isFirstLoad) window.updateAllViews();
                 isFirstLoad = false;
             }
+
+            // Fallback timeout jika Firebase tidak merespon saat aplikasi benar-benar terputus dari internet
+            setTimeout(() => {
+                if (isFirstLoad) {
+                    if (loader) loader.classList.replace('flex', 'hidden');
+                    if (typeof window.initHijriFilter === 'function') window.initHijriFilter();
+                    if (typeof window.updateAllViews === 'function') window.updateAllViews();
+                    isFirstLoad = false;
+                }
+            }, 3000);
         };
 
         
