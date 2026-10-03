@@ -1873,7 +1873,7 @@
                     if (sesi === 1 && j && j.jam.includes('Jam 1') && !window.isJamPiket(j.jam, 1)) isTarget = true;
                     if (sesi === 2) isTarget = true; // Rapat ditugaskan di Sesi 2 untuk semua guru
                 } else if (isAcara) {
-                    isTarget = false; // Jika acara/ujian, tidak wajib (opsional)
+                    if (sesi === 1 || sesi === 2) isTarget = true; // Seluruh guru menjadi target untuk Sesi 1 dan 2 saat ada acara/ujian
                 } else if (!isLibur) {
                     if (j && j.jam.includes(`Jam ${sesi}`) && !window.isJamPiket(j.jam, sesi)) isTarget = true;
                 }
