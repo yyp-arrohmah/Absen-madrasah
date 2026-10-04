@@ -1016,7 +1016,20 @@
                             </div>
                         </div>
                         <div class="lg:col-span-2 overflow-x-auto flex justify-center bg-gray-200 p-4 rounded-2xl border border-gray-300">
-                            <div id="printable-surat-izin" class="bg-white text-black font-serif relative shadow-xl mx-auto flex-shrink-0" style="width: 210mm; min-width: 210mm; height: 297mm; min-height: 297mm; padding: 2.5cm 3cm; box-sizing: border-box; font-family: 'Times New Roman', Times, serif; overflow: hidden;">
+                            <div id="printable-surat-izin" class="bg-white text-black font-serif relative shadow-xl mx-auto flex-shrink-0" style="width: 210mm; min-width: 210mm; height: 297mm; min-height: 297mm; padding: 2cm 2.5cm; box-sizing: border-box; font-family: 'Times New Roman', Times, serif; overflow: hidden;">
+                                
+                                <!-- Kop Surat -->
+                                <div class="flex items-center justify-between border-b-4 border-black pb-4 mb-1">
+                                    <img id="kop-logo-izin" src="" class="w-20 h-20 object-contain" alt="Logo">
+                                    <div class="text-center flex-1">
+                                        <h2 class="text-base font-bold uppercase tracking-wider">Madrasah Miftahul Ulum Arrohmah</h2>
+                                        <h1 class="text-lg font-black uppercase tracking-widest mt-0.5">Yayasan Pendidikan Arrohmah</h1>
+                                        <p class="text-xs mt-1">Dusun Karang Anom Mrawan Tapen Bondowoso</p>
+                                        <p class="text-[11px] mt-0.5">Kode pos: 68283 | Email: yyp.arrohmah@gmail.com | Telp: (021) 1234567</p>
+                                    </div>
+                                    <div class="w-20"></div> <!-- Spacer -->
+                                </div>
+                                <div class="border-b-[1px] border-black mb-6"></div>
                                 
                                 <div class="flex justify-end text-sm mb-6">
                                     <div id="prev-izin-tgl-surat">Bondowoso, ...</div>
@@ -4676,12 +4689,18 @@
             const p = tgl.split('-');
             const d = new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2]));
             const mNames = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-            const dNames = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+            const dNames = ['Ahad','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
             
             const hariStr = dNames[d.getDay()];
-            const tglStr = `${d.getDate()} ${mNames[d.getMonth()]} ${d.getFullYear()}`;
+            const tglMasehiStr = `${d.getDate()} ${mNames[d.getMonth()]} ${d.getFullYear()}`;
             
-            const pTgl = document.getElementById('prev-izin-tgl-surat'); if(pTgl) pTgl.innerText = `Bondowoso, ${tglStr}`;
+            // Konversi ke format Hijriyah
+            const h = window.getHijriComponents(d);
+            const mNamesHijri = ["Muharram", "Safar", "Rabi'ul Awal", "Rabi'ul Akhir", "Jumadil Awal", "Jumadil Akhir", "Rajab", "Sya'ban", "Ramadhan", "Syawal", "Dzulqa'dah", "Dzulhijjah"];
+            const tglHijriStr = `${h.d} ${mNamesHijri[h.m-1]} ${h.y} H`;
+            
+            // Setel tanggal kop surat (Kanan atas) menjadi Hijriyah
+            const pTgl = document.getElementById('prev-izin-tgl-surat'); if(pTgl) pTgl.innerText = `Bondowoso, ${tglHijriStr}`;
             const pKelas = document.getElementById('prev-izin-kelas-tujuan'); if(pKelas) pKelas.innerText = kelas;
             
             if (id) {
@@ -4697,9 +4716,21 @@
                 const pKls = document.getElementById('prev-izin-kelas'); if(pKls) pKls.innerText = '...';
             }
             
-            const pHari = document.getElementById('prev-izin-hari'); if(pHari) pHari.innerText = `${hariStr}, ${tglStr}`;
+            // Tampilkan Masehi & Hijriyah di dalam paragraf isi surat
+            const pHari = document.getElementById('prev-izin-hari'); if(pHari) pHari.innerText = `${hariStr}, ${tglHijriStr} / ${tglMasehiStr}`;
             const pAlasan = document.getElementById('prev-izin-alasan'); if(pAlasan) pAlasan.innerText = alasan;
             const pWali = document.getElementById('prev-izin-ttd-nama'); if(pWali) pWali.innerText = wali;
+            
+            const logo = window.appState?.pengaturan?.logo || '';
+            const kopLogoIzin = document.getElementById('kop-logo-izin');
+            if (kopLogoIzin) {
+                if (logo) {
+                    kopLogoIzin.src = logo;
+                    kopLogoIzin.style.display = 'block';
+                } else {
+                    kopLogoIzin.style.display = 'none';
+                }
+            }
         };
 
         window.downloadSuratIzinPDF = () => {
