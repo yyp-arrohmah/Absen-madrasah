@@ -1653,13 +1653,19 @@
                     const cloudData = snapshot.val();
                     
                     // PERBAIKAN BUG FIREBASE PADA REFRESH MANUAL
-                    ['guru', 'siswa', 'absensi_guru', 'absensi_siswa', 'jadwal_guru', 'tabungan_guru', 'log_login', 'agenda'].forEach(key => {
+                    ['guru', 'siswa', 'jadwal_guru', 'tabungan_guru', 'log_login', 'agenda'].forEach(key => {
                         if (cloudData[key] && typeof cloudData[key] === 'object' && !Array.isArray(cloudData[key])) {
                             cloudData[key] = Object.values(cloudData[key]);
                         }
                     });
-                    if (cloudData.absensi_guru) cloudData.absensi_guru.forEach(a => { if (a.data && typeof a.data === 'object' && !Array.isArray(a.data)) a.data = Object.values(a.data); });
-                    if (cloudData.absensi_siswa) cloudData.absensi_siswa.forEach(a => { if (a.data && typeof a.data === 'object' && !Array.isArray(a.data)) a.data = Object.values(a.data); });
+                    if (cloudData.absensi_guru) {
+                        if (Array.isArray(cloudData.absensi_guru)) { const n = {}; cloudData.absensi_guru.forEach(a=>{if(a&&a.tanggal)n[a.tanggal]=a;}); cloudData.absensi_guru = n; }
+                        Object.values(cloudData.absensi_guru).forEach(a => { if (a.data && typeof a.data === 'object' && !Array.isArray(a.data)) a.data = Object.values(a.data); });
+                    } else { cloudData.absensi_guru = {}; }
+                    if (cloudData.absensi_siswa) {
+                        if (Array.isArray(cloudData.absensi_siswa)) { const n = {}; cloudData.absensi_siswa.forEach(a=>{if(a&&a.tanggal)n[a.tanggal]=a;}); cloudData.absensi_siswa = n; }
+                        Object.values(cloudData.absensi_siswa).forEach(a => { if (a.data && typeof a.data === 'object' && !Array.isArray(a.data)) a.data = Object.values(a.data); });
+                    } else { cloudData.absensi_siswa = {}; }
 
                     window.appState = { ...window.appState, ...cloudData };
                     if (cloudData.pengaturan) { window.appState.pengaturan = { ...window.appState.pengaturan, ...cloudData.pengaturan }; }
