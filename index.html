@@ -1571,30 +1571,22 @@
                         
                         // PERBAIKAN BUG FIREBASE: Konversi Object ke Array
                         // Firebase otomatis mengubah array jadi objek jika indeksnya bolong (karena ada data yang dihapus).
-                        ['guru', 'siswa', 'jadwal_guru', 'tabungan_guru', 'log_login', 'agenda'].forEach(key => {
+                        ['guru', 'siswa', 'absensi_guru', 'absensi_siswa', 'jadwal_guru', 'tabungan_guru', 'log_login', 'agenda'].forEach(key => {
                             if (cloudData[key] && typeof cloudData[key] === 'object' && !Array.isArray(cloudData[key])) {
                                 cloudData[key] = Object.values(cloudData[key]);
                             }
                         });
                         
                         if (cloudData.absensi_guru) {
-                            if (Array.isArray(cloudData.absensi_guru)) {j
-
-                                const newAbs = {}; cloudData.absensi_guru.forEach(a => { if(a && a.tanggal) newAbs[a.tanggal] = a; }); cloudData.absensi_guru = newAbs
-                            }
-                            Object.values(cloudData.absensi_guru).forEach(absen => {
+                            cloudData.absensi_guru.forEach(absen => {
                                 if (absen.data && typeof absen.data === 'object' && !Array.isArray(absen.data)) absen.data = Object.values(absen.data);
                             });
-                        } else { cloudData.absensi_guru = {}; }
-                        
+                        }
                         if (cloudData.absensi_siswa) {
-                            if (Array.isArray(cloudData.absensi_siswa)) {
-                                const newAbsS = {}; cloudData.absensi_siswa.forEach(a => { if(a && a.tanggal) newAbsS[a.tanggal] = a; }); cloudData.absensi_siswa = newAbsS;
-                            }
-                            Object.values(cloudData.absensi_siswa).forEach(absen => {
+                            cloudData.absensi_siswa.forEach(absen => {
                                 if (absen.data && typeof absen.data === 'object' && !Array.isArray(absen.data)) absen.data = Object.values(absen.data);
                             });
-                        } else { cloudData.absensi_siswa = {}; }
+                        }
 
                         window.appState = { ...window.appState, ...cloudData };
                         if (cloudData.pengaturan) { window.appState.pengaturan = { ...window.appState.pengaturan, ...cloudData.pengaturan }; }
@@ -1653,19 +1645,13 @@
                     const cloudData = snapshot.val();
                     
                     // PERBAIKAN BUG FIREBASE PADA REFRESH MANUAL
-                    ['guru', 'siswa', 'jadwal_guru', 'tabungan_guru', 'log_login', 'agenda'].forEach(key => {
+                    ['guru', 'siswa', 'absensi_guru', 'absensi_siswa', 'jadwal_guru', 'tabungan_guru', 'log_login', 'agenda'].forEach(key => {
                         if (cloudData[key] && typeof cloudData[key] === 'object' && !Array.isArray(cloudData[key])) {
                             cloudData[key] = Object.values(cloudData[key]);
                         }
                     });
-                    if (cloudData.absensi_guru) {
-                        if (Array.isArray(cloudData.absensi_guru)) { const n = {}; cloudData.absensi_guru.forEach(a=>{if(a&&a.tanggal)n[a.tanggal]=a;}); cloudData.absensi_guru = n; }
-                        Object.values(cloudData.absensi_guru).forEach(a => { if (a.data && typeof a.data === 'object' && !Array.isArray(a.data)) a.data = Object.values(a.data); });
-                    } else { cloudData.absensi_guru = {}; }
-                    if (cloudData.absensi_siswa) {
-                        if (Array.isArray(cloudData.absensi_siswa)) { const n = {}; cloudData.absensi_siswa.forEach(a=>{if(a&&a.tanggal)n[a.tanggal]=a;}); cloudData.absensi_siswa = n; }
-                        Object.values(cloudData.absensi_siswa).forEach(a => { if (a.data && typeof a.data === 'object' && !Array.isArray(a.data)) a.data = Object.values(a.data); });
-                    } else { cloudData.absensi_siswa = {}; }
+                    if (cloudData.absensi_guru) cloudData.absensi_guru.forEach(a => { if (a.data && typeof a.data === 'object' && !Array.isArray(a.data)) a.data = Object.values(a.data); });
+                    if (cloudData.absensi_siswa) cloudData.absensi_siswa.forEach(a => { if (a.data && typeof a.data === 'object' && !Array.isArray(a.data)) a.data = Object.values(a.data); });
 
                     window.appState = { ...window.appState, ...cloudData };
                     if (cloudData.pengaturan) { window.appState.pengaturan = { ...window.appState.pengaturan, ...cloudData.pengaturan }; }
